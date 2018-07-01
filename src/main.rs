@@ -2,12 +2,13 @@ extern crate clap;
 extern crate taskhero;
 
 pub mod commands;
+pub mod config;
 
 use clap::App;
 use commands::error::{Error, ErrorKind};
+use config::Config;
 use std::io;
 use std::process;
-use taskhero::config::Config;
 
 fn main() {
     let matches = App::new("taskhero")
