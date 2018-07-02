@@ -26,14 +26,16 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
         .alias("n")
         .alias("next")
         .about("Show your todos")
-        .help("A blank search will list all todos")
+        .help("A blank ID will show the \"current\" or \"next\" task.")
         .arg(
             Arg::with_name("json")
+                .long("json")
                 .short("j")
                 .help("Print the task as JSON"),
         )
         .arg(
             Arg::with_name("short")
+                .long("short")
                 .short("s")
                 .alias("title")
                 .alias("t")
