@@ -1,5 +1,9 @@
 extern crate clap;
+extern crate serde;
+extern crate serde_json;
 extern crate taskhero;
+#[macro_use]
+extern crate serde_derive;
 
 pub mod commands;
 pub mod config;

@@ -1,11 +1,12 @@
 use super::error::{Error, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
+use config::Config;
 use std::io;
 use std::io::Write;
-use taskhero::config::Config;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("search")
+        .alias("s")
         .about("Show your todos")
         .help("A blank search will list all todos")
         .arg(

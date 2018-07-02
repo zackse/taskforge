@@ -1,10 +1,10 @@
-use super::tasks::list::List;
 use serde_json;
 use std::env;
 use std::fs;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
+use taskhero::tasks::list::List;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {

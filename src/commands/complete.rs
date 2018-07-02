@@ -1,6 +1,6 @@
 use super::error::{Error, ErrorKind, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
-use taskhero::config::Config;
+use config::Config;
 use taskhero::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
