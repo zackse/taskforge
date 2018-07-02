@@ -53,7 +53,7 @@ impl List {
     }
 
     /// Return a reference to the "current" task.
-    pub fn current<'a>(&'a mut self) -> &'a mut Task {
+    pub fn current<'a>(&'a mut self) -> Option<&'a mut Task> {
         self.find_by_ind(0)
     }
 
@@ -71,9 +71,13 @@ impl List {
     }
 
     /// Return a reference to the task at the given ID / index.
-    pub fn find_by_ind<'a>(&'a mut self, id: usize) -> &'a mut Task {
+    pub fn find_by_ind<'a>(&'a mut self, id: usize) -> Option<&'a mut Task> {
+        if self.tasks.len() < id {
+            return None;
+        }
+
         let t: &'a mut Task = &mut self.tasks[id];
-        t
+        Some(t)
     }
 
     /// Return a reference to the first task with the given title.
@@ -87,7 +91,7 @@ impl List {
         }
 
         match ind {
-            Some(i) => Some(self.find_by_ind(i)),
+            Some(i) => self.find_by_ind(i),
             None => None,
         }
     }
