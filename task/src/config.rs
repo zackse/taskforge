@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use serde_json;
 use std::env;
 use std::fs;
@@ -44,7 +43,7 @@ impl Config {
         Ok(cfg_dir)
     }
 
-    fn file() -> Result<PathBuf, io::Error> {
+    fn state_file() -> Result<PathBuf, io::Error> {
         let mut dir = Config::dir()?;
         dir.push("state.json");
         Ok(dir)
@@ -57,16 +56,19 @@ impl Config {
     }
 
     pub fn save(&self) -> Result<(), io::Error> {
-        let config = serde_json::to_string_pretty(self)?;
-        let file = Config::file()?;
-        fs::File::create(file)?.write_all(config.as_bytes())
+        let list = serde_json::to_string_pretty(&self.state)?;
+        let file = Config::state_file()?;
+        fs::File::create(file)?.write_all(list.as_bytes())
     }
 
     pub fn load() -> Result<Config, io::Error> {
+        let mut config = Config::new();
         let mut contents = String::new();
-        Config::file()
+        Config::state_file()
             .and_then(|path| fs::File::open(path))
-            .and_then(|mut f| f.read_to_string(&mut contents))
-            .and_then(|_| serde_json::from_str(&contents).map_err(|e| io::Error::from(e)))
+            .and_then(|mut f| f.read_to_string(&mut contents))?;
+
+        config.state = serde_json::from_str(&contents).map_err(|e| serde_json::Error::from(e))?;
+        Ok(config)
     }
 }
