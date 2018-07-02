@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use serde_json;
 use std::fmt;
 use std::io;
 use std::result;
@@ -22,6 +23,7 @@ pub enum ErrorKind {
     IO(io::ErrorKind),
     InvalidArg(String),
     InvalidCommand(String),
+    JSON,
 }
 
 #[derive(Debug, Clone)]
@@ -54,6 +56,7 @@ impl Error {
             ErrorKind::IO(_) => 126,
             ErrorKind::InvalidArg(_) => 128,
             ErrorKind::InvalidCommand(_) => 127,
+            ErrorKind::JSON => 1,
         }
     }
 }
@@ -67,12 +70,22 @@ impl From<io::Error> for Error {
     }
 }
 
+impl From<serde_json::Error> for Error {
+    fn from(err: serde_json::Error) -> Error {
+        Error {
+            kind: ErrorKind::JSON,
+            message: format!("{}", err),
+        }
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.kind.clone() {
             ErrorKind::IO(_) => write!(f, "{}", self.message),
             ErrorKind::InvalidArg(arg) => write!(f, "{}: {}", self.message, arg),
             ErrorKind::InvalidCommand(cmd) => write!(f, "{}: {}", self.message, cmd),
+            ErrorKind::JSON => write!(f, "UNKOWN JSON ERROR: {}", self.message),
         }
     }
 }
