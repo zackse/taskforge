@@ -54,7 +54,15 @@ impl List {
 
     /// Return a reference to the "current" task.
     pub fn current<'a>(&'a mut self) -> Option<&'a mut Task> {
-        self.find_by_ind(0)
+        let mut ind = 0;
+        for (task_id, task) in self.enumerate() {
+            if !task.completed() {
+                ind = task_id;
+                break;
+            }
+        }
+
+        self.find_by_ind(ind)
     }
 
     /// Add a task to the List, will sort after adding.
