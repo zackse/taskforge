@@ -14,7 +14,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use super::error::{Error, ErrorKind, Result};
-use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
+use clap::{App, AppSettings, Arg, ArgMatches, SubCommand, Values};
 use config::Config;
 use taskhero::tasks::Task;
 
@@ -28,35 +28,38 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
         .setting(AppSettings::TrailingVarArg)
 }
 
+fn get_task_from_input<'a>(config: &'a mut Config, words: &mut Values) -> Result<&'a mut Task> {
+    if let Ok(id) = words.nth(0).unwrap().parse::<usize>() {
+        if id == 0 {
+            return Err(Error::new(
+                ErrorKind::InvalidArg("0".to_string()),
+                "Cannot use 0 as a task ID",
+            ));
+        }
+
+        return Ok(config.state.find_by_ind(id - 1));
+    }
+
+    match config.state.find_by_title(&words
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>()
+        .join(" "))
+    {
+        Some(task) => Ok(task),
+        None => {
+            return Err(Error::new(
+                ErrorKind::InvalidArg("".to_string()),
+                "Unable to find task with that title",
+            ));
+        }
+    }
+}
+
 pub fn complete(config: &mut Config, args: &ArgMatches) -> Result<()> {
+    // Use this inner block to release the mutable borrow of config before we save it
     {
         let task: &mut Task = match args.values_of("task") {
-            Some(mut words) => {
-                if let Ok(id) = words.nth(0).unwrap().parse::<usize>() {
-                    if id == 0 {
-                        return Err(Error::new(
-                            ErrorKind::InvalidArg("0".to_string()),
-                            "Cannot use 0 as a task ID",
-                        ));
-                    }
-
-                    config.state.find_by_ind(id - 1)
-                } else {
-                    match config.state.find_by_title(&words
-                        .map(|s| s.to_string())
-                        .collect::<Vec<String>>()
-                        .join(" "))
-                    {
-                        Some(task) => task,
-                        None => {
-                            return Err(Error::new(
-                                ErrorKind::InvalidArg("".to_string()),
-                                "Unable to find task with that title",
-                            ));
-                        }
-                    }
-                }
-            }
+            Some(ref mut words) => get_task_from_input(config, words)?,
             None => config.state.current(),
         };
 
