@@ -17,7 +17,9 @@ pub mod complete;
 pub mod error;
 pub mod new;
 pub mod query;
+pub mod show;
 
 pub use self::complete::complete;
 pub use self::new::new;
 pub use self::query::query;
+pub use self::show::show;
