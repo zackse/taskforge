@@ -20,6 +20,7 @@ use taskhero::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("complete")
+        .alias("c")
         .about("Complete tasks")
         .arg(Arg::with_name("task").multiple(true).help(
             "Title or ID of task to complete, if not provided the current task will be completed",
