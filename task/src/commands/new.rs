@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use super::error::{Error, ErrorKind, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use config::Config;
@@ -21,37 +20,38 @@ use taskhero::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("new")
-                .about("Create a new todo")
-                .arg(
-                    Arg::with_name("body")
-                        .short("b")
-                        .help(
-                            "Body of the task, use this for storing a long form text explanation of a task.")
-                        .takes_value(true)
-                        .value_name("BODY"),
-                )
-                .arg(
-                    Arg::with_name("context")
-                        .short("c")
-                        .help(
-                            "Task context, used for keeping unrelated tasks separate. Common examples are 'work', 'home', etc.")
-                        .default_value("default")
-                        .takes_value(true)
-                        .value_name("CONTEXT"),
-                )
-                .arg(
-                    Arg::with_name("priority")
-                        .short("p")
-                        .takes_value(true)
-                        .value_name("PRIORITY")
-                        .validator(|s| s.parse::<i64>().map(|_| ()).map_err(|e| format!("{}", e))),
-                )
-                .arg(
-                    Arg::with_name("title")
-                    .multiple(true)
-                    .help("Title of the task")
-                )
-                .setting(AppSettings::TrailingVarArg)
+        .about("Create a new todo")
+        .alias("n")
+        .arg(
+            Arg::with_name("body")
+            .short("b")
+            .help(
+                "Body of the task, use this for storing a long form text explanation of a task.")
+            .takes_value(true)
+            .value_name("BODY"),
+            )
+        .arg(
+            Arg::with_name("context")
+            .short("c")
+            .help(
+                "Task context, used for keeping unrelated tasks separate. Common examples are 'work', 'home', etc.")
+            .default_value("default")
+            .takes_value(true)
+            .value_name("CONTEXT"),
+            )
+        .arg(
+            Arg::with_name("priority")
+            .short("p")
+            .takes_value(true)
+            .value_name("PRIORITY")
+            .validator(|s| s.parse::<i64>().map(|_| ()).map_err(|e| format!("{}", e))),
+            )
+        .arg(
+            Arg::with_name("title")
+            .multiple(true)
+            .help("Title of the task")
+            )
+        .setting(AppSettings::TrailingVarArg)
 }
 
 pub fn new(config: &mut Config, args: &ArgMatches) -> Result<()> {
