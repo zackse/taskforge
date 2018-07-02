@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use super::error::{Error, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use config::Config;
@@ -63,8 +62,7 @@ pub fn search(config: &mut Config, args: &ArgMatches) -> Result<()> {
     };
 
     // TODO: Add querying here.
-    for (i, task) in list
-        .tasks
+    for (i, task) in list.tasks
         .iter()
         .filter(|x| !x.completed() || args.is_present("completed"))
         .enumerate()

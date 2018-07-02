@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use super::error::{Error, ErrorKind, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use config::Config;
@@ -42,12 +41,11 @@ pub fn complete(config: &mut Config, args: &ArgMatches) -> Result<()> {
 
                     config.state.find_by_ind(id - 1)
                 } else {
-                    match config.state.find_by_title(
-                        &words
-                            .map(|s| s.to_string())
-                            .collect::<Vec<String>>()
-                            .join(" "),
-                    ) {
+                    match config.state.find_by_title(&words
+                        .map(|s| s.to_string())
+                        .collect::<Vec<String>>()
+                        .join(" "))
+                    {
                         Some(task) => task,
                         None => {
                             return Err(Error::new(
