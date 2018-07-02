@@ -28,12 +28,15 @@ pub struct Config {
 
 impl Config {
     fn dir() -> Result<PathBuf, io::Error> {
-        let cfg_dir = match env::home_dir() {
-            Some(mut home) => {
-                home.push(".taskhero");
-                home
-            }
-            None => PathBuf::from(".taskhero"),
+        let cfg_dir = match env::var("TASKHERO_DIR") {
+            Ok(task_dir) => PathBuf::from(task_dir),
+            Err(_) => match env::home_dir() {
+                Some(mut home) => {
+                    home.push(".taskhero");
+                    home
+                }
+                None => PathBuf::from(".taskhero"),
+            },
         };
 
         if !cfg_dir.exists() {
