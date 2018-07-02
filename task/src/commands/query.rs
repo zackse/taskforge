@@ -20,9 +20,9 @@ use std::io;
 use std::io::Write;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
-    SubCommand::with_name("search")
-        .alias("s")
-        .about("Show your todos")
+    SubCommand::with_name("query")
+        .alias("q")
+        .about("Search your todos")
         .help("A blank search will list all todos")
         .arg(
             Arg::with_name("completed")
@@ -45,7 +45,7 @@ pub fn command<'a, 'b>() -> App<'a, 'b> {
         .setting(AppSettings::TrailingVarArg)
 }
 
-pub fn search(config: &mut Config, args: &ArgMatches) -> Result<()> {
+pub fn query(config: &mut Config, args: &ArgMatches) -> Result<()> {
     let _query = match args.values_of("title") {
         Some(words) => Some(
             words

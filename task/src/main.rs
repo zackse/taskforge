@@ -53,8 +53,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.",
         )
         .subcommand(commands::new::command())
-        .subcommand(commands::search::command())
+        .subcommand(commands::query::command())
         .subcommand(commands::complete::command())
+        // .subcommand(commands::show::command())
         .get_matches();
 
     let mut config = match Config::load() {
@@ -69,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.",
 
     let res = match matches.subcommand() {
         ("new", Some(args)) => commands::new(&mut config, args),
-        ("query", Some(args)) => commands::search(&mut config, args),
+        ("query", Some(args)) => commands::query(&mut config, args),
         ("complete", Some(args)) => commands::complete(&mut config, args),
         (command, _) => Err(Error::new(
             ErrorKind::InvalidCommand(command.to_string()),
