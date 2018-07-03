@@ -17,6 +17,7 @@ extern crate clap;
 extern crate serde;
 extern crate serde_json;
 extern crate taskhero;
+extern crate toml;
 #[macro_use]
 extern crate serde_derive;
 
@@ -27,6 +28,7 @@ use clap::App;
 use commands::error::{Error, ErrorKind};
 use config::Config;
 use std::io;
+use std::io::Write;
 use std::process;
 
 fn main() {
@@ -78,6 +80,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.",
             "Unknown command",
         )),
     };
+
+    if let Err(err) = config.save() {
+        match writeln!(&mut io::stderr(), "ERROR: Unable to save config!: {}", err) {
+            Ok(_) => (),
+            Err(ref e) if e.kind() == io::ErrorKind::BrokenPipe => (),
+            Err(_) => process::exit(1),
+        }
+
+        process::exit(1);
+    }
 
     if let Err(err) = res {
         if err.ignoreable() {

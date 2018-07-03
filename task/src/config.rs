@@ -13,16 +13,68 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use serde_json;
+use toml;
+
+use std::collections::HashMap;
 use std::env;
 use std::fs;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use taskhero::tasks::list::List;
+use taskhero::backends;
+use taskhero::list::List;
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct BackendConfig {
+    name: String,
+    config: HashMap<String, String>,
+}
+
+impl BackendConfig {
+    fn new() -> BackendConfig {
+        BackendConfig {
+            name: "file".to_string(),
+            config: HashMap::new(),
+        }
+    }
+
+    fn backend(&self) -> Box<backends::Backend> {
+        Box::new(match self.name.as_ref() {
+            "file" => backends::file::Backend::new(),
+            _ => backends::file::Backend::new(),
+        })
+    }
+
+    fn init_default(&mut self) {
+        if let None = self.config.get("dir") {
+            self.config.insert(
+                "dir".to_string(),
+                Config::dir().unwrap().to_string_lossy().to_string(),
+            );
+        }
+    }
+
+    fn init(&mut self) {
+        match self.name.as_ref() {
+            "file" => self.init_default(),
+            _ => self.init_default(),
+        }
+    }
+
+    fn load(&self) -> Result<List, io::Error> {
+        self.backend().load(&self.config)
+    }
+
+    fn save(&self, list: List) -> Result<(), io::Error> {
+        self.backend().save(&self.config, list)
+    }
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
+    backend: BackendConfig,
+
+    #[serde(skip_deserializing, skip_serializing)]
     pub state: List,
 }
 
@@ -46,32 +98,46 @@ impl Config {
         Ok(cfg_dir)
     }
 
-    fn state_file() -> Result<PathBuf, io::Error> {
+    fn file() -> Result<PathBuf, io::Error> {
         let mut dir = Config::dir()?;
-        dir.push("state.json");
+        dir.push("config.toml");
         Ok(dir)
     }
 
     pub fn new() -> Config {
         Config {
+            backend: BackendConfig::new(),
             state: List::new(Vec::new()),
         }
     }
 
     pub fn save(&self) -> Result<(), io::Error> {
-        let list = serde_json::to_string_pretty(&self.state)?;
-        let file = Config::state_file()?;
-        fs::File::create(file)?.write_all(list.as_bytes())
+        self.backend.save(self.state.clone())?;
+
+        let file = Config::file()?;
+        let conf = toml::to_string(self)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
+        fs::File::create(file)?.write_all(conf.as_bytes())
     }
 
     pub fn load() -> Result<Config, io::Error> {
         let mut config = Config::new();
         let mut contents = String::new();
-        Config::state_file()
-            .and_then(|path| fs::File::open(path))
-            .and_then(|mut f| f.read_to_string(&mut contents))?;
+        let file = fs::File::open(Config::file()?);
 
-        config.state = serde_json::from_str(&contents).map_err(|e| serde_json::Error::from(e))?;
+        match file {
+            Ok(mut f) => {
+                f.read_to_string(&mut contents)?;
+                config = toml::from_str(&contents)
+                    .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))?;
+            }
+            Err(ref e) if e.kind() == io::ErrorKind::NotFound => (),
+            Err(e) => return Err(e),
+        }
+
+        config.backend.init();
+        config.state = config.backend.load()?;
+
         Ok(config)
     }
 }
