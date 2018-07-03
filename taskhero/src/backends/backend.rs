@@ -13,12 +13,14 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate chrono;
-extern crate serde;
-extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
+use list::List;
 
-pub mod backends;
-pub mod list;
-pub mod tasks;
+use std::collections::HashMap;
+use std::io;
+
+pub trait Backend {
+    /// Save the list using the given config.
+    fn save(&self, config: &HashMap<String, String>, list: List) -> Result<(), io::Error>;
+    /// Load the list using the given config.
+    fn load(&self, config: &HashMap<String, String>) -> Result<List, io::Error>;
+}
