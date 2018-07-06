@@ -21,4 +21,5 @@ extern crate serde_derive;
 
 pub mod backends;
 pub mod list;
+pub mod query;
 pub mod tasks;
