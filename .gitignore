@@ -1,4 +1,4 @@
 /target
-/task/target
-/taskhero/target
+task/target
+taskhero/target
 **/*.rs.bk
