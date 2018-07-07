@@ -44,8 +44,8 @@ impl<'a> Lexer<'a> {
     fn string(&mut self) -> Token {
         let mut s = self.read_until(|c| c == '"');
         s.remove(0);
-        // Advance past the " char
-        self.next_char();
+        // // Advance past the " char
+        // self.next_char();
         Token::Str(s)
     }
 
@@ -66,6 +66,24 @@ impl<'a> Lexer<'a> {
         self.current_char = self.content.next();
         self.current_char
     }
+
+    fn token_from_char(&mut self, c: char) -> Token {
+        match c {
+            '>' | '<' => if let Some('=') = self.content.peek() {
+                let mut s = c.to_string();
+                // Advance past the = sign.
+                // Safe to unwrap since the peek already showed us it was Some
+                s.push(self.next_char().unwrap());
+                Token::from(s.as_ref())
+            } else {
+                Token::from(c)
+            },
+            '"' => self.string(),
+            'a'..='z' | 'A'..='Z' => self.field(),
+            _num if c.is_digit(10) => self.number(),
+            _ => Token::from(c),
+        }
+    }
 }
 
 impl<'a> Iterator for Lexer<'a> {
@@ -73,22 +91,15 @@ impl<'a> Iterator for Lexer<'a> {
 
     fn next(&mut self) -> Option<Token> {
         match self.next_char() {
-            Some(c) => Some(match c {
-                '>' | '<' => if let Some('=') = self.content.peek() {
-                    let mut s = c.to_string();
-                    // Advance past the = sign.
-                    // Safe to unwrap since the peek already showed us it was Some
-                    s.push(self.next_char().unwrap());
-                    Token::from(s.as_ref())
-                } else {
-                    Token::from(c)
-                },
-                '"' => self.string(),
-                'a'..='z' | 'A'..='Z' => self.field(),
-                _num if c.is_digit(10) => self.number(),
-                _whitespace if c.is_whitespace() => return self.next(),
-                _ => Token::from(c),
-            }),
+            Some(c) if c.is_whitespace() => self.next(),
+            Some(c) => {
+                println!("{}", c);
+                Some({
+                    let t = self.token_from_char(c);
+                    println!("{}", &t);
+                    t
+                })
+            }
             None => None,
         }
     }
@@ -140,6 +151,14 @@ pub mod tests {
         assert_eq!(tokens[5], Token::Field("other".to_string()));
         assert_eq!(tokens[6], Token::EQ);
         assert_eq!(tokens[7], Token::Str("other string".to_string()));
+        assert_eq!(tokens[8], Token::RP);
+        assert_eq!(tokens[9], Token::OR);
+        assert_eq!(tokens[10], Token::LP);
+        assert_eq!(tokens[11], Token::Field("mighty".to_string()));
+        assert_eq!(tokens[12], Token::Field("morphin".to_string()));
+        assert_eq!(tokens[13], Token::Field("power".to_string()));
+        assert_eq!(tokens[14], Token::Field("rangers".to_string()));
+        assert_eq!(tokens[15], Token::RP);
         assert_eq!(tokens.len(), 16);
     }
 }

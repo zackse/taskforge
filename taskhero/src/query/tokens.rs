@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     GT,
     LT,

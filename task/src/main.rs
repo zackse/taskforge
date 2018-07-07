@@ -75,6 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.",
         ("query", Some(args)) => commands::query(&mut config, args),
         ("complete", Some(args)) => commands::complete(&mut config, args),
         ("show", Some(args)) => commands::show(&mut config, args),
+        // ("edit", Some(args)) => commands::edit(&mut config, args),
         (command, _) => Err(Error::new(
             ErrorKind::InvalidCommand(command.to_string()),
             "Unknown command",
