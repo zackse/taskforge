@@ -17,7 +17,7 @@ use super::error::{Error, ErrorKind, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand, Values};
 use config::Config;
 use std::process;
-use taskhero::tasks::Task;
+use tsk_lib::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("complete")

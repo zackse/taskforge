@@ -21,8 +21,8 @@ use std::fs;
 use std::io;
 use std::io::prelude::*;
 use std::path::PathBuf;
-use taskhero::backends;
-use taskhero::list::List;
+use tsk_lib::backends;
+use tsk_lib::list::List;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct BackendConfig {
@@ -84,10 +84,10 @@ impl Config {
             Ok(task_dir) => PathBuf::from(task_dir),
             Err(_) => match env::home_dir() {
                 Some(mut home) => {
-                    home.push(".taskhero");
+                    home.push(".tsk_lib");
                     home
                 }
-                None => PathBuf::from(".taskhero"),
+                None => PathBuf::from(".tsk_lib"),
             },
         };
 

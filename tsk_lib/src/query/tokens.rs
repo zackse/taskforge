@@ -1,13 +1,14 @@
 use chrono::prelude::*;
 use std::fmt;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     GT,
     LT,
     GTE,
     LTE,
     EQ,
+    NE,
 
     AND,
     OR,
@@ -18,7 +19,6 @@ pub enum Token {
     EOF,
 
     Str(String),
-    Field(String),
     Float(f64),
     Date(DateTime<Local>),
 
@@ -40,6 +40,14 @@ impl From<char> for Token {
 
 impl<'a> From<&'a str> for Token {
     fn from(s: &str) -> Token {
+        if let Ok(num) = s.parse::<f64>() {
+            return Token::Float(num);
+        }
+
+        if let Ok(date) = Local.datetime_from_str(s, "%Y-%m-%d %r") {
+            return Token::Date(date);
+        }
+
         match s {
             ">=" => Token::GTE,
             "<=" => Token::LTE,
@@ -47,7 +55,7 @@ impl<'a> From<&'a str> for Token {
             "EOF" => Token::EOF,
             "AND" | "and" => Token::AND,
             "OR" | "or" => Token::OR,
-            _ => Token::Field(s.to_string()),
+            _ => Token::Str(s.to_string()),
         }
     }
 }
@@ -62,7 +70,6 @@ impl Into<String> for Token {
     fn into(self) -> String {
         match self {
             Token::Str(s) => format!("(String, {})", s),
-            Token::Field(s) => format!("(Field, {})", s),
             Token::Date(d) => format!("(Date, {})", d),
             Token::Float(num) => format!("(Float, {})", num),
 
@@ -71,6 +78,7 @@ impl Into<String> for Token {
             Token::GTE => "(GTE, >=)".to_string(),
             Token::LTE => "(LTE, <=)".to_string(),
             Token::EQ => "(EQ, =)".to_string(),
+            Token::NE => "(NE, !=)".to_string(),
 
             Token::AND => "(AND, AND)".to_string(),
             Token::OR => "(OR, OR)".to_string(),
@@ -104,7 +112,8 @@ pub mod tests {
         assert_eq!(Token::from("and"), Token::AND);
         assert_eq!(Token::from("OR"), Token::OR);
         assert_eq!(Token::from("or"), Token::OR);
-        assert_eq!(Token::from("MyField"), Token::Field("MyField".to_string()));
+        assert_eq!(Token::from("1.0"), Token::Float(1.0));
+        assert_eq!(Token::from("5"), Token::Float(5.0));
     }
 
     #[test]

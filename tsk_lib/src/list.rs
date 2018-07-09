@@ -20,6 +20,8 @@ use std::fmt::Display;
 use std::iter;
 use std::slice;
 
+use query::ast::{Expression, InfixExpression, AST};
+use query::tokens::Token;
 use tasks::Task;
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -122,6 +124,23 @@ impl List {
                 .map(|x| x.clone())
                 .collect(),
         )
+    }
+
+    pub fn search<'a>(&'a mut self, query: AST) -> Vec<&'a Task> {
+        match query.expression {
+            Expression::StrLiteral(Token::Str(s)) => self.tasks
+                .iter()
+                .filter(|t| match t.body.as_ref() {
+                    Some(body) => t.title.contains(&s) || body.contains(&s),
+                    None => t.title.contains(&s),
+                })
+                .collect(),
+            exp => self.eval(exp),
+        }
+    }
+
+    fn eval<'a>(&'a mut self, exp: Expression) -> Vec<&'a Task> {
+        self.tasks.iter().filter(|_t| true).collect()
     }
 }
 
