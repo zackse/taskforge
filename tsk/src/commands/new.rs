@@ -16,7 +16,7 @@
 use super::error::{Error, ErrorKind, Result};
 use clap::{App, AppSettings, Arg, ArgMatches, SubCommand};
 use config::Config;
-use taskhero::tasks::Task;
+use tsk_lib::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("new")

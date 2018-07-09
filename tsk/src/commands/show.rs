@@ -18,7 +18,7 @@ use clap::{App, Arg, ArgMatches, SubCommand};
 use config::Config;
 use std::io;
 use std::io::Write;
-use taskhero::tasks::Task;
+use tsk_lib::tasks::Task;
 
 pub fn command<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("show")

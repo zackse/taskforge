@@ -16,8 +16,8 @@
 extern crate clap;
 extern crate serde;
 extern crate serde_json;
-extern crate taskhero;
 extern crate toml;
+extern crate tsk_lib;
 #[macro_use]
 extern crate serde_derive;
 
@@ -32,7 +32,7 @@ use std::io::Write;
 use std::process;
 
 fn main() {
-    let matches = App::new("taskhero")
+    let matches = App::new("tsk")
         .version("0.1.0")
         .author("Mathew Robinson <chasinglogic@gmail.com>")
         .about(
