@@ -2,6 +2,11 @@
 name = "tsk_lib"
 version = "0.0.0"
 authors = ["Mathew Robinson <chasinglogic@gmail.com>"]
+keywords = ["productivity", "todo"]
+license = "GPL-3.0"
+readme = "../README.md"
+description = "Task management shared functions and structures for the tsk family of tools."
+
 
 [dependencies]
 serde = "1.0"
