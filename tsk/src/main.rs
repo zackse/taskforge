@@ -33,7 +33,7 @@ use std::process;
 
 fn main() {
     let matches = App::new("tsk")
-        .version("0.1.0")
+        .version("0.0.0")
         .author("Mathew Robinson <chasinglogic@gmail.com>")
         .about(
             "
