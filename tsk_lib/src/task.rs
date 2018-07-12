@@ -14,11 +14,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use chrono::prelude::*;
+use md5::Digest;
+use md5::Md5;
 use serde_json;
+
 use std::cmp::{Ord, Ordering, PartialOrd};
 use std::fmt;
+use std::str;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Note {
     pub created_date: DateTime<Local>,
     pub body: String,
@@ -33,12 +37,13 @@ impl fmt::Display for Note {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Task {
+    pub id: String,
     pub title: String,
     pub context: String,
     pub created_date: DateTime<Local>,
-    pub priority: i64,
+    pub priority: f64,
     pub notes: Vec<Note>,
     pub completed_date: Option<DateTime<Local>>,
     pub body: Option<String>,
@@ -46,11 +51,24 @@ pub struct Task {
 
 impl Task {
     pub fn new(title: &str) -> Task {
+        let mut id = title.to_string();
+        let created_date = Local::now();
+
+        id.push_str(":");
+        id.push_str(&format!("{}", created_date));
+
+        let mut hasher = Md5::default();
+        hasher.input(id.as_bytes());
+
         Task {
+            // TODO: Remove this unwrap
+            id: str::from_utf8(hasher.result().as_slice())
+                .unwrap()
+                .to_string(),
             title: title.to_string(),
             context: "default".to_string(),
-            created_date: Local::now(),
-            priority: 0,
+            created_date: created_date,
+            priority: 0.0,
             completed_date: None,
             body: None,
             notes: Vec::new(),
@@ -62,7 +80,7 @@ impl Task {
         self
     }
 
-    pub fn with_priority(mut self, priority: i64) -> Task {
+    pub fn with_priority(mut self, priority: f64) -> Task {
         self.priority = priority;
         self
     }
@@ -93,6 +111,15 @@ impl Task {
     pub fn to_json(&self) -> Result<String, serde_json::Error> {
         serde_json::to_string_pretty(self)
     }
+
+    pub fn update(&mut self, mut task: Task) {
+        self.title = task.title;
+        self.context = task.context;
+        self.priority = task.priority;
+        self.completed_date = task.completed_date;
+        self.body = task.body;
+        self.notes.append(&mut task.notes);
+    }
 }
 
 impl fmt::Display for Task {
@@ -104,17 +131,23 @@ impl fmt::Display for Task {
     }
 }
 
-impl PartialOrd for Task {
-    fn partial_cmp(&self, other: &Task) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
+impl Eq for Task {}
 
 impl Ord for Task {
     fn cmp(&self, other: &Task) -> Ordering {
-        match self.created_date.date().cmp(&other.created_date.date()) {
-            Ordering::Equal => self.priority.cmp(&other.priority).reverse(),
-            order => order,
+        match self.partial_cmp(other) {
+            Some(order) => order,
+            None => Ordering::Less,
+        }
+    }
+}
+
+impl PartialOrd for Task {
+    fn partial_cmp(&self, other: &Task) -> Option<Ordering> {
+        match self.priority.partial_cmp(&other.priority) {
+            Some(Ordering::Equal) => Some(self.created_date.date().cmp(&other.created_date.date())),
+            Some(order) => Some(order.reverse()),
+            None => None,
         }
     }
 }
@@ -122,6 +155,8 @@ impl Ord for Task {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::prelude::*;
+    use chrono::Duration;
 
     #[test]
     fn test_new_task() {
@@ -137,5 +172,42 @@ mod tests {
         task.complete();
         assert!(task.completed_date.is_some());
         assert!(task.completed());
+    }
+
+    #[test]
+    fn test_simple_task_ordering() {
+        let list = List::new(vec![
+            Task::new("test1").with_priority(1),
+            Task::new("test3").with_priority(3),
+            Task::new("test2").with_priority(2),
+            Task::new("test0"),
+        ]);
+
+        let mut priority = 3;
+        for task in list {
+            assert_eq!(task.priority, priority);
+            priority = priority - 1;
+        }
+    }
+
+    #[test]
+    fn test_multi_day_task_ordering() {
+        let mut yesterday = Task::new("test2").with_priority(2);
+        yesterday.created_date = Local::now() - Duration::days(1);
+
+        let tasks = vec![
+            Task::new("test1").with_priority(1),
+            yesterday,
+            Task::new("test3").with_priority(3),
+            Task::new("test0").with_priority(2),
+        ];
+
+        let list = List::new(tasks.clone());
+
+        let mut iter = list.into_iter();
+        assert_eq!(iter.next().unwrap(), tasks[1]);
+        assert_eq!(iter.next().unwrap(), tasks[2]);
+        assert_eq!(iter.next().unwrap(), tasks[0]);
+        assert_eq!(iter.next().unwrap(), tasks[3]);
     }
 }

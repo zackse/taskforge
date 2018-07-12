@@ -13,177 +13,132 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-use serde_json;
+use chrono::prelude::*;
 
-use std::fmt;
-use std::fmt::Display;
-use std::iter;
-use std::slice;
+use backend::BackendError;
+use query;
+use task::{Note, Task};
 
-use query::ast::{Expression, InfixExpression, AST};
-use query::tokens::Token;
-use tasks::Task;
+/// List should be implemented by any collection of Tasks
+pub trait List<'a> {
+    /// Return a new List which has all completed task if yes_or_no is true and all
+    /// uncompleted tasks if yes_or_no is false.
+    fn completed(&mut self, yes_or_no: bool) -> Vec<Task>;
+    /// Return a new List with only tasks in the given context
+    fn with_context(&mut self, context: &str) -> Vec<Task>;
+    /// Evaluate the AST and return a List of matching results
+    fn search(&mut self, ast: query::ast::AST) -> Vec<Task>;
+    /// Add a task to the List
+    fn add(&mut self, task: Task) -> Result<(), BackendError>;
+    /// Add multiple tasks to the List, should be more efficient resource
+    /// utilization.
+    fn add_multiple(&mut self, task: &mut Vec<Task>) -> Result<(), BackendError>;
+    /// Return a vector of Tasks in this List
+    fn into_vec(&mut self) -> Vec<Task>;
+    /// Find a task by ID
+    fn find_by_id(&mut self, id: &str) -> Option<&mut Task>;
+    /// Return the current task, meaning the oldest uncompleted task in the List
+    fn current(&mut self) -> Option<&mut Task>;
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct List {
-    pub tasks: Vec<Task>,
+    /// Complete a task by id
+    fn complete(&mut self, id: &str) -> Result<(), BackendError>;
+    /// Update a task in the list, finding the original by the ID of the given task
+    fn update(&mut self, task: Task) -> Result<(), BackendError>;
+    /// Add note to a task by ID
+    fn add_note(&mut self, id: &str, note: Note) -> Result<(), BackendError>;
 }
 
-impl IntoIterator for List {
-    type Item = Task;
-    type IntoIter = ::std::vec::IntoIter<Task>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.tasks.into_iter()
-    }
-}
-
-impl Display for List {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match serde_json::to_string_pretty(self) {
-            Ok(jsn) => write!(f, "{}", jsn),
-            Err(_) => write!(f, "ERROR: Unable to serialize list"),
-        }
-    }
-}
-
-impl List {
-    pub fn new(tasks: Vec<Task>) -> List {
-        let mut list = List { tasks: tasks };
-
-        list.tasks.sort();
-        list
+impl<'a> List<'a> for Vec<Task> {
+    fn completed(&mut self, yes_or_no: bool) -> Vec<Task> {
+        self.iter()
+            .filter(|t| t.completed_date.is_none() && !yes_or_no)
+            .cloned()
+            .collect()
     }
 
-    /// Return a reference to the "current" task.
-    pub fn current<'a>(&'a mut self) -> Option<&'a mut Task> {
-        let mut ind = 0;
-        for (task_id, task) in self.enumerate() {
-            if !task.completed() {
-                ind = task_id;
-                break;
+    fn with_context(&mut self, context: &str) -> Vec<Task> {
+        self.iter()
+            .filter(|t| t.context.as_str() == context)
+            .cloned()
+            .collect()
+    }
+
+    // TODO: implement
+    fn search(&mut self, ast: query::ast::AST) -> Self {
+        self.clone()
+    }
+
+    fn add(&mut self, task: Task) -> Result<(), BackendError> {
+        self.push(task);
+        self.sort();
+        Ok(())
+    }
+
+    fn add_multiple(&mut self, tasks: &mut Vec<Task>) -> Result<(), BackendError> {
+        self.append(tasks);
+        self.sort();
+        Ok(())
+    }
+
+    fn into_vec(&mut self) -> Vec<Task> {
+        self.clone()
+    }
+
+    fn find_by_id(&mut self, id: &str) -> Option<&mut Task> {
+        for task in self {
+            if task.id.as_str() == id {
+                return Some(task);
             }
         }
 
-        self.find_by_ind(ind)
+        None
     }
 
-    /// Add a task to the List, will sort after adding.
-    pub fn add(&mut self, task: Task) {
-        self.tasks.push(task);
-        self.tasks.sort();
-    }
-
-    /// Add multiple tasks to the List, this is more efficient than calling add multiple times
-    /// since only one sort is performed. It will empty the given vector.
-    pub fn add_multiple(&mut self, tasks: &mut Vec<Task>) {
-        self.tasks.append(tasks);
-        self.tasks.sort();
-    }
-
-    /// Return a reference to the task at the given ID / index.
-    pub fn find_by_ind<'a>(&'a mut self, id: usize) -> Option<&'a mut Task> {
-        if self.tasks.len() < id {
-            return None;
-        }
-
-        let t: &'a mut Task = &mut self.tasks[id];
-        Some(t)
-    }
-
-    /// Return a reference to the first task with the given title.
-    pub fn find_by_title<'a>(&'a mut self, title: &str) -> Option<&'a mut Task> {
-        let mut ind = None;
-        for (i, task) in self.enumerate() {
-            if task.title == title {
-                ind = Some(i);
-                break;
+    fn current(&mut self) -> Option<&mut Task> {
+        for task in self {
+            if task.completed_date.is_none() {
+                return Some(task);
             }
         }
 
-        match ind {
-            Some(i) => self.find_by_ind(i),
-            None => None,
+        None
+    }
+
+    fn complete(&mut self, id: &str) -> Result<(), BackendError> {
+        for task in self {
+            if task.id.as_str() == id {
+                match task.completed_date {
+                    Some(_) => return Err(BackendError::from("Already completed.")),
+                    None => {
+                        task.completed_date = Some(Local::now());
+                        return Ok(());
+                    }
+                }
+            }
         }
+
+        Err(BackendError::NotFound)
     }
 
-    /// Return an enumerated iterator over the tasks in this list.
-    pub fn enumerate(&self) -> iter::Enumerate<slice::Iter<Task>> {
-        self.tasks.iter().enumerate()
-    }
-
-    pub fn to_json(&self) -> Result<String, serde_json::Error> {
-        serde_json::to_string_pretty(self)
-    }
-
-    pub fn context(&self, context: &str) -> List {
-        List::new(
-            self.tasks
-                .iter()
-                .filter(|x| &x.context == context)
-                .map(|x| x.clone())
-                .collect(),
-        )
-    }
-
-    pub fn search<'a>(&'a mut self, query: AST) -> Vec<&'a Task> {
-        match query.expression {
-            Expression::StrLiteral(Token::Str(s)) => self.tasks
-                .iter()
-                .filter(|t| match t.body.as_ref() {
-                    Some(body) => t.title.contains(&s) || body.contains(&s),
-                    None => t.title.contains(&s),
-                })
-                .collect(),
-            exp => self.eval(exp),
+    fn update(&mut self, new_task: Task) -> Result<(), BackendError> {
+        for task in self.iter_mut() {
+            if task.id == new_task.id {
+                task.update(new_task.clone());
+                return Ok(());
+            }
         }
+
+        Err(BackendError::NotFound)
     }
 
-    fn eval<'a>(&'a mut self, exp: Expression) -> Vec<&'a Task> {
-        self.tasks.iter().filter(|_t| true).collect()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use chrono::prelude::*;
-    use chrono::Duration;
-
-    #[test]
-    fn test_simple_task_ordering() {
-        let list = List::new(vec![
-            Task::new("test1").with_priority(1),
-            Task::new("test3").with_priority(3),
-            Task::new("test2").with_priority(2),
-            Task::new("test0"),
-        ]);
-
-        let mut priority = 3;
-        for task in list {
-            assert_eq!(task.priority, priority);
-            priority = priority - 1;
+    fn add_note(&mut self, id: &str, note: Note) -> Result<(), BackendError> {
+        for mut t in self.iter_mut() {
+            if t.id.as_str() == id {
+                t.notes.push(note.clone());
+                return Ok(());
+            }
         }
-    }
 
-    #[test]
-    fn test_multi_day_task_ordering() {
-        let mut yesterday = Task::new("test2").with_priority(2);
-        yesterday.created_date = Local::now() - Duration::days(1);
-
-        let tasks = vec![
-            Task::new("test1").with_priority(1),
-            yesterday,
-            Task::new("test3").with_priority(3),
-            Task::new("test0"),
-        ];
-
-        let list = List::new(tasks.clone());
-
-        let mut iter = list.into_iter();
-        assert_eq!(iter.next().unwrap(), tasks[1]);
-        assert_eq!(iter.next().unwrap(), tasks[2]);
-        assert_eq!(iter.next().unwrap(), tasks[0]);
-        assert_eq!(iter.next().unwrap(), tasks[3]);
+        Err(BackendError::NotFound)
     }
 }

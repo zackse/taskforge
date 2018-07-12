@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use list::List;
 use serde_json;
 
@@ -23,12 +22,39 @@ use std::io;
 use std::io::{Read, Write};
 use std::path::PathBuf;
 
-/// A simple JSON file saving backend
-pub struct Backend {}
+use backend::Backend;
 
-impl Backend {
-    pub fn new() -> Backend {
-        Backend {}
+/// A simple JSON file saving backend
+pub struct FileBackend {
+    config: HashMap<String, String>,
+    tasks: Vec<Task>,
+}
+
+impl FileBackend {
+    pub fn new() -> FileBackend {
+        let mut config = HashMap::new();
+
+        config.set("dir", match env::var("TASK_DIR") {
+            Ok(task_dir) => task_dir,
+            Err(_) => match env::var("HOME") {
+                Some(mut home) => {
+                    home.push(".tasks.d");
+                    home
+                }
+                None => ".tasks.d".to_string(),
+            },
+        });
+
+
+        FileBackend{
+            config: config,
+            tasks: Vec::new(),
+        }
+    }
+
+    pub fn with_config(mut self, config: HashMap<String, String>) -> FileBackend {
+        self.config = config;
+        self
     }
 
     pub fn file(config: &HashMap<String, String>) -> Result<PathBuf, io::Error> {
@@ -46,7 +72,7 @@ impl Backend {
     }
 }
 
-impl super::Backend for Backend {
+impl Backend for FileBackend {
     fn save(&self, config: &HashMap<String, String>, list: List) -> Result<(), io::Error> {
         let file = Backend::file(config)?;
         let list = serde_json::to_string_pretty(&list)?;
@@ -61,3 +87,5 @@ impl super::Backend for Backend {
             .map_err(|e| io::Error::new(io::ErrorKind::Other, format!("{}", e)))
     }
 }
+
+impl 

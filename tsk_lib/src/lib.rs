@@ -14,12 +14,20 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern crate chrono;
+extern crate md5;
 extern crate serde;
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 
-pub mod backends;
+pub mod backend;
+pub use backend::Backend;
+
 pub mod list;
+pub use list::List;
+
+pub mod task;
+pub use task::Task;
+
+pub mod backends;
 pub mod query;
-pub mod tasks;
