@@ -41,7 +41,7 @@ Future ideas and features I will implement are as follows:
   - MongoDB
   - S3 / Object Storage
  - REST API Server built on tsk\_lib
- - GUI Frontends (QT is a likely choice)
+ - GUI Frontends (QT is a good choice)
  - Modifier statements on queries such as `LIMIT` or `ORDER BY`
  - Configurable canned queries
  - Task custom fields
@@ -251,9 +251,9 @@ It will implement the following:
 
  - `impl From<std::io::Error>`
  - `impl From<String>`
- - `impl From<T>` where T is the various serde\_x libraries errors used in tsk
+ - `impl From<T>` where T is all of the serde\_x libraries errors used in tsk
 
-The design of BackendError is likely to change.
+The design of BackendError is subject to change.
 
 ## tsk (CLI)
 ### Configuration File
