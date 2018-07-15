@@ -58,7 +58,7 @@ within tsk\_lib.
 
 The query language for tasks will accept two "modes". 
 
-The first mode is a simple string search. A query which takes the form: `WORD*`
+The first mode is a simple string search. A query which takes the form: `WORD^`
 such as: `milk and sugar` is a simple string search. It will be a single
 expression which is a String Literal of "milk and sugar" if an interpreter finds
 a single String Literal expression as the root node of an AST then it should do
@@ -103,16 +103,16 @@ lexer.
 Valid infix operators are:
 
   - `=` equality so that `title = foo` means if title is equal to "foo"
-  - `!=` or `*=` negative equality so that `title != foo` means find titles which are not equal to "foo"
+  - `!=` or `^=` negative equality so that `title != foo` means find titles which are not equal to "foo"
       The `!=` form is preferred but the `!` character is troublesome in a
-      shell environment so the `*=` form is provided as a convenience.
+      shell environment so the `^=` form is provided as a convenience.
   - `>` and `>=` Greater than and Greater than or equal to so that `priority >
       5` means priority is greater than `5.0` similarly `priority >= 5` simply
       includes 5.0 as a valid value.
   - `<` and `<=` Less than and Less than or equal to. The inverse of the above.
-  - `*` or `~` A "LIKE" operator for strings, performs fuzzy matching instead
+  - `^` or `~` A "LIKE" operator for strings, performs fuzzy matching instead
       of strict equality. The `~` is the preferred form however is inconvenient
-      for terminal use so `*` is also valid.
+      for terminal use so `^` is also valid.
   - `AND` or `and` both the upper and lower case forms of `and` are acceptable.
       These perform a logical and of two expressions.
   - `OR` or `or` both the upper and lower case forms of `or` are acceptable.
@@ -122,7 +122,7 @@ Some example queries with literate explanations of interpreter behavior:
 
  - `title = "take out the trash"`
   - Find all tasks which have the title "take out the trash"
- - `title * "take out the trash"`
+ - `title ^ "take out the trash"`
   - Find all tasks whose title contains the string "take out the trash"
  - `("milk and sugar") and priority > 5`
   - Find all tasks which have the string "milk and sugar" fuzzy matched on
@@ -131,7 +131,7 @@ Some example queries with literate explanations of interpreter behavior:
  - `milk -and sugar`
   - Find all tasks which have the string "milk and sugar" fuzzy matched on
       their title, body, and notes. 
- - `(priority > 5 and title * "take out the trash") or (context = "work" and (priority >= 2 or ("my little pony")))`
+ - `(priority > 5 and title ^ "take out the trash") or (context = "work" and (priority >= 2 or ("my little pony")))`
   - Find all tasks which either have a priority greater than 5.0 and a title
     containing the string "take out the trash" or which are in the context
     "work" and have a priority greater than or equal to 2 or have the string "my
