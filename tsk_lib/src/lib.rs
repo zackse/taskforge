@@ -14,9 +14,9 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern crate chrono;
-extern crate md5;
 extern crate serde;
 extern crate serde_json;
+extern crate uuid;
 #[macro_use]
 extern crate serde_derive;
 

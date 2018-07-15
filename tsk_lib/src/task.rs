@@ -14,9 +14,8 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 use chrono::prelude::*;
-use md5::Digest;
-use md5::Md5;
 use serde_json;
+use uuid::Uuid;
 
 use std::cmp::{Ord, Ordering, PartialOrd};
 use std::fmt;
@@ -51,23 +50,11 @@ pub struct Task {
 
 impl Task {
     pub fn new(title: &str) -> Task {
-        let mut id = title.to_string();
-        let created_date = Local::now();
-
-        id.push_str(":");
-        id.push_str(&format!("{}", created_date));
-
-        let mut hasher = Md5::default();
-        hasher.input(id.as_bytes());
-
         Task {
-            // TODO: Remove this unwrap
-            id: str::from_utf8(hasher.result().as_slice())
-                .unwrap()
-                .to_string(),
+            id: Uuid::new_v4().to_string().chars().take(8).collect(),
             title: title.to_string(),
             context: "default".to_string(),
-            created_date: created_date,
+            created_date: Local::now(),
             priority: 0.0,
             completed_date: None,
             body: None,
@@ -155,7 +142,6 @@ impl PartialOrd for Task {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use chrono::prelude::*;
     use chrono::Duration;
 
     #[test]
@@ -176,38 +162,49 @@ mod tests {
 
     #[test]
     fn test_simple_task_ordering() {
-        let list = List::new(vec![
-            Task::new("test1").with_priority(1),
-            Task::new("test3").with_priority(3),
-            Task::new("test2").with_priority(2),
+        let mut list = vec![
+            Task::new("test1").with_priority(1.0),
+            Task::new("test3").with_priority(3.0),
+            Task::new("test2").with_priority(2.0),
             Task::new("test0"),
-        ]);
+        ];
 
-        let mut priority = 3;
+        list.sort();
+
+        let mut priority = 3.0;
         for task in list {
+            println!("Task: {}", task.title);
             assert_eq!(task.priority, priority);
-            priority = priority - 1;
+            priority = priority - 1.0;
         }
     }
 
     #[test]
     fn test_multi_day_task_ordering() {
-        let mut yesterday = Task::new("test2").with_priority(2);
+        let mut yesterday = Task::new("test2").with_priority(2.0);
         yesterday.created_date = Local::now() - Duration::days(1);
 
         let tasks = vec![
-            Task::new("test1").with_priority(1),
+            Task::new("test1").with_priority(1.0),
             yesterday,
-            Task::new("test3").with_priority(3),
-            Task::new("test0").with_priority(2),
+            Task::new("test3").with_priority(3.0),
+            Task::new("test0").with_priority(2.0),
         ];
 
-        let list = List::new(tasks.clone());
+        let mut list = tasks.clone();
+        list.sort();
 
         let mut iter = list.into_iter();
-        assert_eq!(iter.next().unwrap(), tasks[1]);
         assert_eq!(iter.next().unwrap(), tasks[2]);
-        assert_eq!(iter.next().unwrap(), tasks[0]);
+        assert_eq!(iter.next().unwrap(), tasks[1]);
         assert_eq!(iter.next().unwrap(), tasks[3]);
+        assert_eq!(iter.next().unwrap(), tasks[0]);
+    }
+
+    #[test]
+    fn test_unique_ids() {
+        let t1 = Task::new("Test task");
+        let t2 = Task::new("Test task");
+        assert_ne!(t1.id, t2.id)
     }
 }
