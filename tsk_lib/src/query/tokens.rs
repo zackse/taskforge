@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use chrono::prelude::*;
 use std::fmt;
 
@@ -25,6 +24,8 @@ pub enum Token {
     LTE,
     EQ,
     NE,
+    LIKE,
+    NLIKE,
 
     AND,
     OR,
@@ -49,10 +50,20 @@ impl From<char> for Token {
             '>' => Token::GT,
             '<' => Token::LT,
             '=' => Token::EQ,
+            '^' => Token::LIKE,
+            '~' => Token::LIKE,
             _ => Token::Unexpected(c.to_string()),
         }
     }
 }
+
+// %F == 2001-07-08 or YYYY-MM-DD
+// %P == am || pm
+// %p == AM || PM
+// %I == 01 - 12 hour
+// %H == 00 - 23 hour
+// %M == 00 - 60 minutes
+const DATE_FORMATS: [&'static str; 3] = ["%F %I:%M %P", "%F %I:%M %p", "%F %H:%M"];
 
 impl<'a> From<&'a str> for Token {
     fn from(s: &str) -> Token {
@@ -60,17 +71,28 @@ impl<'a> From<&'a str> for Token {
             return Token::Float(num);
         }
 
-        if let Ok(date) = Local.datetime_from_str(s, "%Y-%m-%d %r") {
-            return Token::Date(date);
+        for format in DATE_FORMATS.iter() {
+            if let Ok(date) = Local.datetime_from_str(s, format) {
+                return Token::Date(date);
+            }
         }
 
         match s {
             ">=" => Token::GTE,
             "<=" => Token::LTE,
+
+            "^=" => Token::NE,
+            "!=" => Token::NE,
+
+            "^^" => Token::NLIKE,
+            "!~" => Token::NLIKE,
+
             "" => Token::EOF,
             "EOF" => Token::EOF,
+
             "AND" | "and" => Token::AND,
             "OR" | "or" => Token::OR,
+
             _ => Token::Str(s.to_string()),
         }
     }
@@ -95,6 +117,8 @@ impl Into<String> for Token {
             Token::LTE => "(LTE, <=)".to_string(),
             Token::EQ => "(EQ, =)".to_string(),
             Token::NE => "(NE, !=)".to_string(),
+            Token::LIKE => "(LIKE, ~)".to_string(),
+            Token::NLIKE => "(LIKE, !~)".to_string(),
 
             Token::AND => "(AND, AND)".to_string(),
             Token::OR => "(OR, OR)".to_string(),
@@ -130,6 +154,25 @@ pub mod tests {
         assert_eq!(Token::from("or"), Token::OR);
         assert_eq!(Token::from("1.0"), Token::Float(1.0));
         assert_eq!(Token::from("5"), Token::Float(5.0));
+        assert_eq!(Token::from("^^"), Token::NLIKE);
+        assert_eq!(Token::from("!~"), Token::NLIKE);
+        assert_eq!(
+            Token::from("2018-07-04 12:00 PM"),
+            Token::Date(
+                Local
+                    .datetime_from_str("2018-07-04 12:00 PM", "%F %I:%M %p")
+                    .unwrap()
+            )
+        );
+        assert_eq!(
+            Token::from("2018-07-04 12:00"),
+            Token::Date(
+                Local
+                    .datetime_from_str("2018-07-04 12:00", "%F %H:%M")
+                    .unwrap()
+            )
+        );
+        assert_eq!(Token::from("!~"), Token::NLIKE);
     }
 
     #[test]
@@ -139,6 +182,8 @@ pub mod tests {
         assert_eq!(Token::from('>'), Token::GT);
         assert_eq!(Token::from('<'), Token::LT);
         assert_eq!(Token::from('='), Token::EQ);
-        assert_eq!(Token::from('*'), Token::Unexpected("*".to_string()));
+        assert_eq!(Token::from('%'), Token::Unexpected("%".to_string()));
+        assert_eq!(Token::from('~'), Token::LIKE);
+        assert_eq!(Token::from('^'), Token::LIKE);
     }
 }
