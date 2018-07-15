@@ -51,7 +51,7 @@ pub trait List<'a> {
 impl<'a> List<'a> for Vec<Task> {
     fn completed(&mut self, yes_or_no: bool) -> Vec<Task> {
         self.iter()
-            .filter(|t| t.completed_date.is_none() && !yes_or_no)
+            .filter(|t| !t.completed_date.is_none() && yes_or_no)
             .cloned()
             .collect()
     }
@@ -64,7 +64,7 @@ impl<'a> List<'a> for Vec<Task> {
     }
 
     // TODO: implement
-    fn search(&mut self, ast: query::ast::AST) -> Self {
+    fn search(&mut self, _ast: query::ast::AST) -> Self {
         self.clone()
     }
 
@@ -95,6 +95,8 @@ impl<'a> List<'a> for Vec<Task> {
     }
 
     fn current(&mut self) -> Option<&mut Task> {
+        self.sort();
+
         for task in self {
             if task.completed_date.is_none() {
                 return Some(task);
@@ -140,5 +142,64 @@ impl<'a> List<'a> for Vec<Task> {
         }
 
         Err(BackendError::NotFound)
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+    use task::Task;
+
+    #[test]
+    fn test_completed() {
+        let mut task2 = Task::new("test2");
+        task2.complete();
+
+        let mut tasks = vec![Task::new("test1"), task2, Task::new("test3")];
+
+        let completed = tasks.completed(true);
+
+        assert_eq!(completed.len(), 1);
+        assert_eq!(completed[0], tasks[1])
+    }
+
+    #[test]
+    fn test_with_context() {
+        let mut tasks = vec![
+            Task::new("test1"),
+            Task::new("test2").with_context("testing"),
+            Task::new("test3"),
+        ];
+
+        let testing = tasks.with_context("testing");
+
+        assert_eq!(testing.len(), 1);
+        assert_eq!(testing[0], tasks[1])
+    }
+
+    //     #[test]
+    //     fn test_search() {}
+
+    #[test]
+    fn test_current() {
+        let mut task1 = Task::new("test1");
+        task1.complete();
+
+        let mut tasks = vec![
+            task1,
+            Task::new("test2"),
+            Task::new("test3").with_priority(2.0),
+        ];
+
+        let mut task2 = tasks[2].clone();
+        assert_eq!(tasks.current().unwrap(), &mut task2)
+    }
+
+    #[test]
+    fn test_find_by_id() {
+        let mut tasks = vec![Task::new("test1"), Task::new("test2"), Task::new("test3")];
+        let id = tasks[2].id.clone();
+        let task2 = tasks[2].clone();
+        assert_eq!(task2, *tasks.find_by_id(&id).unwrap())
     }
 }
