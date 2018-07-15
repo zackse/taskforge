@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use std::fmt;
 
 use super::ast::{Expression, InfixExpression, AST};
@@ -77,8 +76,9 @@ impl Validator {
     fn validate_logical(infix: &InfixExpression) -> Result<(), ParseError> {
         match infix.left.as_ref() {
             Expression::Infix(_) => Ok(()),
+            Expression::StrLiteral(_) => Ok(()),
             _ => Err(ParseError::new(
-                "logical operators can only compare other infix expressions",
+                "logical operators can only compare other infix expressions or string literals",
             )),
         }
     }
@@ -176,6 +176,8 @@ impl<'a> From<&'a Token> for Precedence {
             Token::LTE => Precedence::COMPARISON,
             Token::EQ => Precedence::COMPARISON,
             Token::NE => Precedence::COMPARISON,
+            Token::LIKE => Precedence::COMPARISON,
+            Token::NLIKE => Precedence::COMPARISON,
             Token::AND => Precedence::ANDOR,
             Token::OR => Precedence::ANDOR,
             Token::Str(_) => Precedence::STRING,
@@ -226,6 +228,8 @@ impl<'a> Parser<'a> {
                 Some(Token::GTE) => self.parse_infix_exp(left),
                 Some(Token::AND) => self.parse_infix_exp(left),
                 Some(Token::OR) => self.parse_infix_exp(left),
+                Some(Token::LIKE) => self.parse_infix_exp(left),
+                Some(Token::NLIKE) => self.parse_infix_exp(left),
                 Some(Token::Str(_)) => self.concat(left),
                 _ => break,
             }?;
@@ -266,6 +270,8 @@ impl<'a> Parser<'a> {
             Some(token @ Token::EQ) => token,
             Some(token @ Token::AND) => token,
             Some(token @ Token::OR) => token,
+            Some(token @ Token::LIKE) => token,
+            Some(token @ Token::NLIKE) => token,
             Some(token) => {
                 return Err(ParseError::from(format!(
                     "{} is not a valid operator",
@@ -308,40 +314,164 @@ impl<'a> Parser<'a> {
 pub mod test {
     use super::*;
 
-    #[test]
-    fn test_simple_exp() {
-        let input = "this is a simple query";
-        match Parser::from(input).parse() {
-            Ok(ast) => assert_eq!(
-                ast,
-                AST {
-                    expression: Expression::StrLiteral(Token::from("this is a simple query"))
-                }
-            ),
-            Err(e) => {
-                println!("{}", e);
-                assert!(false)
-            }
-        }
+    struct ParserValidTest<'a> {
+        name: &'a str,
+        input: &'a str,
+        expected: AST,
     }
 
     #[test]
-    fn test_simple_comparison() {
-        let input = "title = something";
-        match Parser::from(input).parse() {
-            Ok(ast) => assert_eq!(
-                ast,
-                AST {
+    fn test_valid_expressions() {
+        let tests = vec![
+            ParserValidTest {
+                input: "this is a simple query",
+                name: "simple query expression",
+                expected: AST {
+                    expression: Expression::StrLiteral(Token::from("this is a simple query")),
+                },
+            },
+            ParserValidTest {
+                input: "title = something",
+                name: "simple comparison",
+                expected: AST {
                     expression: Expression::Infix(Box::new(InfixExpression {
                         left: Box::new(Expression::StrLiteral(Token::from("title"))),
                         right: Box::new(Expression::StrLiteral(Token::from("something"))),
                         operator: Token::from('='),
-                    }))
+                    })),
+                },
+            },
+            ParserValidTest {
+                input: "title = something and priority > 5",
+                name: "logical expression",
+                expected: AST {
+                    expression: Expression::Infix(Box::new(InfixExpression {
+                        left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::StrLiteral(Token::from("title"))),
+                            right: Box::new(Expression::StrLiteral(Token::from("something"))),
+                            operator: Token::from('='),
+                        }))),
+                        operator: Token::AND,
+                        right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::StrLiteral(Token::from("priority"))),
+                            right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
+                            operator: Token::from('>'),
+                        }))),
+                    })),
+                },
+            },
+            ParserValidTest {
+                input: "(title = something and priority > 5) or notes = \"what I want in notes\"",
+                name: "complex expression",
+                expected: AST {
+                    expression: Expression::Infix(Box::new(InfixExpression {
+                        right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::StrLiteral(Token::from("notes"))),
+                            right: Box::new(Expression::StrLiteral(Token::from(
+                                "what I want in notes",
+                            ))),
+                            operator: Token::EQ,
+                        }))),
+                        operator: Token::OR,
+                        left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                left: Box::new(Expression::StrLiteral(Token::from("title"))),
+                                right: Box::new(Expression::StrLiteral(Token::from("something"))),
+                                operator: Token::from('='),
+                            }))),
+                            operator: Token::AND,
+                            right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                left: Box::new(Expression::StrLiteral(Token::from("priority"))),
+                                right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
+                                operator: Token::from('>'),
+                            }))),
+                        }))),
+                    })),
+                },
+            },
+            ParserValidTest {
+                input: "milk -and cookies",
+                name: "milk and cookies",
+                expected: AST {
+                    expression: Expression::StrLiteral(Token::from("milk and cookies")),
+                },
+            },
+            ParserValidTest {
+                input: "title ^ \"take out the trash\"",
+                name: "title like take out the trash",
+                expected: AST {
+                    expression: Expression::Infix(Box::new(InfixExpression {
+                        left: Box::new(Expression::StrLiteral(Token::from("title"))),
+                        right: Box::new(Expression::StrLiteral(Token::from("take out the trash"))),
+                        operator: Token::LIKE,
+                    })),
+                },
+            },
+            ParserValidTest {
+                input: "(\"milk and sugar\") and priority > 5",
+                name: "str literal and priority greater than 5.0",
+                expected: AST {
+                    expression: Expression::Infix(Box::new(InfixExpression {
+                        left: Box::new(Expression::StrLiteral(Token::from("milk and sugar"))),
+                        operator: Token::AND,
+                        right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::StrLiteral(Token::from("priority"))),
+                            right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
+                            operator: Token::GT,
+                        }))),
+                    })),
+                },
+            },
+            ParserValidTest {
+                input: "(priority > 5 and title ^ \"take out the trash\") or (context = \"work\" and (priority >= 2 or (\"my little pony\")))",
+                name: "very complex expression",
+                expected: AST {
+                    expression: Expression::Infix(Box::new(InfixExpression {
+                        left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                left: Box::new(Expression::StrLiteral(Token::from("priority"))),
+                                operator: Token::GT,
+                                right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
+                            }))),
+                            operator: Token::AND,
+                            right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                left: Box::new(Expression::StrLiteral(Token::from("title"))),
+                                operator: Token::LIKE,
+                                right: Box::new(Expression::StrLiteral(Token::from("take out the trash"))),
+                            }))),
+                        }))),
+                        operator: Token::OR,
+                        right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                            left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                left: Box::new(Expression::StrLiteral(Token::from("context"))),
+                                operator: Token::EQ,
+                                right: Box::new(Expression::StrLiteral(Token::from("work"))),
+                            }))),
+                            operator: Token::AND,
+                            right: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                operator: Token::OR,
+                                left: Box::new(Expression::Infix(Box::new(InfixExpression {
+                                    left: Box::new(Expression::StrLiteral(Token::from("priority"))),
+                                    operator: Token::GTE,
+                                    right: Box::new(Expression::NumLiteral(Token::Float(2.0))),
+                                }))),
+                                right: Box::new(Expression::StrLiteral(Token::from("my little pony")))
+                            })))
+
+                        })))
+                    })),
+                },
+            }
+        ];
+
+        for test in tests.iter() {
+            println!("Running Test: {}", test.name);
+            match Parser::from(test.input).parse() {
+                Ok(ast) => assert_eq!(ast, test.expected),
+                Err(e) => {
+                    println!("{}", e);
+                    assert!(false)
                 }
-            ),
-            Err(e) => {
-                println!("{}", e);
-                assert!(false)
             }
         }
     }
@@ -360,91 +490,6 @@ pub mod test {
                 assert!(false)
             }
             Err(_) => (),
-        }
-    }
-
-    #[test]
-    fn test_invalid_comparison() {
-        let input = "title = 1.0";
-        match Parser::from(input).parse() {
-            Ok(_) => assert!(false),
-            Err(_) => (),
-        }
-    }
-
-    #[test]
-    fn test_logical_exp() {
-        let input = "title = something and priority > 5";
-        match Parser::from(input).parse() {
-            Ok(ast) => {
-                println!("AST: {:?}", ast);
-                assert_eq!(
-                    ast,
-                    AST {
-                        expression: Expression::Infix(Box::new(InfixExpression {
-                            left: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                left: Box::new(Expression::StrLiteral(Token::from("title"))),
-                                right: Box::new(Expression::StrLiteral(Token::from("something"))),
-                                operator: Token::from('='),
-                            }))),
-                            operator: Token::AND,
-                            right: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                left: Box::new(Expression::StrLiteral(Token::from("priority"))),
-                                right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
-                                operator: Token::from('>'),
-                            })))
-                        }))
-                    }
-                )
-            }
-            Err(e) => {
-                println!("{}", e);
-                assert!(false)
-            }
-        }
-    }
-
-    #[test]
-    fn test_complex_exp() {
-        let input = "(title = something and priority > 5) or notes = \"what I want in notes\"";
-        match Parser::from(input).parse() {
-            Ok(ast) => {
-                println!("AST: {:?}", ast);
-                assert_eq!(
-                    ast,
-                    AST {
-                        expression: Expression::Infix(Box::new(InfixExpression {
-                            right: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                left: Box::new(Expression::StrLiteral(Token::from("notes"))),
-                                right: Box::new(Expression::StrLiteral(Token::from(
-                                    "what I want in notes"
-                                ))),
-                                operator: Token::EQ,
-                            }))),
-                            operator: Token::OR,
-                            left: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                left: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                    left: Box::new(Expression::StrLiteral(Token::from("title"))),
-                                    right: Box::new(Expression::StrLiteral(Token::from(
-                                        "something"
-                                    ))),
-                                    operator: Token::from('='),
-                                }))),
-                                operator: Token::AND,
-                                right: Box::new(Expression::Infix(Box::new(InfixExpression {
-                                    left: Box::new(Expression::StrLiteral(Token::from("priority"))),
-                                    right: Box::new(Expression::NumLiteral(Token::Float(5.0))),
-                                    operator: Token::from('>'),
-                                })))
-                            })))
-                        }))
-                    }
-                )
-            }
-            Err(e) => {
-                println!("{}", e);
-                assert!(false)
-            }
         }
     }
 }
