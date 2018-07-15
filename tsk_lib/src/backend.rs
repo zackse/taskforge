@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+use serde_json;
+use std::collections::HashMap;
 use std::io;
 
 use list::List;
@@ -39,6 +41,12 @@ impl From<io::Error> for BackendError {
     }
 }
 
+impl From<serde_json::Error> for BackendError {
+    fn from(err: serde_json::Error) -> BackendError {
+        BackendError::Serialization(format!("{}", err))
+    }
+}
+
 impl<'a> From<&'a str> for BackendError {
     fn from(s: &'a str) -> BackendError {
         BackendError::Other(s.to_string())
@@ -53,9 +61,9 @@ impl From<String> for BackendError {
 
 /// Backend is implemented by all structs that know how to save and load lists.
 /// Ideally all backends should also implement List
-pub trait Backend<'a>: List<'a> + From<Vec<&'a Task>> {
+pub trait Backend<'a>: List<'a> + From<Vec<Task>> {
     /// Save the list owned by self.
-    fn save(&self) -> Result<(), BackendError>;
+    fn save(&self, config: &HashMap<String, String>) -> Result<(), BackendError>;
     /// Load the list owned by self.
-    fn load(&self) -> Result<(), BackendError>;
+    fn load(&mut self, config: &HashMap<String, String>) -> Result<(), BackendError>;
 }
