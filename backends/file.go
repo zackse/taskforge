@@ -1,6 +1,8 @@
 package backends
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -29,9 +31,23 @@ func (f File) Init() error {
 }
 
 func (f File) Save() error {
-	return nil
+	stateFile := filepath.Join(f.Dir, "state.json")
+
+	jsn, err := json.Marshal(f.MemoryList)
+	if err != nil {
+		return err
+	}
+
+	return ioutil.WriteFile(stateFile, jsn, os.ModePerm)
 }
 
 func (f File) Load() error {
-	return nil
+	stateFile := filepath.Join(f.Dir, "state.json")
+
+	content, err := ioutil.ReadFile(stateFile)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(content, &f.MemoryList)
 }
