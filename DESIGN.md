@@ -200,29 +200,29 @@ It has the following definition:
 ```rust
 // Return a new List which has all completed task if yes_or_no is true and all
 // uncompleted tasks if yes_or_no is false.
-fn completed(&mut self, yes_or_no: bool) -> Box<List>
+fn completed(yes_or_no: bool) -> Box<List>
 // Return a new List with only tasks in the given context
-fn with_context(&mut self) -> Box<List>
+fn with_context() -> Box<List>
 // Evaluate the AST and return a List of matching results
-fn search(&mut self, ast: tsk_lib::query::ast::AST) -> Box<List>
+fn search(ast: tsk_lib::query::ast::AST) -> Box<List>
 // Add a task to the List
-fn add(&mut self, task: tsk_lib::task::Task) -> Result<(), BackendError>
+fn add(task: tsk_lib::task::Task) -> error
 // Add multiple tasks to the List, should be more efficient resource
 // utilization.
-fn add_multiple(&mut self, task: &Vec<Task>) -> Result<(), BackendError>
+fn add_multiple(task: &Vec<Task>) -> error
 // Return a vector of Tasks in this List
-fn into_vec(&mut self) -> Vec<Task>
+fn into_vec() -> Vec<Task>
 // Find a task by ID
-fn find_by_id(&mut self, id: &str) -> Option<Task>
+fn find_by_id(id: &str) -> Option<Task>
 // Return the current task, meaning the oldest uncompleted task in the List
-fn current(&mut self) -> Option<Task>
+fn current() -> Option<Task>
 
 // Complete a task by id
-fn complete(&mut self, id: &str) -> Result<(), BackendError>
+fn complete(id: &str) -> error
 // Update a task in the list, finding the original by the ID of the given task
-fn update(&mut self, task: Task) -> Result<(), BackendError>
+fn update(task: Task) -> error
 // Add note to a task by ID
-fn add_note(&mut self, id: &str, note: Note) -> Result<(), BackendError>
+fn add_note(id: &str, note: Note) -> error
 ```
 
 ### Backends
@@ -231,10 +231,10 @@ Backend is a trait which is implemented by all of the concrete Backends. It has
 the following pseudo-code definition:
 
 ```rust
-fn save(&self) -> Result<(), BackendError>
-fn save_list(&self, Box<List>) -> Result<(), BackendError>
-fn load(&self) -> Result<(), BackendError>
-fn load_list(&self, Box<List>) -> Result<(), BackendError>
+fn save(&self) -> error
+fn save_list(&self, Box<List>) -> error
+fn load(&self) -> error
+fn load_list(&self, Box<List>) -> error
 ```
 
 BackendError will be an enum that has the following variants:
