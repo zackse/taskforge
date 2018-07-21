@@ -12,41 +12,40 @@ import (
 type File struct {
 	Dir string
 
-	*task.MemoryList `yaml:"-" json:"-"`
+	task.MemoryList `yaml:"-" json:"-"`
 }
 
-func (f File) Init() error {
-	if f.Dir != "" {
+func (f *File) Init() error {
+	if f.MemoryList != nil {
 		return nil
 	}
 
-	taskDir := os.Getenv("TASK_DIR")
-	if taskDir == "" {
-		f.Dir = filepath.Join(os.Getenv("HOME"), ".tasks.d")
-		return nil
-	}
-
-	f.Dir = taskDir
+	f.MemoryList = make([]task.Task, 0)
 	return nil
 }
 
-func (f File) Save() error {
-	stateFile := filepath.Join(f.Dir, "state.json")
+func (f *File) Save() error {
+	if err := os.MkdirAll(f.Dir, os.ModePerm); err != nil {
+		return err
+	}
 
+	stateFile := filepath.Join(f.Dir, "state.json")
 	jsn, err := json.Marshal(f.MemoryList)
 	if err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(stateFile, jsn, os.ModePerm)
+	return ioutil.WriteFile(stateFile, jsn, 0644)
 }
 
-func (f File) Load() error {
+func (f *File) Load() error {
 	stateFile := filepath.Join(f.Dir, "state.json")
 
 	content, err := ioutil.ReadFile(stateFile)
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return err
+	} else if err != nil {
+		return nil
 	}
 
 	return json.Unmarshal(content, &f.MemoryList)

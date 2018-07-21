@@ -1,0 +1,23 @@
+hash: 334a51666e6b2c19178f6231fb339c5db41c261dff416aca6e44ba12279b7efd
+updated: 2018-07-20T16:04:59.286237806-04:00
+imports:
+- name: github.com/chasinglogic/dfm
+  version: 01ac16bf657b7f1f3b6caa4919e06a895c3791b1
+  subpackages:
+  - commands
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/mitchellh/mapstructure
+  version: f15292f7a699fcc1a38a80977f80a046874ba8ac
+- name: github.com/mongodb/mongo-go-driver
+  version: 4503c54ec045b406a0b3533901c6d7a5614cfef3
+  subpackages:
+  - bson/objectid
+  - mongo
+- name: github.com/spf13/cobra
+  version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
+- name: github.com/spf13/pflag
+  version: 583c0c0531f06d5278b7d917446061adc344b5cd
+- name: gopkg.in/yaml.v2
+  version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
+testImports: []

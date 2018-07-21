@@ -1,0 +1,13 @@
+package: github.com/chasinglogic/tsk
+import:
+- package: github.com/chasinglogic/dfm
+  subpackages:
+  - commands
+- package: github.com/spf13/cobra
+- package: github.com/mitchellh/mapstructure
+- package: github.com/mongodb/mongo-go-driver
+  version: ^0.0.9
+  subpackages:
+  - mongo
+- package: github.com/spf13/pflag
+  version: ^1.0.1

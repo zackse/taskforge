@@ -1,9 +1,10 @@
 package task
 
 import (
-	"crypto/md5"
 	"encoding/json"
 	"time"
+
+	"github.com/mongodb/mongo-go-driver/bson/objectid"
 )
 
 type Note struct {
@@ -46,8 +47,7 @@ func New(title string) Task {
 		CreatedDate: time.Now(),
 	}
 
-	hasher := md5.New()
-	t.ID = string(hasher.Sum([]byte(t.Title + ":" + t.CreatedDate.Format(time.RFC3339))))
+	t.ID = objectid.New().Hex()
 
 	return t
 }

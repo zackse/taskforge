@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/chasinglogic/tsk/commands"
 
 func main() {
-	fmt.Println("HELLO")
+	commands.Root.Execute()
 }

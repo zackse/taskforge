@@ -41,10 +41,10 @@ type MemoryList []Task
 
 // TODO: Would counting matching tasks first be faster since we could
 // frontload allocation?
-func (ml MemoryList) findWhere(f func(t Task) bool) []Task {
+func (ml *MemoryList) findWhere(f func(t Task) bool) []Task {
 	new := []Task{}
 
-	for _, t := range ml {
+	for _, t := range *ml {
 		if f(t) {
 			new = append(new, t)
 		}
@@ -53,15 +53,19 @@ func (ml MemoryList) findWhere(f func(t Task) bool) []Task {
 	return new
 }
 
-func (ml MemoryList) sort() {
-	sort.Slice(ml, func(i, j int) bool {
-		return (ml[i].Priority > ml[j].Priority) ||
-			(ml[i].Priority == ml[j].Priority && ml[i].CreatedDate.Before(ml[j].CreatedDate))
+func (ml *MemoryList) sort() {
+	list := *ml
+
+	sort.Slice(list, func(i, j int) bool {
+		return (list[i].Priority > list[j].Priority) ||
+			(list[i].Priority == list[j].Priority && list[i].CreatedDate.Before(list[j].CreatedDate))
 	})
+
+	ml = &list
 }
 
 // Completed returns a slice of completed tasks
-func (ml MemoryList) Completed(completed bool) []Task {
+func (ml *MemoryList) Completed(completed bool) []Task {
 	return ml.findWhere(func(t Task) bool {
 		return (t.CompletedDate.IsZero() && completed) ||
 			(!t.CompletedDate.IsZero() && !completed)
@@ -69,33 +73,33 @@ func (ml MemoryList) Completed(completed bool) []Task {
 }
 
 // Context returns a slice of tasks in the given context
-func (ml MemoryList) Context(context string) []Task {
+func (ml *MemoryList) Context(context string) []Task {
 	return ml.findWhere(func(t Task) bool {
 		return t.Context == context
 	})
 }
 
 // Add adds a task to this list
-func (ml MemoryList) Add(task Task) error {
-	ml = append(ml, task)
+func (ml *MemoryList) Add(task Task) error {
+	*ml = append(*ml, task)
 	return nil
 }
 
 // AddMultiple adds multiple tasks to this list
-func (ml MemoryList) AddMultiple(tasks []Task) error {
-	ml = append(ml, tasks...)
+func (ml *MemoryList) AddMultiple(tasks []Task) error {
+	*ml = append(*ml, tasks...)
 	return nil
 }
 
 // Slice turns the list into a slice of tasks
-func (ml MemoryList) Slice() []Task {
-	return []Task(ml)
+func (ml *MemoryList) Slice() []Task {
+	return []Task(*ml)
 }
 
 // FindById will return a pointer to the task indicated by ID, nil if no task
 // found with that id
-func (ml MemoryList) FindById(id string) *Task {
-	for _, t := range ml {
+func (ml *MemoryList) FindById(id string) *Task {
+	for _, t := range *ml {
 		if t.ID == id {
 			return &t
 		}
@@ -105,10 +109,10 @@ func (ml MemoryList) FindById(id string) *Task {
 }
 
 // Current will return the first task which is not completed
-func (ml MemoryList) Current() *Task {
+func (ml *MemoryList) Current() *Task {
 	ml.sort()
 
-	for _, t := range ml {
+	for _, t := range *ml {
 		if t.CompletedDate.IsZero() {
 			return &t
 		}
@@ -118,7 +122,7 @@ func (ml MemoryList) Current() *Task {
 }
 
 // Complete will complete the task indicated by id
-func (ml MemoryList) Complete(id string) error {
+func (ml *MemoryList) Complete(id string) error {
 	t := ml.FindById(id)
 	if t == nil {
 		return ErrNotFound
@@ -129,7 +133,7 @@ func (ml MemoryList) Complete(id string) error {
 }
 
 // Update will update the task indicated by the ID of the provided Task
-func (ml MemoryList) Update(other Task) error {
+func (ml *MemoryList) Update(other Task) error {
 	t := ml.FindById(other.ID)
 	if t == nil {
 		return ErrNotFound
@@ -148,7 +152,7 @@ func (ml MemoryList) Update(other Task) error {
 }
 
 // AddNote will add the note to the task indicated by the ID
-func (ml MemoryList) AddNote(id string, note Note) error {
+func (ml *MemoryList) AddNote(id string, note Note) error {
 	t := ml.FindById(id)
 	if t == nil {
 		return ErrNotFound
