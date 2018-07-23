@@ -67,7 +67,7 @@ var query = &cobra.Command{
 		if len(input) == 0 {
 			list := backend.Slice()
 			printList(list)
-			os.Exit(1)
+			os.Exit(0)
 		}
 
 		p := parser.New(lexer.New(input))
