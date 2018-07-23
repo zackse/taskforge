@@ -8,9 +8,11 @@ import (
 )
 
 func init() {
-	Root.AddCommand(New)
+	Root.AddCommand(new)
+	Root.AddCommand(query)
 }
 
+// Root is the root CLI command
 var Root = &cobra.Command{
 	Use:   "tsk",
 	Short: "Manage your tasks",
