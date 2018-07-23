@@ -72,8 +72,6 @@ type Config struct {
 
 func (c *Config) backend() (backends.Backend, error) {
 	if c.backendImpl == nil {
-		fmt.Println("loading backend")
-
 		var err error
 		c.backendImpl, err = backends.GetByName(c.Backend)
 		if err != nil {
@@ -94,8 +92,6 @@ func (c *Config) backend() (backends.Backend, error) {
 			return nil, err
 		}
 	}
-
-	fmt.Println(c.backendImpl)
 
 	return c.backendImpl, c.backendImpl.Load()
 }

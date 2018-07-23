@@ -10,6 +10,9 @@ import (
 func init() {
 	Root.AddCommand(new)
 	Root.AddCommand(query)
+	Root.AddCommand(complete)
+	Root.AddCommand(edit)
+	Root.AddCommand(next)
 }
 
 // Root is the root CLI command
