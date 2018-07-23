@@ -9,9 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var New = &cobra.Command{
-	Use:   "new",
-	Short: "create a new task",
+var new = &cobra.Command{
+	Use:     "new",
+	Aliases: []string{"n", "create"},
+	Short:   "Create a new task",
 	Run: func(cmd *cobra.Command, args []string) {
 		title := strings.Join(args, " ")
 		t := task.New(title)
