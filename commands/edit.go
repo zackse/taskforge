@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package commands
 
 import (
@@ -27,16 +26,16 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+func init() {
+	edit.SetUsageTemplate(taskIDUsageTemplate)
+}
+
 var edit = &cobra.Command{
 	Use:     "edit",
 	Aliases: []string{"e"},
 	Short:   "Edit a task as YAML",
+	Args:    taskId,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("TASK_ID is a required argument")
-			os.Exit(1)
-		}
-
 		backend, err := config.backend()
 		if err != nil {
 			fmt.Println("ERROR Unable to load backend:", err)

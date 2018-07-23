@@ -13,10 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -30,6 +30,30 @@ func init() {
 	Root.AddCommand(edit)
 	Root.AddCommand(next)
 }
+
+const taskIDUsageTemplate = `Usage:{{if .Runnable}}
+  {{.UseLine}} TASK_ID{{end}}{{if .HasAvailableSubCommands}}
+  {{.CommandPath}} [command]{{end}}{{if gt (len .Aliases) 0}}
+
+Aliases:
+  {{.NameAndAliases}}{{end}}{{if .HasExample}}
+
+Examples:
+{{.Example}}{{end}}{{if .HasAvailableSubCommands}}
+Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
+
+Flags:
+{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}{{if .HasAvailableInheritedFlags}}
+
+Global Flags:
+{{.InheritedFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}{{if .HasHelpSubCommands}}
+
+Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
+  {{rpad .CommandPath .CommandPathPadding}} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableSubCommands}}
+
+Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
+`
 
 // Root is the root CLI command
 var Root = &cobra.Command{
@@ -45,4 +69,12 @@ var Root = &cobra.Command{
 			os.Exit(1)
 		}
 	},
+}
+
+func taskId(cmd *cobra.Command, args []string) error {
+	if len(args) != 1 {
+		return errors.New("TASK_ID is a required argument")
+	}
+
+	return nil
 }

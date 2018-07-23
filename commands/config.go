@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package commands
 
 import (
@@ -64,8 +63,8 @@ func defaultConfig() *Config {
 func findConfigFile() string {
 	possiblePaths := []string{
 		".tsk.yml",
-		filepath.Join(os.Getenv("HOME"), ".tasks.d", "tsk.yml"),
-		"/etc/tsk/tsk.yml",
+		filepath.Join(os.Getenv("HOME"), ".tasks.d", "config.yml"),
+		"/etc/tsk/config.yml",
 	}
 
 	for _, path := range possiblePaths {

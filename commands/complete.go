@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package commands
 
 import (
@@ -23,16 +22,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func init() {
+	complete.SetUsageTemplate(taskIDUsageTemplate)
+}
+
 var complete = &cobra.Command{
 	Use:     "complete",
 	Aliases: []string{"done", "d"},
 	Short:   "Complete tasks by ID",
+	Args:    taskId,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) != 1 {
-			fmt.Println("TASK_ID is a required argument")
-			os.Exit(1)
-		}
-
 		backend, err := config.backend()
 		if err != nil {
 			fmt.Println("ERROR Unable to load backend:", err)
