@@ -3,11 +3,18 @@ package task
 import (
 	"errors"
 	"sort"
+	"strings"
 	"time"
+
+	"github.com/chasinglogic/tsk/ql/ast"
+	"github.com/chasinglogic/tsk/ql/token"
 )
 
+// ErrNotFound is returned by a List when a Task matching the given ID does not
+// exist
 var ErrNotFound = errors.New("no task with that id exists")
 
+// List is implemented by any struct that can maintain tasks
 type List interface {
 	// Return a new List which has all completed task if yes_or_no is true and all
 	// uncompleted tasks if yes_or_no is false.
@@ -15,7 +22,7 @@ type List interface {
 	// Return a new List with only tasks in the given context
 	Context(context string) []Task
 	// Evaluate the AST and return a List of matching results
-	// search(ast: query::ast::AST) []Task
+	Search(ast ast.AST) ([]Task, error)
 	// Add a task to the List
 	Add(Task) error
 	// Add multiple tasks to the List, should be more efficient resource
@@ -24,9 +31,9 @@ type List interface {
 	// Return a slice of Tasks in this List
 	Slice() []Task
 	// Find a task by ID
-	FindById(id string) *Task
+	FindByID(id string) (Task, error)
 	// Return the current task, meaning the oldest uncompleted task in the List
-	Current() *Task
+	Current() (Task, error)
 
 	// Complete a task by id
 	Complete(id string) error
@@ -39,7 +46,7 @@ type List interface {
 // MemoryList implements List for a slice of Tasks
 type MemoryList []Task
 
-// TODO: Would counting matching tasks first be faster since we could
+// TODO: Would counting matching tasks first be faster since we
 // frontload allocation?
 func (ml *MemoryList) findWhere(f func(t Task) bool) []Task {
 	new := []Task{}
@@ -67,8 +74,8 @@ func (ml *MemoryList) sort() {
 // Completed returns a slice of completed tasks
 func (ml *MemoryList) Completed(completed bool) []Task {
 	return ml.findWhere(func(t Task) bool {
-		return (t.CompletedDate.IsZero() && completed) ||
-			(!t.CompletedDate.IsZero() && !completed)
+		return (!t.CompletedDate.IsZero() && completed) ||
+			(t.CompletedDate.IsZero() && !completed)
 	})
 }
 
@@ -96,68 +103,229 @@ func (ml *MemoryList) Slice() []Task {
 	return []Task(*ml)
 }
 
-// FindById will return a pointer to the task indicated by ID, nil if no task
-// found with that id
-func (ml *MemoryList) FindById(id string) *Task {
+// FindByID will return a pointer to the task indicated by ID, returns
+// ErrNotFound if no task with that ID exists
+func (ml *MemoryList) FindByID(id string) (Task, error) {
 	for _, t := range *ml {
 		if t.ID == id {
-			return &t
+			return t, nil
 		}
 	}
 
-	return nil
+	return Task{}, ErrNotFound
 }
 
 // Current will return the first task which is not completed
-func (ml *MemoryList) Current() *Task {
+func (ml *MemoryList) Current() (Task, error) {
 	ml.sort()
 
 	for _, t := range *ml {
 		if t.CompletedDate.IsZero() {
-			return &t
+			return t, nil
 		}
 	}
 
-	return nil
+	return Task{}, ErrNotFound
 }
 
 // Complete will complete the task indicated by id
 func (ml *MemoryList) Complete(id string) error {
-	t := ml.FindById(id)
-	if t == nil {
-		return ErrNotFound
+	t, err := ml.FindByID(id)
+	if err != nil {
+		return err
 	}
 
 	t.CompletedDate = time.Now()
-	return nil
+	return ml.Update(t)
 }
 
 // Update will update the task indicated by the ID of the provided Task
 func (ml *MemoryList) Update(other Task) error {
-	t := ml.FindById(other.ID)
-	if t == nil {
-		return ErrNotFound
+	list := *ml
+
+	for i := range list {
+		if list[i].ID == other.ID {
+			list[i].Context = other.Context
+			list[i].Priority = other.Priority
+			list[i].Body = other.Body
+			list[i].Title = other.Title
+			list[i].CompletedDate = other.CompletedDate
+
+			if len(other.Notes) > len(list[i].Notes) {
+				list[i].Notes = other.Notes
+			}
+
+			ml = &list
+			return nil
+		}
 	}
 
-	t.Context = other.Context
-	t.Priority = other.Priority
-	t.Body = other.Body
-	t.Title = other.Title
-
-	if len(other.Notes) > len(t.Notes) {
-		t.Notes = append(t.Notes, other.Notes...)
-	}
-
-	return nil
+	return ErrNotFound
 }
 
 // AddNote will add the note to the task indicated by the ID
 func (ml *MemoryList) AddNote(id string, note Note) error {
-	t := ml.FindById(id)
-	if t == nil {
-		return ErrNotFound
+	t, err := ml.FindByID(id)
+	if err != nil {
+		return err
 	}
 
 	t.Notes = append(t.Notes, note)
-	return nil
+	return ml.Update(t)
+}
+
+// Search will construct a function to find matching tasks based on the given
+// ast.AST
+func (ml *MemoryList) Search(tree ast.AST) ([]Task, error) {
+	return ml.findWhere(eval(tree.Expression)), nil
+}
+
+func eval(exp ast.Expression) func(t Task) bool {
+	switch exp.(type) {
+	case ast.InfixExpression:
+		return evalInfixExp(exp.(ast.InfixExpression))
+	case ast.StringLiteral:
+		return evalStrLiteralQ(exp.(ast.StringLiteral))
+	default:
+		return func(t Task) bool { return false }
+	}
+}
+
+func evalInfixExp(exp ast.InfixExpression) func(t Task) bool {
+	switch exp.Operator.Type {
+	case token.AND:
+		return func(t Task) bool {
+			return eval(exp.Left)(t) && eval(exp.Right)(t)
+		}
+	case token.OR:
+		return func(t Task) bool {
+			return eval(exp.Left)(t) || eval(exp.Right)(t)
+		}
+	case token.LIKE:
+		return like(exp.Left, exp.Right)
+	case token.NLIKE:
+		return func(t Task) bool { return !like(exp.Left, exp.Right)(t) }
+	case token.EQ:
+		return eq(exp.Left, exp.Right)
+	case token.NE:
+		return func(t Task) bool { return !eq(exp.Left, exp.Right)(t) }
+	case token.GT:
+		return gt(exp.Left, exp.Right)
+	case token.GTE:
+		return gte(exp.Left, exp.Right)
+	case token.LT:
+		return func(t Task) bool { return !gt(exp.Left, exp.Right)(t) }
+	case token.LTE:
+		return lte(exp.Left, exp.Right)
+	default:
+		return func(t Task) bool { return false }
+	}
+}
+
+func evalStrLiteralQ(exp ast.StringLiteral) func(t Task) bool {
+	return func(t Task) bool {
+		return strings.Contains(t.Title, exp.Value) ||
+			strings.Contains(t.Body, exp.Value)
+	}
+}
+
+func gt(left, right ast.Expression) func(Task) bool {
+	return func(t Task) bool {
+		switch left.(ast.StringLiteral).Value {
+		case "priority":
+			return t.Priority > right.(ast.NumberLiteral).Value
+		case "created_date":
+			fallthrough
+		case "createdDate":
+			return t.CreatedDate.After(right.(ast.DateLiteral).Value)
+		case "completed_date":
+			fallthrough
+		case "completedDate":
+			return t.CompletedDate.After(right.(ast.DateLiteral).Value)
+		default:
+			return false
+		}
+	}
+}
+
+func gte(left, right ast.Expression) func(Task) bool {
+	return func(t Task) bool {
+		switch left.(ast.StringLiteral).Value {
+		case "priority":
+			return t.Priority >= right.(ast.NumberLiteral).Value
+		case "created_date":
+			fallthrough
+		case "createdDate":
+			return t.CreatedDate.After(right.(ast.DateLiteral).Value) ||
+				t.CreatedDate == right.(ast.DateLiteral).Value
+		case "completed_date":
+			fallthrough
+		case "completedDate":
+			return t.CompletedDate.After(right.(ast.DateLiteral).Value) ||
+				t.CompletedDate == right.(ast.DateLiteral).Value
+		default:
+			return false
+		}
+	}
+}
+
+func lte(left, right ast.Expression) func(Task) bool {
+	return func(t Task) bool {
+		switch left.(ast.StringLiteral).Value {
+		case "priority":
+			return t.Priority <= right.(ast.NumberLiteral).Value
+		case "created_date":
+			fallthrough
+		case "createdDate":
+			return t.CreatedDate.Before(right.(ast.DateLiteral).Value) ||
+				t.CreatedDate == right.(ast.DateLiteral).Value
+		case "completed_date":
+			fallthrough
+		case "completedDate":
+			return t.CompletedDate.Before(right.(ast.DateLiteral).Value) ||
+				t.CompletedDate == right.(ast.DateLiteral).Value
+		default:
+			return false
+		}
+	}
+}
+
+func eq(left, right ast.Expression) func(Task) bool {
+	return func(t Task) bool {
+		switch left.(ast.StringLiteral).Value {
+		case "title":
+			return t.Title == right.(ast.StringLiteral).Value
+		case "body":
+			return t.Body == right.(ast.StringLiteral).Value
+		case "context":
+			return t.Context == right.(ast.StringLiteral).Value
+		case "priority":
+			return t.Priority == right.(ast.NumberLiteral).Value
+		case "created_date":
+			fallthrough
+		case "createdDate":
+			return t.CreatedDate == right.(ast.DateLiteral).Value
+		case "completed_date":
+			fallthrough
+		case "completedDate":
+			return t.CompletedDate == right.(ast.DateLiteral).Value
+		default:
+			return false
+		}
+	}
+}
+
+func like(left, right ast.Expression) func(Task) bool {
+	return func(t Task) bool {
+		switch left.(ast.StringLiteral).Value {
+		case "title":
+			return strings.Contains(t.Title, right.(ast.StringLiteral).Value)
+		case "body":
+			return strings.Contains(t.Body, right.(ast.StringLiteral).Value)
+		case "context":
+			return strings.Contains(t.Context, right.(ast.StringLiteral).Value)
+		default:
+			return false
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package task
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -66,17 +67,44 @@ func TestMemoryList_Completed(t *testing.T) {
 }
 
 func TestMemoryList_Context(t *testing.T) {
+	otherContext := New("other context")
+	otherContext.Context = "other"
+
+	fixture := MemoryList{
+		New("default context"),
+		otherContext,
+		New("default context"),
+	}
+
 	type args struct {
 		context string
 	}
+
 	tests := []struct {
 		name string
 		ml   MemoryList
 		args args
 		want []Task
 	}{
-		// TODO: Add test cases.
+		{
+			name: "other context",
+			ml:   fixture,
+			args: args{"other"},
+			want: []Task{
+				otherContext,
+			},
+		},
+		{
+			name: "default context",
+			ml:   fixture,
+			args: args{"default"},
+			want: []Task{
+				fixture[0],
+				fixture[2],
+			},
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := tt.ml.Context(tt.args.context)
@@ -151,7 +179,7 @@ func TestMemoryList_AddMultiple(t *testing.T) {
 	}
 }
 
-func TestMemoryList_FindById(t *testing.T) {
+func TestMemoryList_FindByID(t *testing.T) {
 	task2 := New("task 2")
 	list := MemoryList{
 		New("task 1"),
@@ -159,26 +187,63 @@ func TestMemoryList_FindById(t *testing.T) {
 		New("task 3"),
 	}
 
-	found := list.FindById(task2.ID)
+	found, _ := list.FindByID(task2.ID)
 	if task2.ID != found.ID || task2.Title != found.Title {
-		t.Errorf("MemoryList.FindById() = %v, want %v", found, task2)
+		t.Errorf("MemoryList.FindByID() = %v, want %v", found, task2)
 	}
 }
 
 func TestMemoryList_Current(t *testing.T) {
-	tests := []struct {
-		name string
-		ml   MemoryList
-		want *Task
-	}{
-		// TODO: Add test cases.
+	completed := New("completed task")
+	completed.Complete()
+	current := New("current task")
+
+	firstUnComplete := MemoryList{
+		current,
+		completed,
 	}
+
+	lastUncomplete := MemoryList{
+		completed,
+		current,
+	}
+
+	tests := []struct {
+		name      string
+		ml        MemoryList
+		want      Task
+		shouldErr bool
+	}{
+		{
+			name: "all completed",
+			ml: MemoryList{
+				completed,
+				completed,
+			},
+			shouldErr: true,
+		},
+		{
+			name: "first uncompleted",
+			ml:   firstUnComplete,
+			want: current,
+		},
+		{
+			name: "last uncompleted",
+			ml:   lastUncomplete,
+			want: current,
+		},
+	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := tt.ml.Current()
-
-			if got == nil && tt.want != nil {
-				t.Errorf("MemoryList.Current() = got nil when expected %v", tt.want)
+			got, err := tt.ml.Current()
+			if err != nil && !tt.shouldErr {
+				t.Errorf("MemoryList.Current() = got error: %s when expected %v", err, tt.want)
+				return
+			} else if err != nil && tt.shouldErr {
+				return
+			} else if err == nil && tt.shouldErr {
+				t.Errorf("MemoryList.Current() = got no error when expected one got: %v", got)
 				return
 			}
 
@@ -190,65 +255,69 @@ func TestMemoryList_Current(t *testing.T) {
 }
 
 func TestMemoryList_Complete(t *testing.T) {
-	type args struct {
-		id string
+	fixture := MemoryList{
+		New("task 1"),
+		New("task 2"),
+		New("task to complete"),
+		New("task 4"),
 	}
-	tests := []struct {
-		name    string
-		ml      MemoryList
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
+
+	id := fixture[2].ID
+
+	err := fixture.Complete(id)
+	if err != nil {
+		t.Errorf("Error completing: %s", err)
+		return
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ml.Complete(tt.args.id); (err != nil) != tt.wantErr {
-				t.Errorf("MemoryList.Complete() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+
+	fmt.Println(fixture)
+
+	if fixture[2].CompletedDate.IsZero() {
+		t.Errorf("Expected task to complete to have a completed date got: %v", fixture)
 	}
 }
 
 func TestMemoryList_Update(t *testing.T) {
-	type args struct {
-		other Task
+	toUpdate := New("task to update")
+
+	list := MemoryList{
+		New("task 1"),
+		toUpdate,
+		New("task 3"),
 	}
-	tests := []struct {
-		name    string
-		ml      MemoryList
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
+
+	other := toUpdate
+	other.Title = "task updated"
+
+	err := list.Update(other)
+	if err != nil {
+		t.Errorf("Got an error updating: %s", err)
+		return
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ml.Update(tt.args.other); (err != nil) != tt.wantErr {
-				t.Errorf("MemoryList.Update() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+
+	if list[1].Title != "task updated" {
+		t.Errorf("Expected title \"task updated\" got: %v", list[1])
 	}
 }
 
 func TestMemoryList_AddNote(t *testing.T) {
-	type args struct {
-		id   string
-		note Note
+	task := New("add a note to me")
+
+	list := MemoryList{
+		New("task 1"),
+		task,
+		New("task 3"),
 	}
-	tests := []struct {
-		name    string
-		ml      MemoryList
-		args    args
-		wantErr bool
-	}{
-		// TODO: Add test cases.
+
+	note := NewNote("this is a note")
+
+	err := list.AddNote(task.ID, note)
+	if err != nil {
+		t.Errorf("Got an err when expected none %s: %v", err, list)
+		return
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.ml.AddNote(tt.args.id, tt.args.note); (err != nil) != tt.wantErr {
-				t.Errorf("MemoryList.AddNote() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+
+	if len(list[1].Notes) != 1 {
+		t.Errorf("Expected one note got: %v", list[1])
 	}
 }
