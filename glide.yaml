@@ -11,3 +11,4 @@ import:
   - mongo
 - package: github.com/spf13/pflag
   version: ^1.0.1
+- package: github.com/gocarina/gocsv

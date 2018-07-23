@@ -1,10 +1,12 @@
-hash: 334a51666e6b2c19178f6231fb339c5db41c261dff416aca6e44ba12279b7efd
-updated: 2018-07-20T16:04:59.286237806-04:00
+hash: a8721c3cc340f8e3ebd04b232df33449fbb7a22cd205bfc3373f13038725ba94
+updated: 2018-07-23T14:53:07.401714197-04:00
 imports:
 - name: github.com/chasinglogic/dfm
   version: 01ac16bf657b7f1f3b6caa4919e06a895c3791b1
   subpackages:
   - commands
+- name: github.com/gocarina/gocsv
+  version: a5c9099e2484f1551abb9433885e158610a25f4b
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/mitchellh/mapstructure
