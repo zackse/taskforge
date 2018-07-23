@@ -177,18 +177,6 @@ A Note will be represented as:
 }
 ```
 
-Task will implement the following traits and methods:
-
-- `impl From<&'a str>`
-- `impl From<String>`
-- `impl std::fmt::Display`
-- `impl Debug`
-- `impl Clone`
-- `new(title: &str) -> Task`
-  - `with_x` where x is the remaining task fields not in new
-- `impl PartialOrd`
-- `impl Serialize` from serde
-- `impl Deserialize` from serde
 
 ### Task Lists
 
@@ -197,32 +185,35 @@ Additionally List will be implemented for `Vec<Task>` and `Vec<&Task>`.
 
 It has the following definition:
 
-```rust
-// Return a new List which has all completed task if yes_or_no is true and all
-// uncompleted tasks if yes_or_no is false.
-fn completed(yes_or_no: bool) -> Box<List>
-// Return a new List with only tasks in the given context
-fn with_context() -> Box<List>
-// Evaluate the AST and return a List of matching results
-fn search(ast: tsk_lib::query::ast::AST) -> Box<List>
-// Add a task to the List
-fn add(task: tsk_lib::task::Task) -> error
-// Add multiple tasks to the List, should be more efficient resource
-// utilization.
-fn add_multiple(task: &Vec<Task>) -> error
-// Return a vector of Tasks in this List
-fn into_vec() -> Vec<Task>
-// Find a task by ID
-fn find_by_id(id: &str) -> Option<Task>
-// Return the current task, meaning the oldest uncompleted task in the List
-fn current() -> Option<Task>
+```go
+// List is implemented by any struct that can maintain tasks
+type List interface {
+    // Return a new List which has all completed task if yes_or_no is true and all
+    // uncompleted tasks if yes_or_no is false.
+    Completed(completed bool) []Task
+    // Return a new List with only tasks in the given context
+    Context(context string) []Task
+    // Evaluate the AST and return a List of matching results
+    Search(ast ast.AST) ([]Task, error)
+    // Add a task to the List
+    Add(Task) error
+    // Add multiple tasks to the List, should be more efficient resource
+    // utilization.
+    AddMultiple(task []Task) error
+    // Return a slice of Tasks in this List
+    Slice() []Task
+    // Find a task by ID
+    FindByID(id string) (Task, error)
+    // Return the current task, meaning the oldest uncompleted task in the List
+    Current() (Task, error)
 
-// Complete a task by id
-fn complete(id: &str) -> error
-// Update a task in the list, finding the original by the ID of the given task
-fn update(task: Task) -> error
-// Add note to a task by ID
-fn add_note(id: &str, note: Note) -> error
+    // Complete a task by id
+    Complete(id string) error
+    // Update a task in the list, finding the original by the ID of the given task
+    Update(Task) error
+    // Add note to a task by ID
+    AddNote(id string, note Note) error
+}
 ```
 
 ### Backends
@@ -230,30 +221,23 @@ fn add_note(id: &str, note: Note) -> error
 Backend is a trait which is implemented by all of the concrete Backends. It has
 the following pseudo-code definition:
 
-```rust
-fn save(&self) -> error
-fn save_list(&self, Box<List>) -> error
-fn load(&self) -> error
-fn load_list(&self, Box<List>) -> error
+```go
+
+// Backend is a task.List that supports saving and loading from
+// a data source.
+type Backend interface {
+    task.List
+    
+    Init() error
+    Save() error
+    Load() error
+}
 ```
 
-BackendError will be an enum that has the following variants:
-
-```text
-NotFound
-Serialization(String)
-Network(std::io::Error)
-IO(std::io::Error)
-Other(String)
-```
-
-It will implement the following:
-
-- `impl From<std::io::Error>`
-- `impl From<String>`
-- `impl From<T>` where T is all of the serde\_x libraries errors used in tsk
-
-The design of BackendError is subject to change.
+Additionally a backend will need to be deserializable from a
+`map[string]interface{}` via mapstructure. This allows us to store the backend
+config in the user config's YAML and load it at the appropriate time, after
+we've decided which backend to use.
 
 ## tsk (CLI)
 
