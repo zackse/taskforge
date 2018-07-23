@@ -36,7 +36,7 @@ var (
 )
 
 func init() {
-	new.Flags().StringVarP(&context, "context", "c", "default",
+	new.Flags().StringVarP(&context, "context", "c", config.DefaultContext,
 		"the context which to create this task in")
 	new.Flags().StringVarP(&body, "body", "b", "",
 		"the text body to give this task")

@@ -48,12 +48,18 @@ func loadConfigFile(path string) (*Config, error) {
 
 	var c *Config
 	err = yaml.Unmarshal(content, &c)
+
+	if c != nil && c.DefaultContext == "" {
+		c.DefaultContext = "default"
+	}
+
 	return c, err
 }
 
 func defaultConfig() *Config {
 	return &Config{
-		Backend: "file",
+		DefaultContext: "default",
+		Backend:        "file",
 		BackendConfig: map[string]interface{}{
 			"dir": filepath.Join(os.Getenv("HOME"), ".tasks.d"),
 		},
@@ -79,8 +85,9 @@ func findConfigFile() string {
 var config *Config
 
 type Config struct {
-	Backend       string
-	BackendConfig map[string]interface{} `yaml:"backend_config" json:"backend_config"`
+	DefaultContext string `yaml:"default_context"`
+	Backend        string
+	BackendConfig  map[string]interface{} `yaml:"backend_config" json:"backend_config"`
 
 	backendImpl backends.Backend
 }
