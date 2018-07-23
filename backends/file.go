@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package backends
 
 import (
@@ -21,6 +20,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/chasinglogic/tsk/task"
 )
@@ -37,6 +37,11 @@ func (f *File) Init() error {
 	}
 
 	f.MemoryList = make([]task.Task, 0)
+
+	if strings.HasPrefix(f.Dir, "~") {
+		f.Dir = strings.Replace(f.Dir, "~", os.Getenv("HOME"), 1)
+	}
+
 	return nil
 }
 
