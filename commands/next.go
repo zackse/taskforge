@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package commands
 
 import (
@@ -23,6 +22,18 @@ import (
 	"github.com/chasinglogic/tsk/task"
 	"github.com/spf13/cobra"
 )
+
+var (
+	titleOnly bool
+	idOnly    bool
+)
+
+func init() {
+	next.Flags().BoolVarP(&titleOnly, "title-only", "t", false,
+		"print only the task title")
+	next.Flags().BoolVarP(&idOnly, "id-only", "i", false,
+		"print only the task id")
+}
 
 var next = &cobra.Command{
 	Use:     "next",
@@ -44,6 +55,13 @@ var next = &cobra.Command{
 			return
 		}
 
-		fmt.Printf("%s %s\n", current.ID, current.Title)
+		switch {
+		case titleOnly:
+			fmt.Println(current.Title)
+		case idOnly:
+			fmt.Println(current.ID)
+		default:
+			fmt.Println(current.ID, current.Title)
+		}
 	},
 }
