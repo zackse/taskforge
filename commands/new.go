@@ -16,11 +16,15 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
 
+	"gopkg.in/yaml.v2"
+
 	"github.com/chasinglogic/tsk/task"
+	"github.com/gocarina/gocsv"
 	"github.com/spf13/cobra"
 )
 
@@ -71,10 +75,32 @@ var new = &cobra.Command{
 	Aliases: []string{"n", "create"},
 	Short:   "Create a new task",
 	Run: func(cmd *cobra.Command, args []string) {
-		// if fromFile != "" {
-		// 	createTasksFromFile()
-		// 	return
-		// }
+		backend, err := config.backend()
+		if err != nil {
+			fmt.Println("ERROR Unable to load backend:", err)
+			os.Exit(1)
+		}
+
+		if fromFile != "" {
+			tasks, err := getTasksFromFile()
+			if err != nil {
+				fmt.Println("ERROR", err)
+				os.Exit(1)
+			}
+
+			err = backend.AddMultiple(tasks)
+			if err != nil {
+				fmt.Println("ERROR Unable to add tasks:", err)
+				os.Exit(1)
+			}
+
+			os.Exit(0)
+		}
+
+		if len(args) == 0 {
+			fmt.Println("ERROR Title is required when not using --from-file")
+			os.Exit(1)
+		}
 
 		title := strings.Join(args, " ")
 		t := task.New(title)
@@ -82,20 +108,50 @@ var new = &cobra.Command{
 		t.Body = body
 		t.Priority = priority
 
-		backend, err := config.backend()
-		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
-			os.Exit(1)
-		}
-
 		err = backend.Add(t)
 		if err != nil {
 			fmt.Println("ERROR Unable to add task:", err)
+			os.Exit(1)
 		}
 
 		err = backend.Save()
 		if err != nil {
 			fmt.Println("ERROR Unable to save to backend:", err)
+			os.Exit(1)
 		}
 	},
+}
+
+func getTasksFromFile() ([]task.Task, error) {
+	taskFile, err := os.Open(fromFile)
+	if err != nil {
+		return nil, err
+	}
+
+	defer taskFile.Close()
+
+	var tasks []task.Task
+
+	switch {
+	case strings.HasSuffix(fromFile, ".csv"):
+		if err := gocsv.UnmarshalFile(taskFile, &tasks); err != nil {
+			return nil, err
+		}
+	case strings.HasSuffix(fromFile, ".yaml"):
+		fallthrough
+	case strings.HasSuffix(fromFile, ".yml"):
+		decoder := yaml.NewDecoder(taskFile)
+		if decoder == nil {
+			return nil, errors.New("unable to create yaml decoder got nil")
+		}
+
+		err = decoder.Decode(&tasks)
+		if err != nil {
+			return nil, err
+		}
+	default:
+		return nil, fmt.Errorf("only yaml and csv files accepted found: %s", fromFile)
+	}
+
+	return tasks, nil
 }
