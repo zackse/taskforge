@@ -13,12 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package task
 
 import (
 	"errors"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -325,6 +325,14 @@ func eq(left, right ast.Expression) func(Task) bool {
 			fallthrough
 		case "completedDate":
 			return t.CompletedDate == right.(ast.DateLiteral).Value
+		case "completed":
+			boolStr := right.(ast.StringLiteral).Value
+			completed, err := strconv.ParseBool(boolStr)
+			if err != nil {
+				return false
+			}
+
+			return t.CompletedDate.IsZero() != completed
 		default:
 			return false
 		}
