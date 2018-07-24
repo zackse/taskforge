@@ -28,7 +28,7 @@ import (
 )
 
 func loadConfigFile(path string) (*Config, error) {
-	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
 		return nil, err
 	}
 
@@ -79,7 +79,7 @@ func findConfigFile() string {
 		}
 	}
 
-	return filepath.Join(os.Getenv("HOME"), ".tasks.d", "tsk.yml")
+	return filepath.Join(os.Getenv("HOME"), ".tasks.d", "config.yml")
 }
 
 var config *Config
