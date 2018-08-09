@@ -13,24 +13,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-package backends
+package list
 
 import (
+	"fmt"
 	"os"
 	"testing"
+
+	"github.com/mitchellh/mapstructure"
 )
 
-func TestFileBackend(t *testing.T) {
-	runBackendTest(t, backendTest{
-		cleanup: func(b Backend) error {
-			fileB := b.(*File)
-			return os.RemoveAll(fileB.Dir)
-		},
-		config: Config{
-			"dir": ".test.file.d",
-		},
-		backend: &File{},
-		empty:   &File{},
-	})
+func TestFileList(t *testing.T) {
+	for _, test := range listTests {
+		config := Config{
+			"dir": fmt.Sprintf(".test.file.%s", test.name),
+		}
+
+		l := &File{}
+
+		err := mapstructure.Decode(config, &l)
+		if err != nil {
+			t.Error(err)
+			return
+		}
+
+		t.Run(test.name, func(t *testing.T) {
+			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.name))
+
+			err := test.Test(l)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+
+		})
+	}
 }
