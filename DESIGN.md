@@ -1,6 +1,6 @@
-# tsk
+# taskforge
 
-This document describes the goals of tsk, and it's design.
+This document describes the goals of taskforge, and it's design.
 
 # Scope
 
@@ -40,7 +40,7 @@ Future ideas and features I will implement are as follows:
   - Postgres
   - MongoDB
   - S3 / Object Storage
-- REST API Server built on tsk\_lib
+- REST API Server built on taskforge\_lib
 - GUI Frontends (QT is a good choice)
 - Modifier statements on queries such as `LIMIT` or `ORDER BY`
 - Configurable canned queries
@@ -48,11 +48,11 @@ Future ideas and features I will implement are as follows:
 
 # Design
 
-## tsk\_lib
+## taskforge\_lib
 
-`tsk_lib` is the shared library which holds all of the "business logic" for tsk.
+`taskforge_lib` is the shared library which holds all of the "business logic" for taskforge.
 Anything which does not relate to the presentation of the data is contained
-within tsk\_lib.
+within taskforge\_lib.
 
 ### Query Language
 
@@ -239,11 +239,11 @@ Additionally a backend will need to be deserializable from a
 config in the user config's YAML and load it at the appropriate time, after
 we've decided which backend to use.
 
-## tsk (CLI)
+## taskforge (CLI)
 
 ### Configuration File
 
-tsk will be configured with YAML.
+taskforge will be configured with YAML.
 
 TODO: Write this section
 
@@ -259,7 +259,7 @@ The new subcommand will accept the following flags:
 It takes VarArgs and concats them into the title of a new task. So that:
 
 ```bash
-tsk new write a design doc
+taskforge new write a design doc
 ```
 
 Will create a task with the title "write a design doc". Flags as described above
@@ -288,7 +288,7 @@ The note subcommand takes no flags and one argument: the ID of the task to add
 a note to. So that:
 
 ```bash
-tsk note TASK_ID
+taskforge note TASK_ID
 ```
 
 Opens up your `$EDITOR` and allows you to input text that will then be used as
@@ -300,7 +300,7 @@ The complete subcommand takes no flags and one argument: the ID of the task to
 add a note to. So that:
 
 ```bash
-tsk complete TASK_ID
+taskforge complete TASK_ID
 ```
 
 Will complete the task indicated by `TASK_ID`.

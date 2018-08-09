@@ -23,7 +23,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/task"
 	"github.com/gocarina/gocsv"
 	"github.com/spf13/cobra"
 )

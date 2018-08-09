@@ -1,4 +1,4 @@
-# tsk, a task management cli
+# taskforge, a task management cli
 
 It's like [taskwarrior](https://taskwarrior.org) but flexible in different ways.
 
@@ -28,7 +28,7 @@ If your `$GOPATH/bin` is in your `$PATH` then you now have dfm installed.
 Manage your tasks
 
 Usage:
-  tsk [command]
+  taskforge [command]
 
 Available Commands:
   complete    Complete tasks by ID
@@ -40,9 +40,9 @@ Available Commands:
   version     print version information
 
 Flags:
-  -h, --help   help for tsk
+  -h, --help   help for taskforge
 
-Use "tsk [command] --help" for more information about a command.
+Use "taskforge [command] --help" for more information about a command.
 ```
 
 ## Contributing
@@ -55,7 +55,7 @@ Use "tsk [command] --help" for more information about a command.
 
 All pull requests should go to the develop branch not master. Thanks!
 
-See the [DESIGN.md](https://github.com/chasinglogic/tsk/blob/master/DESIGN.md)
+See the [DESIGN.md](https://github.com/chasinglogic/taskforge/blob/master/DESIGN.md)
 for more info. Not everything laid out there is implemented yet.
 
 ## License

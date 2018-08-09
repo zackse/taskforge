@@ -20,7 +20,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chasinglogic/tsk/ql/token"
+	"github.com/chasinglogic/taskforge/ql/token"
 )
 
 func TestLexer(t *testing.T) {

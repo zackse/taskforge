@@ -21,7 +21,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/task"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -42,7 +42,7 @@ var edit = &cobra.Command{
 			os.Exit(1)
 		}
 
-		tsk, err := backend.FindByID(args[0])
+		taskforge, err := backend.FindByID(args[0])
 		if err != nil && err == task.ErrNotFound {
 			fmt.Println(err)
 			os.Exit(0)
@@ -60,7 +60,7 @@ var edit = &cobra.Command{
 		defer file.Close()
 		defer os.Remove(file.Name())
 
-		yml, err := yaml.Marshal(tsk)
+		yml, err := yaml.Marshal(taskforge)
 		if err != nil {
 			fmt.Println("ERROR Unable to serialize task into yaml:", err)
 			os.Exit(1)

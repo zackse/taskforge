@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/task"
 	"github.com/spf13/cobra"
 )
 

@@ -13,14 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package ast
 
 import (
 	"fmt"
 	"time"
 
-	"github.com/chasinglogic/tsk/ql/token"
+	"github.com/chasinglogic/taskforge/ql/token"
 )
 
 // AST is the Abstract Syntax Tree for a query
@@ -80,6 +79,21 @@ func (nl NumberLiteral) String() string            { return fmt.Sprint(nl.Value)
 
 // GetValue returns the value for this literal
 func (nl NumberLiteral) GetValue() interface{} { return nl.Value }
+
+// BooleanLiteral is a literal number in a query
+type BooleanLiteral struct {
+	Token token.Token
+	Value float64
+}
+
+func (nl BooleanLiteral) expression() {}
+
+// TokenLiteral implements Node
+func (nl BooleanLiteral) TokenLiteral() token.Token { return nl.Token }
+func (nl BooleanLiteral) String() string            { return fmt.Sprint(nl.Value) }
+
+// GetValue returns the value for this literal
+func (nl BooleanLiteral) GetValue() interface{} { return nl.Value }
 
 // StringLiteral is a string
 type StringLiteral struct {

@@ -20,9 +20,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/chasinglogic/tsk/ql/lexer"
-	"github.com/chasinglogic/tsk/ql/parser"
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/ql/lexer"
+	"github.com/chasinglogic/taskforge/ql/parser"
+	"github.com/chasinglogic/taskforge/task"
 	"github.com/spf13/cobra"
 )
 

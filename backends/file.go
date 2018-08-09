@@ -22,7 +22,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/task"
 )
 
 type File struct {

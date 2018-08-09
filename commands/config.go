@@ -23,13 +23,15 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/chasinglogic/tsk/backends"
+	"github.com/chasinglogic/taskforge/backends"
 	"github.com/mitchellh/mapstructure"
 )
 
 func loadConfigFile(path string) (*Config, error) {
-	if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
-		return nil, err
+	if _, err := os.Stat(filepath.Dir(path)); err != nil && os.IsNotExist(err) {
+		if err := os.MkdirAll(filepath.Dir(path), 0644); err != nil {
+			return nil, err
+		}
 	}
 
 	content, err := ioutil.ReadFile(path)
@@ -68,9 +70,9 @@ func defaultConfig() *Config {
 
 func findConfigFile() string {
 	possiblePaths := []string{
-		".tsk.yml",
+		".taskforge.yml",
 		filepath.Join(os.Getenv("HOME"), ".tasks.d", "config.yml"),
-		"/etc/tsk/config.yml",
+		"/etc/taskforge/config.yml",
 	}
 
 	for _, path := range possiblePaths {

@@ -13,13 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package backends
 
 import (
 	"fmt"
 
-	"github.com/chasinglogic/tsk/task"
+	"github.com/chasinglogic/taskforge/task"
 )
 
 // Backend is a task.List that supports saving and loading from
@@ -45,6 +44,10 @@ func GetByName(name string) (Backend, error) {
 	switch name {
 	case "file":
 		return &File{}, nil
+	case "mongodb":
+		fallthrough
+	case "mongo":
+		return &MongoBackend{}, nil
 	default:
 		return nil, fmt.Errorf("no backend found with name %s", name)
 	}

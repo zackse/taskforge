@@ -21,9 +21,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/chasinglogic/tsk/ql/ast"
-	"github.com/chasinglogic/tsk/ql/lexer"
-	"github.com/chasinglogic/tsk/ql/token"
+	"github.com/chasinglogic/taskforge/ql/ast"
+	"github.com/chasinglogic/taskforge/ql/lexer"
+	"github.com/chasinglogic/taskforge/ql/token"
 )
 
 func TestParser(t *testing.T) {

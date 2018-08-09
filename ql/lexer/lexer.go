@@ -18,7 +18,7 @@
 package lexer
 
 import (
-	"github.com/chasinglogic/tsk/ql/token"
+	"github.com/chasinglogic/taskforge/ql/token"
 )
 
 // Lexer maintains document position and lexing the input

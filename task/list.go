@@ -22,8 +22,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/chasinglogic/tsk/ql/ast"
-	"github.com/chasinglogic/tsk/ql/token"
+	"github.com/chasinglogic/taskforge/ql/ast"
+	"github.com/chasinglogic/taskforge/ql/token"
 )
 
 // ErrNotFound is returned by a List when a Task matching the given ID does not
@@ -32,11 +32,6 @@ var ErrNotFound = errors.New("no task with that id exists")
 
 // List is implemented by any struct that can maintain tasks
 type List interface {
-	// Return a new List which has all completed task if yes_or_no is true and all
-	// uncompleted tasks if yes_or_no is false.
-	Completed(completed bool) []Task
-	// Return a new List with only tasks in the given context
-	Context(context string) []Task
 	// Evaluate the AST and return a List of matching results
 	Search(ast ast.AST) ([]Task, error)
 	// Add a task to the List
@@ -85,21 +80,6 @@ func (ml *MemoryList) sort() {
 	})
 
 	ml = &list
-}
-
-// Completed returns a slice of completed tasks
-func (ml *MemoryList) Completed(completed bool) []Task {
-	return ml.findWhere(func(t Task) bool {
-		return (!t.CompletedDate.IsZero() && completed) ||
-			(t.CompletedDate.IsZero() && !completed)
-	})
-}
-
-// Context returns a slice of tasks in the given context
-func (ml *MemoryList) Context(context string) []Task {
-	return ml.findWhere(func(t Task) bool {
-		return t.Context == context
-	})
 }
 
 // Add adds a task to this list

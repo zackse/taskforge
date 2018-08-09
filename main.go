@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/chasinglogic/tsk/commands"
+	"github.com/chasinglogic/taskforge/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +38,7 @@ var versionCmd = &cobra.Command{
 	Aliases: []string{"v"},
 	Short:   "print version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("tsk-%s-%s\n", commit, version)
+		fmt.Printf("taskforge-%s-%s\n", commit, version)
 		fmt.Println(`license`)
 	},
 }

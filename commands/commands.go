@@ -38,6 +38,7 @@ func init() {
 	Root.AddCommand(complete)
 	Root.AddCommand(edit)
 	Root.AddCommand(next)
+	Root.AddCommand(notify)
 }
 
 const taskIDUsageTemplate = `Usage:{{if .Runnable}}
@@ -66,7 +67,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 // Root is the root CLI command
 var Root = &cobra.Command{
-	Use:   "tsk",
+	Use:   "taskforge",
 	Short: "Manage your tasks",
 }
 
