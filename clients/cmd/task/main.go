@@ -13,13 +13,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package main
 
 import (
 	"fmt"
 
-	"github.com/chasinglogic/taskforge/commands"
+	"github.com/chasinglogic/taskforge/clients/cmd/task/commands"
 	"github.com/spf13/cobra"
 )
 
