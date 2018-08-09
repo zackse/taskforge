@@ -2,26 +2,25 @@
 
 This document describes the goals of taskforge, and it's design.
 
-# Scope
+## Scope
 
-## Goals
+### Goals
 
-### MVP
+#### MVP
 
 - Task management library that can be used with multiple frontends
   - Supports querying tasks
     - [Query Language Design](#query-language)
     - [Task Design](#task-data)
-    - [List Design](#task-lists)
-    - [Backend Design](#backends)
-- Supports saving and loading of tasks from multiple backends
-  - **MVP:** Only supports one backend: [LocalFile](#local-backend)
+    - [List Design](#lists)
+- Supports saving and loading of tasks from multiple "services" via List implementations
+  - **MVP:** Only supports one list: [File](#file-list)
 - Query Language supports both simple string searches and complex field based queries
   - For Example:
     - "milk and sugar" will search through all tasks for the words "milk and sugar" in the title, body, and notes of tasks
     - "title = WORK" will find tasks whose title is the string WORK
 - Task management CLI as the first usable frontend
-  - Supports use of different backends via a configuration file
+  - Supports use of different lists via a configuration file
   - Follows Unix best practices
   - Uses a subcommand interface the following commands will be supported:
     - `new` [design](#new-subcommand)
@@ -31,11 +30,11 @@ This document describes the goals of taskforge, and it's design.
     - `next` [design](#next-subcommand)
     - `edit` [design](#edit-subcommand)
 
-### Future Work / Ideas
+#### Future Work / Ideas
 
 Future ideas and features I will implement are as follows:
 
-- Additional Backends:
+- Additional Lists:
   - SQLite
   - Postgres
   - MongoDB
@@ -46,13 +45,7 @@ Future ideas and features I will implement are as follows:
 - Configurable canned queries
 - Task custom fields
 
-# Design
-
-## taskforge\_lib
-
-`taskforge_lib` is the shared library which holds all of the "business logic" for taskforge.
-Anything which does not relate to the presentation of the data is contained
-within taskforge\_lib.
+## Design
 
 ### Query Language
 
@@ -161,93 +154,76 @@ The pseudo-code representation of a task is:
 }
 ```
 
-The ID of a task will be it's title and created\_date joined using a `:`
-character and hashed using MD5. More pseudo-code:
-
-```text
-md5(title + ":" + created_date.to_string())
-```
-
 A Note will be represented as:
 
 ```json
 {
+    id: String,
     created_date: Date,
     body: String,
 }
 ```
 
+All ID's will be BSON ObjectIDs regardless of list storage. This is a nice and
+easy to use UUID that can be made into a string.
 
-### Task Lists
+## Task Lists
 
-List will be a trait that will be implemented by all concrete Backends.
-Additionally List will be implemented for `Vec<Task>` and `Vec<&Task>`.
+List will be a trait that will be implemented by all services which can store tasks.
 
 It has the following definition:
 
 ```go
 // List is implemented by any struct that can maintain tasks
 type List interface {
-    // Return a new List which has all completed task if yes_or_no is true and all
-    // uncompleted tasks if yes_or_no is false.
-    Completed(completed bool) []Task
-    // Return a new List with only tasks in the given context
-    Context(context string) []Task
+    // Init will perform any necessary initialization of the List such as
+    // connecting to external data sources or loading files into memory
+    Init() error
+
     // Evaluate the AST and return a List of matching results
     Search(ast ast.AST) ([]Task, error)
+
     // Add a task to the List
     Add(Task) error
+
     // Add multiple tasks to the List, should be more efficient resource
     // utilization.
     AddMultiple(task []Task) error
+
     // Return a slice of Tasks in this List
     Slice() []Task
+
     // Find a task by ID
     FindByID(id string) (Task, error)
+
     // Return the current task, meaning the oldest uncompleted task in the List
     Current() (Task, error)
 
     // Complete a task by id
     Complete(id string) error
+
     // Update a task in the list, finding the original by the ID of the given task
     Update(Task) error
+
     // Add note to a task by ID
     AddNote(id string, note Note) error
 }
 ```
 
-### Backends
-
-Backend is a trait which is implemented by all of the concrete Backends. It has
-the following pseudo-code definition:
-
-```go
-
-// Backend is a task.List that supports saving and loading from
-// a data source.
-type Backend interface {
-    task.List
-    
-    Init() error
-    Save() error
-    Load() error
-}
-```
-
-Additionally a backend will need to be deserializable from a
-`map[string]interface{}` via mapstructure. This allows us to store the backend
+Additionally a list will need to be deserializable from a
+`map[string]interface{}` via mapstructure. This allows us to store the list
 config in the user config's YAML and load it at the appropriate time, after
-we've decided which backend to use.
+we've decided which list to use.
 
-## taskforge (CLI)
+### task (CLI client)
 
-### Configuration File
+#### Configuration File
 
-taskforge will be configured with YAML.
+task will be configured with TOML.
 
 TODO: Write this section
 
-### New Subcommand
+#### New Subcommand
 
 The new subcommand will accept the following flags:
 
@@ -259,7 +235,7 @@ The new subcommand will accept the following flags:
 It takes VarArgs and concats them into the title of a new task. So that:
 
 ```bash
-taskforge new write a design doc
+task new write a design doc
 ```
 
 Will create a task with the title "write a design doc". Flags as described above
@@ -282,30 +258,30 @@ The order of the columns is not important. Only the title, priority, and context
 columns are required. Values can be omitted for the optional comments for any
 record which does require them.
 
-### Note Subcommand
+#### Note Subcommand
 
 The note subcommand takes no flags and one argument: the ID of the task to add
 a note to. So that:
 
 ```bash
-taskforge note TASK_ID
+task note TASK_ID
 ```
 
 Opens up your `$EDITOR` and allows you to input text that will then be used as
 the body of a note which is attached to the task.
 
-### Complete Subcommand
+#### Complete Subcommand
 
 The complete subcommand takes no flags and one argument: the ID of the task to
 add a note to. So that:
 
 ```bash
-taskforge complete TASK_ID
+task complete TASK_ID
 ```
 
 Will complete the task indicated by `TASK_ID`.
 
-### Query Subcommand
+#### Query Subcommand
 
 The query subcommand takes the following flags:
 
@@ -337,7 +313,7 @@ TASK_ID TASK_CREATED_DATE TASK_TITLE
 If ID is given only a newline separated list of TASK\IDs are printed with no
 headers.
 
-### Next Subcommand
+#### Next Subcommand
 
 The next subcommand takes the following flags:  
 
@@ -353,7 +329,7 @@ TASK_ID TASK_CREATED_DATE TASK_TITLE
 
 If title or id only flags are given then only that field is printed.
 
-### Edit Subcommand
+#### Edit Subcommand
 
 The edit subcommand takes one argument: the task ID. It opens the indicated task
 in `$EDITOR` as a yaml file and includes all fields from the task. Upon saving
