@@ -36,14 +36,14 @@ var edit = &cobra.Command{
 	Short:   "Edit a task as YAML",
 	Args:    taskId,
 	Run: func(cmd *cobra.Command, args []string) {
-		backend, err := config.backend()
+		l, err := config.l()
 		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
+			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
-		taskforge, err := backend.FindByID(args[0])
-		if err != nil && err == task.ErrNotFound {
+		taskforge, err := l.FindByID(args[0])
+		if err != nil && err == l.ErrNotFound {
 			fmt.Println(err)
 			os.Exit(0)
 		} else if err != nil {
@@ -102,7 +102,7 @@ var edit = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := backend.Update(updatedTask); err != nil {
+		if err := l.Update(updatedTask); err != nil {
 			fmt.Println("ERROR Updating task:", err)
 			os.Exit(1)
 		}

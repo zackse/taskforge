@@ -75,9 +75,9 @@ var new = &cobra.Command{
 	Aliases: []string{"n", "create"},
 	Short:   "Create a new task",
 	Run: func(cmd *cobra.Command, args []string) {
-		backend, err := config.backend()
+		l, err := config.l()
 		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
+			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
@@ -88,7 +88,7 @@ var new = &cobra.Command{
 				os.Exit(1)
 			}
 
-			err = backend.AddMultiple(tasks)
+			err = l.AddMultiple(tasks)
 			if err != nil {
 				fmt.Println("ERROR Unable to add tasks:", err)
 				os.Exit(1)
@@ -108,15 +108,9 @@ var new = &cobra.Command{
 		t.Body = body
 		t.Priority = priority
 
-		err = backend.Add(t)
+		err = l.Add(t)
 		if err != nil {
 			fmt.Println("ERROR Unable to add task:", err)
-			os.Exit(1)
-		}
-
-		err = backend.Save()
-		if err != nil {
-			fmt.Println("ERROR Unable to save to backend:", err)
 			os.Exit(1)
 		}
 	},

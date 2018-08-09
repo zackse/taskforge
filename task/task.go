@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package task
 
 import (
@@ -26,6 +25,7 @@ import (
 // Note is a note added to a task, analogous to a comment but only for ones
 // personal use.
 type Note struct {
+	ID          string    `bson:"_id" json:"id"`
 	CreatedDate time.Time `json:"created_date"`
 	Body        string    `json:"body"`
 }
@@ -42,6 +42,7 @@ func (n Note) String() string {
 // NewNote will properly fill out the metadata of a note with the given body
 func NewNote(body string) Note {
 	return Note{
+		ID:          objectid.New().Hex(),
 		CreatedDate: time.Now(),
 		Body:        body,
 	}
@@ -49,7 +50,7 @@ func NewNote(body string) Note {
 
 // Task is a unit of work
 type Task struct {
-	ID            string    `json:"id"`
+	ID            string    `bson:"_id" json:"id"`
 	Title         string    `json:"title"`
 	CreatedDate   time.Time `json:"created_date"`
 	Context       string    `json:"context"`
@@ -71,18 +72,21 @@ func (t Task) String() string {
 // New creates a task with the given title. This properly populates meta data
 // fields with non-zero values.
 func New(title string) Task {
-	t := Task{
+	return Task{
+		ID:          objectid.New().Hex(),
 		Title:       title,
 		CreatedDate: time.Now(),
 		Context:     "default",
 	}
-
-	t.ID = objectid.New().Hex()
-
-	return t
 }
 
 // Complete completes this task.
 func (t *Task) Complete() {
 	t.CompletedDate = time.Now()
+}
+
+// IsCompleted returns a boolean indicating whether this task is complete or
+// not.
+func (t *Task) IsCompleted() bool {
+	return !t.CompletedDate.IsZero()
 }

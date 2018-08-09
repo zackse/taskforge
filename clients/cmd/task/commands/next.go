@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chasinglogic/taskforge/task"
 	"github.com/spf13/cobra"
 )
 
@@ -40,14 +39,14 @@ var next = &cobra.Command{
 	Aliases: []string{"current"},
 	Short:   "Show the current task",
 	Run: func(cmd *cobra.Command, args []string) {
-		backend, err := config.backend()
+		l, err := config.l()
 		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
+			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
-		current, err := backend.Current()
-		if err != nil && err == task.ErrNotFound {
+		current, err := l.Current()
+		if err != nil && err == l.ErrNotFound {
 			fmt.Println("No uncompleted tasks found!")
 			return
 		} else if err != nil {

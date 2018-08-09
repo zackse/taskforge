@@ -38,7 +38,6 @@ func init() {
 	Root.AddCommand(complete)
 	Root.AddCommand(edit)
 	Root.AddCommand(next)
-	Root.AddCommand(notify)
 }
 
 const taskIDUsageTemplate = `Usage:{{if .Runnable}}

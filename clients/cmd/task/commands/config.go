@@ -16,14 +16,13 @@
 package commands
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/chasinglogic/taskforge/backends"
+	"github.com/chasinglogic/taskforge/l"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -61,8 +60,8 @@ func loadConfigFile(path string) (*Config, error) {
 func defaultConfig() *Config {
 	return &Config{
 		DefaultContext: "default",
-		Backend:        "file",
-		BackendConfig: map[string]interface{}{
+		List:           "file",
+		ListConfig: map[string]interface{}{
 			"dir": filepath.Join(os.Getenv("HOME"), ".tasks.d"),
 		},
 	}
@@ -88,34 +87,25 @@ var config *Config
 
 type Config struct {
 	DefaultContext string `yaml:"default_context"`
-	Backend        string
-	BackendConfig  map[string]interface{} `yaml:"backend_config" json:"backend_config"`
+	List           string
+	ListConfig     map[string]interface{} `yaml:"list_config" json:"list_config"`
 
-	backendImpl backends.Backend
+	listImpl l.List
 }
 
-func (c *Config) backend() (backends.Backend, error) {
-	if c.backendImpl == nil {
+func (c *Config) l() (l.List, error) {
+	if c.listImpl == nil {
 		var err error
-		c.backendImpl, err = backends.GetByName(c.Backend)
+		c.listImpl, err = l.GetByName(c.List)
 		if err != nil {
 			return nil, err
 		}
 
-		err = mapstructure.Decode(c.BackendConfig, &c.backendImpl)
-		if err != nil {
-			return nil, err
-		}
-
-		if c.backendImpl == nil {
-			return nil, fmt.Errorf("backend %s didn't initialize but returned no error", c.Backend)
-		}
-
-		err = c.backendImpl.Init()
+		err = mapstructure.Decode(c.ListConfig, &c.listImpl)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	return c.backendImpl, c.backendImpl.Load()
+	return c.listImpl, c.listImpl.Init()
 }

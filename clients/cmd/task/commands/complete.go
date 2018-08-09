@@ -31,15 +31,15 @@ var complete = &cobra.Command{
 	Aliases: []string{"done", "d"},
 	Short:   "Complete tasks by ID",
 	Run: func(cmd *cobra.Command, args []string) {
-		backend, err := config.backend()
+		l, err := config.l()
 		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
+			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
 		var idToComplete string
 		if len(args) == 0 {
-			current, err := backend.Current()
+			current, err := l.Current()
 			if err != nil {
 				fmt.Println("ERROR No TASK_ID given and no current task found.")
 				os.Exit(1)
@@ -54,13 +54,8 @@ var complete = &cobra.Command{
 			os.Exit(1)
 		}
 
-		if err := backend.Complete(idToComplete); err != nil {
+		if err := l.Complete(idToComplete); err != nil {
 			fmt.Println("ERROR Unable to complete task:", err)
-			os.Exit(1)
-		}
-
-		if err := backend.Save(); err != nil {
-			fmt.Println("ERROR Saving changes to backend:", err)
 			os.Exit(1)
 		}
 	},

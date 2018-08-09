@@ -57,16 +57,21 @@ var query = &cobra.Command{
 	Aliases: []string{"q", "s", "search"},
 	Short:   "Search and list tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		backend, err := config.backend()
+		l, err := config.l()
 		if err != nil {
-			fmt.Println("ERROR Unable to load backend:", err)
+			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
 		input := strings.Join(args, " ")
 		if len(input) == 0 {
-			list := backend.Slice()
-			printList(list)
+			l, err := l.Slice()
+			if err != nil {
+				fmt.Println("ERROR unable to retrieve tasks:", err)
+				os.Exit(1)
+			}
+
+			printList(l)
 			os.Exit(0)
 		}
 
@@ -78,18 +83,18 @@ var query = &cobra.Command{
 			os.Exit(1)
 		}
 
-		list, err := backend.Search(ast)
+		l, err := l.Search(ast)
 		if err != nil {
-			fmt.Println("ERROR searching backend:", err)
+			fmt.Println("ERROR searching list:", err)
 			os.Exit(1)
 		}
 
-		printList(list)
+		printList(l)
 	},
 }
 
-func printList(list []task.Task) {
-	for i := range list {
-		fmt.Printf("%s \"%s\"\n", list[i].ID, list[i].Title)
+func printList(l []task.Task) {
+	for i := range l {
+		fmt.Printf("%s \"%s\"\n", l[i].ID, l[i].Title)
 	}
 }
