@@ -1,27 +1,92 @@
-hash: 663d6e487f40e8d1978fb6cbd9a4a19912795c7e16f411bba8a7cf949a2eafb5
-updated: 2018-07-26T15:55:26.824209319-04:00
+hash: cc60ab8e8bf409db27333508dcf696af1eaaf3bac2a3f61ea6ca613b2322893d
+updated: 2018-08-09T12:43:49.747507891-04:00
 imports:
 - name: github.com/0xAX/notificator
   version: 88d57ee9043ba88d6a62e437fa15dda1ca0d2b59
+- name: github.com/buger/jsonparser
+  version: f4dd9f5a6b441265aefc1d44872a6f8c10f42b37
 - name: github.com/chasinglogic/dfm
   version: 01ac16bf657b7f1f3b6caa4919e06a895c3791b1
   subpackages:
   - commands
+- name: github.com/go-stack/stack
+  version: 259ab82a6cad3992b4e21ff5cac294ccb06474bc
 - name: github.com/gocarina/gocsv
   version: a5c9099e2484f1551abb9433885e158610a25f4b
+- name: github.com/golang/snappy
+  version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
 - name: github.com/mitchellh/mapstructure
   version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/mongodb/mongo-go-driver
-  version: 8df56f107cdd485351eb2523992c3364114b4b2e
+  version: 9b26cbb1a61aaedd6160e99c41fa514b04a1a245
   subpackages:
+  - bson
+  - bson/builder
+  - bson/decimal
+  - bson/elements
   - bson/objectid
+  - bson/parser
+  - bson/parser/ast
+  - core/address
+  - core/auth
+  - core/auth/internal/gssapi
+  - core/command
+  - core/compressor
+  - core/connection
+  - core/connstring
+  - core/description
+  - core/dispatch
+  - core/event
+  - core/option
+  - core/readconcern
+  - core/readpref
+  - core/result
+  - core/session
+  - core/tag
+  - core/topology
+  - core/uuid
+  - core/version
+  - core/wiremessage
+  - core/writeconcern
+  - internal
   - mongo
+  - mongo/aggregateopt
+  - mongo/changestreamopt
+  - mongo/clientopt
+  - mongo/collectionopt
+  - mongo/countopt
+  - mongo/dbopt
+  - mongo/deleteopt
+  - mongo/distinctopt
+  - mongo/dropcollopt
+  - mongo/findopt
+  - mongo/indexopt
+  - mongo/insertopt
+  - mongo/listcollectionopt
+  - mongo/listdbopt
+  - mongo/mongoopt
+  - mongo/replaceopt
+  - mongo/runcmdopt
+  - mongo/sessionopt
+  - mongo/updateopt
 - name: github.com/spf13/cobra
   version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
 - name: github.com/spf13/pflag
-  version: 583c0c0531f06d5278b7d917446061adc344b5cd
+  version: 9a97c102cda95a86cec2345a6f09f55a939babf5
+- name: golang.org/x/crypto
+  version: 9477e0b78b9ac3d0b03822fd95422e2fe07627cd
+  subpackages:
+  - pbkdf2
+- name: golang.org/x/net
+  version: f9ce57c11b242f0f1599cf25c89d8cb02c45295a
+  subpackages:
+  - context
+- name: golang.org/x/sync
+  version: 1d60e4601c6fd243af51cc01ddf169918a5407ca
+  subpackages:
+  - semaphore
 - name: gopkg.in/yaml.v2
   version: 5420a8b6744d3b0345ab293f6fcba19c978f1183
 testImports: []

@@ -139,7 +139,7 @@ func TestFindAndUpdateOneOpt(t *testing.T) {
 		proj := Projection(true)
 		sort := Sort(true)
 
-		opts := []UpdateOne{
+		opts := []UpdateOneOption{
 			BypassDocumentValidation(false),
 			Collation(c),
 			MaxTime(5),
@@ -148,9 +148,13 @@ func TestFindAndUpdateOneOpt(t *testing.T) {
 			Sort(sort),
 			Upsert(true),
 		}
-		bundle := BundleUpdateOne(opts...)
+		params := make([]UpdateOne, len(opts))
+		for i := range opts {
+			params[i] = opts[i]
+		}
+		bundle := BundleUpdateOne(params...)
 
-		deleteOpts, err := bundle.Unbundle(true)
+		deleteOpts, _, err := bundle.Unbundle(true)
 		testhelpers.RequireNil(t, err, "got non-nill error from unbundle: %s", err)
 
 		if len(deleteOpts) != len(opts) {
@@ -161,6 +165,23 @@ func TestFindAndUpdateOneOpt(t *testing.T) {
 			if !reflect.DeepEqual(opt.ConvertUpdateOneOption(), deleteOpts[i]) {
 				t.Errorf("opt mismatch. expected %#v, got %#v", opt, deleteOpts[i])
 			}
+		}
+	})
+
+	t.Run("Nil Option Bundle", func(t *testing.T) {
+		sess := FindSessionOpt{}
+		opts, _, err := BundleUpdateOne(Upsert(true), BundleUpdateOne(nil), sess, nil).unbundle()
+		testhelpers.RequireNil(t, err, "got non-nil error from unbundle: %s", err)
+
+		if len(opts) != 1 {
+			t.Errorf("expected bundle length 1. got: %d", len(opts))
+		}
+
+		opts, _, err = BundleUpdateOne(nil, sess, BundleUpdateOne(nil), Upsert(true)).unbundle()
+		testhelpers.RequireNil(t, err, "got non-nil error from unbundle: %s", err)
+
+		if len(opts) != 1 {
+			t.Errorf("expected bundle length 1. got: %d", len(opts))
 		}
 	})
 
@@ -202,7 +223,7 @@ func TestFindAndUpdateOneOpt(t *testing.T) {
 
 		for _, tc := range cases {
 			t.Run(tc.name, func(t *testing.T) {
-				options, err := tc.bundle.Unbundle(tc.dedup)
+				options, _, err := tc.bundle.Unbundle(tc.dedup)
 				testhelpers.RequireNil(t, err, "got non-nill error from unbundle: %s", err)
 
 				if len(options) != len(tc.expectedOpts) {

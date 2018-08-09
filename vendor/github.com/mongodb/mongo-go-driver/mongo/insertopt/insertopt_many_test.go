@@ -137,13 +137,17 @@ func TestInsertManyOpt(t *testing.T) {
 	})
 
 	t.Run("TestAll", func(t *testing.T) {
-		opts := []Many{
+		opts := []ManyOption{
 			BypassDocumentValidation(true),
 			Ordered(false),
 		}
-		bundle := BundleMany(opts...)
+		params := make([]Many, len(opts))
+		for i := range opts {
+			params[i] = opts[i]
+		}
+		bundle := BundleMany(params...)
 
-		deleteOpts, err := bundle.Unbundle(true)
+		deleteOpts, _, err := bundle.Unbundle(true)
 		testhelpers.RequireNil(t, err, "got non-nill error from unbundle: %s", err)
 
 		if len(deleteOpts) != len(opts) {
@@ -154,6 +158,23 @@ func TestInsertManyOpt(t *testing.T) {
 			if !reflect.DeepEqual(opt.ConvertInsertOption(), deleteOpts[i]) {
 				t.Errorf("opt mismatch. expected %#v, got %#v", opt, deleteOpts[i])
 			}
+		}
+	})
+
+	t.Run("Nil Option Bundle", func(t *testing.T) {
+		sess := InsertSessionOpt{}
+		opts, _, err := BundleMany(BypassDocumentValidation(true), BundleMany(nil), sess, nil).unbundle()
+		testhelpers.RequireNil(t, err, "got non-nil error from unbundle: %s", err)
+
+		if len(opts) != 1 {
+			t.Errorf("expected bundle length 1. got: %d", len(opts))
+		}
+
+		opts, _, err = BundleMany(nil, sess, BundleMany(nil), BypassDocumentValidation(true)).unbundle()
+		testhelpers.RequireNil(t, err, "got non-nil error from unbundle: %s", err)
+
+		if len(opts) != 1 {
+			t.Errorf("expected bundle length 1. got: %d", len(opts))
 		}
 	})
 
@@ -181,7 +202,7 @@ func TestInsertManyOpt(t *testing.T) {
 
 		for _, tc := range cases {
 			t.Run(tc.name, func(t *testing.T) {
-				options, err := tc.bundle.Unbundle(tc.dedup)
+				options, _, err := tc.bundle.Unbundle(tc.dedup)
 				testhelpers.RequireNil(t, err, "got non-nill error from unbundle: %s", err)
 
 				if len(options) != len(tc.expectedOpts) {

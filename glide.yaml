@@ -6,7 +6,6 @@ import:
 - package: github.com/spf13/cobra
 - package: github.com/mitchellh/mapstructure
 - package: github.com/mongodb/mongo-go-driver
-  version: ^0.0.9
   subpackages:
   - mongo
 - package: github.com/spf13/pflag

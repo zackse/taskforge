@@ -129,6 +129,13 @@ type ChangeStreamOptioner interface {
 	changeStreamOption()
 }
 
+// DropCollectionsOptioner is the interface implemented by types that can be used as
+// Options for DropCollections operations.
+type DropCollectionsOptioner interface {
+	Optioner
+	dropCollectionsOption()
+}
+
 // ListCollectionsOptioner is the interface implemented by types that can be used as
 // Options for ListCollections operations.
 type ListCollectionsOptioner interface {
@@ -186,6 +193,8 @@ var (
 	_ CreateIndexesOptioner     = (*OptMaxTime)(nil)
 	_ CursorOptioner            = OptBatchSize(0)
 	_ DeleteOptioner            = (*OptCollation)(nil)
+	_ DistinctOptioner          = (*OptCollation)(nil)
+	_ DistinctOptioner          = (*OptMaxTime)(nil)
 	_ DistinctOptioner          = (*OptCollation)(nil)
 	_ DistinctOptioner          = (*OptMaxTime)(nil)
 	_ DropIndexesOptioner       = (*OptMaxTime)(nil)
@@ -247,6 +256,9 @@ var (
 	_ FindOneOptioner           = (*OptSort)(nil)
 	_ InsertManyOptioner        = (*OptBypassDocumentValidation)(nil)
 	_ InsertManyOptioner        = (*OptOrdered)(nil)
+	_ InsertOneOptioner         = (*OptBypassDocumentValidation)(nil)
+	_ InsertOptioner            = (*OptBypassDocumentValidation)(nil)
+	_ InsertOptioner            = (*OptOrdered)(nil)
 	_ InsertOneOptioner         = (*OptBypassDocumentValidation)(nil)
 	_ InsertOptioner            = (*OptBypassDocumentValidation)(nil)
 	_ InsertOptioner            = (*OptOrdered)(nil)
@@ -608,17 +620,17 @@ func (opt OptMaxTime) Option(d *bson.Document) error {
 	return nil
 }
 
-func (OptMaxTime) aggregateOption()         {}
-func (OptMaxTime) countOption()             {}
-func (OptMaxTime) distinctOption()          {}
-func (OptMaxTime) findOption()              {}
-func (OptMaxTime) findOneOption()           {}
-func (OptMaxTime) findOneAndDeleteOption()  {}
-func (OptMaxTime) findOneAndReplaceOption() {}
-func (OptMaxTime) findOneAndUpdateOption()  {}
-func (OptMaxTime) listIndexesOption()       {}
-func (OptMaxTime) dropIndexesOption()       {}
-func (OptMaxTime) createIndexesOption()     {}
+func (OptMaxTime) aggregateOption()              {}
+func (OptMaxTime) countOption()                  {}
+func (OptMaxTime) distinctOption()               {}
+func (OptMaxTime) findOption()                   {}
+func (OptMaxTime) findOneOption()                {}
+func (OptMaxTime) findOneAndDeleteOption()       {}
+func (OptMaxTime) findOneAndReplaceOption()      {}
+func (OptMaxTime) findOneAndUpdateOption()       {}
+func (OptMaxTime) listIndexesOption()            {}
+func (OptMaxTime) dropIndexesOption()            {}
+func (OptMaxTime) createIndexesOption()          {}
 
 // String implements the Stringer interface.
 func (opt OptMaxTime) String() string {
