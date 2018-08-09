@@ -1,6 +1,8 @@
-hash: a8721c3cc340f8e3ebd04b232df33449fbb7a22cd205bfc3373f13038725ba94
-updated: 2018-07-23T14:53:07.401714197-04:00
+hash: 663d6e487f40e8d1978fb6cbd9a4a19912795c7e16f411bba8a7cf949a2eafb5
+updated: 2018-07-26T15:55:26.824209319-04:00
 imports:
+- name: github.com/0xAX/notificator
+  version: 88d57ee9043ba88d6a62e437fa15dda1ca0d2b59
 - name: github.com/chasinglogic/dfm
   version: 01ac16bf657b7f1f3b6caa4919e06a895c3791b1
   subpackages:
@@ -12,7 +14,7 @@ imports:
 - name: github.com/mitchellh/mapstructure
   version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/mongodb/mongo-go-driver
-  version: 4503c54ec045b406a0b3533901c6d7a5614cfef3
+  version: 8df56f107cdd485351eb2523992c3364114b4b2e
   subpackages:
   - bson/objectid
   - mongo
