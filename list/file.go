@@ -115,7 +115,7 @@ func (f *File) save() error {
 }
 
 func (f *File) load() error {
-	stateFile := filepath.Join(f.Dir, "state.json")
+	stateFile := filepath.Join(f.Dir, "tasks.json")
 
 	content, err := ioutil.ReadFile(stateFile)
 	if err != nil && !os.IsNotExist(err) {
