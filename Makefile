@@ -17,4 +17,4 @@ dist:
 task: dist/task
 cli: dist/task
 dist/task: dist
-	go build -o ./dist/task ./clients/cmd/task
+	go build -o ./dist/task ./cmd/task
