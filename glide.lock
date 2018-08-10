@@ -1,14 +1,8 @@
-hash: cc60ab8e8bf409db27333508dcf696af1eaaf3bac2a3f61ea6ca613b2322893d
-updated: 2018-08-09T12:43:49.747507891-04:00
+hash: db61dbb89f557d88a11d62722e84718bd44a59d8642e0aa2523ce05630960aa7
+updated: 2018-08-09T21:24:53.045559142-04:00
 imports:
-- name: github.com/0xAX/notificator
-  version: 88d57ee9043ba88d6a62e437fa15dda1ca0d2b59
 - name: github.com/buger/jsonparser
   version: f4dd9f5a6b441265aefc1d44872a6f8c10f42b37
-- name: github.com/chasinglogic/dfm
-  version: 01ac16bf657b7f1f3b6caa4919e06a895c3791b1
-  subpackages:
-  - commands
 - name: github.com/go-stack/stack
   version: 259ab82a6cad3992b4e21ff5cac294ccb06474bc
 - name: github.com/gocarina/gocsv
