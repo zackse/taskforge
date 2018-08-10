@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package lexer
 
 import (
@@ -44,6 +43,32 @@ func TestLexer(t *testing.T) {
 				{
 					Type:    token.STRING,
 					Literal: "cookies",
+				},
+			},
+		},
+		{
+			name:  "single grouped expression",
+			input: "(priority > 0)",
+			expected: []token.Token{
+				{
+					Type:    token.LPAREN,
+					Literal: "(",
+				},
+				{
+					Type:    token.STRING,
+					Literal: "priority",
+				},
+				{
+					Type:    token.GT,
+					Literal: ">",
+				},
+				{
+					Type:    token.NUMBER,
+					Literal: "0",
+				},
+				{
+					Type:    token.RPAREN,
+					Literal: ")",
 				},
 			},
 		},

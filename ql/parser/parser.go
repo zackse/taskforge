@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package parser
 
 import (
@@ -311,7 +310,6 @@ func (p *Parser) parseGroupedExpression() ast.Expression {
 	p.nextToken()
 
 	exp := p.parseExpression(LOWEST)
-
 	if !p.expectPeek(token.RPAREN) {
 		return nil
 	}

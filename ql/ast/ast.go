@@ -105,7 +105,7 @@ func (nl StringLiteral) expression() {}
 
 // TokenLiteral implements Node
 func (nl StringLiteral) TokenLiteral() token.Token { return nl.Token }
-func (nl StringLiteral) String() string            { return nl.Value }
+func (nl StringLiteral) String() string            { return "\"" + nl.Value + "\"" }
 
 // GetValue returns the value for this literal
 func (nl StringLiteral) GetValue() interface{} { return nl.Value }

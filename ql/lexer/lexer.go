@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 // Package lexer contains the lexer for our query language
 package lexer
 
@@ -82,7 +81,6 @@ func (l *Lexer) peekChar() byte {
 
 func (l *Lexer) read(valid func(byte) bool) string {
 	start := l.position
-
 	for valid(l.ch) {
 		l.readChar()
 	}
@@ -98,7 +96,6 @@ func (l *Lexer) number() token.Token {
 	}
 
 	tok.Type = token.DateOrNumber(tok.Literal)
-
 	return tok
 }
 
@@ -186,7 +183,7 @@ func (l *Lexer) NextToken() token.Token {
 	case l.ch == '"':
 		tok = l.quotedString()
 	case '0' <= l.ch && l.ch <= '9':
-		tok = l.number()
+		return l.number()
 	case l.ch == '-':
 		// skip the -
 		l.readChar()

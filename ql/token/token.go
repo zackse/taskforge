@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package token
 
 import (
@@ -54,29 +53,29 @@ const (
 func (t Type) String() string {
 	switch t {
 	case GT:
-		return "GT"
+		return ">"
 	case LT:
-		return "LT"
+		return "<"
 	case GTE:
-		return "GTE"
+		return ">="
 	case LTE:
-		return "LTE"
+		return "<="
 	case EQ:
-		return "EQ"
+		return "="
 	case NE:
-		return "NE"
+		return "!="
 	case LIKE:
-		return "LIKE"
+		return "~"
 	case NLIKE:
-		return "NLIKE"
+		return "!~"
 	case AND:
 		return "AND"
 	case OR:
 		return "OR"
 	case LPAREN:
-		return "LPAREN"
+		return "("
 	case RPAREN:
-		return "RPAREN"
+		return ")"
 	case EOF:
 		return "EOF"
 	case STRING:
