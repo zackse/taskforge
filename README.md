@@ -17,7 +17,7 @@ Task management tool that integrates well with other services.
 Simply run go get:
 
 ```bash
-$ go get github.com/chasinglogic/taskforge/clients/cmd/task
+$ go get github.com/chasinglogic/taskforge/cmd/task
 ```
 
 If your `$GOPATH/bin` is in your `$PATH` then you now have the taskforge CLI
