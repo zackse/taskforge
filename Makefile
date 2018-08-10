@@ -9,7 +9,7 @@ lint:
 	gometalinter $(SRC_FILES)
 
 test:
-	go test ./...
+	go test -v ./...
 
 dist:
 	mkdir -p dist
