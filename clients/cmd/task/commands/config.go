@@ -22,7 +22,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/chasinglogic/taskforge/l"
+	"github.com/chasinglogic/taskforge/list"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -90,13 +90,13 @@ type Config struct {
 	List           string
 	ListConfig     map[string]interface{} `yaml:"list_config" json:"list_config"`
 
-	listImpl l.List
+	listImpl list.List
 }
 
-func (c *Config) l() (l.List, error) {
+func (c *Config) list() (list.List, error) {
 	if c.listImpl == nil {
 		var err error
-		c.listImpl, err = l.GetByName(c.List)
+		c.listImpl, err = list.GetByName(c.List)
 		if err != nil {
 			return nil, err
 		}

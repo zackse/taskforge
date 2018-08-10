@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/chasinglogic/taskforge/list"
 	"github.com/chasinglogic/taskforge/task"
 	"github.com/spf13/cobra"
 	yaml "gopkg.in/yaml.v2"
@@ -36,14 +37,14 @@ var edit = &cobra.Command{
 	Short:   "Edit a task as YAML",
 	Args:    taskId,
 	Run: func(cmd *cobra.Command, args []string) {
-		l, err := config.l()
+		l, err := config.list()
 		if err != nil {
 			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
 		taskforge, err := l.FindByID(args[0])
-		if err != nil && err == l.ErrNotFound {
+		if err != nil && err == list.ErrNotFound {
 			fmt.Println(err)
 			os.Exit(0)
 		} else if err != nil {

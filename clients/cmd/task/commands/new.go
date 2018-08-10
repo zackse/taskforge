@@ -75,7 +75,7 @@ var new = &cobra.Command{
 	Aliases: []string{"n", "create"},
 	Short:   "Create a new task",
 	Run: func(cmd *cobra.Command, args []string) {
-		l, err := config.l()
+		l, err := config.list()
 		if err != nil {
 			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)

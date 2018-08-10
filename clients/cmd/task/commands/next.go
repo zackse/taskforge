@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/chasinglogic/taskforge/list"
 	"github.com/spf13/cobra"
 )
 
@@ -39,14 +40,14 @@ var next = &cobra.Command{
 	Aliases: []string{"current"},
 	Short:   "Show the current task",
 	Run: func(cmd *cobra.Command, args []string) {
-		l, err := config.l()
+		l, err := config.list()
 		if err != nil {
 			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
 		}
 
 		current, err := l.Current()
-		if err != nil && err == l.ErrNotFound {
+		if err != nil && err == list.ErrNotFound {
 			fmt.Println("No uncompleted tasks found!")
 			return
 		} else if err != nil {

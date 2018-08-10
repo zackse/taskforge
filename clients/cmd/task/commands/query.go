@@ -57,7 +57,7 @@ var query = &cobra.Command{
 	Aliases: []string{"q", "s", "search"},
 	Short:   "Search and list tasks",
 	Run: func(cmd *cobra.Command, args []string) {
-		l, err := config.l()
+		l, err := config.list()
 		if err != nil {
 			fmt.Println("ERROR Unable to load list:", err)
 			os.Exit(1)
@@ -83,13 +83,13 @@ var query = &cobra.Command{
 			os.Exit(1)
 		}
 
-		l, err := l.Search(ast)
+		result, err := l.Search(ast)
 		if err != nil {
 			fmt.Println("ERROR searching list:", err)
 			os.Exit(1)
 		}
 
-		printList(l)
+		printList(result)
 	},
 }
 
