@@ -16,12 +16,12 @@
 package commands
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 
-	"gopkg.in/yaml.v2"
-
+	"github.com/BurntSushi/toml"
 	"github.com/chasinglogic/taskforge/list"
 	"github.com/mitchellh/mapstructure"
 )
@@ -37,58 +37,44 @@ func loadConfigFile(path string) (*Config, error) {
 	if err != nil && !os.IsNotExist(err) {
 		return nil, err
 	} else if err != nil {
-		c := defaultConfig()
-
-		yml, err := yaml.Marshal(c)
-		if err != nil {
-			return c, err
-		}
-
-		return c, ioutil.WriteFile(path, yml, 0644)
+		return defaultConfig(), nil
 	}
 
 	var c *Config
-	err = yaml.Unmarshal(content, &c)
-
-	if c != nil && c.DefaultContext == "" {
-		c.DefaultContext = "default"
-	}
+	err = toml.Unmarshal(content, &c)
 
 	return c, err
 }
 
 func defaultConfig() *Config {
 	return &Config{
-		DefaultContext: "default",
-		List:           "file",
-		ListConfig: map[string]interface{}{
-			"dir": filepath.Join(os.Getenv("HOME"), ".tasks.d"),
+		List: map[string]interface{}{
+			"name": "file",
+			"dir":  defaultDir(),
 		},
 	}
 }
 
 func findConfigFile() string {
-	possiblePaths := []string{
-		".taskforge.yml",
-		filepath.Join(os.Getenv("HOME"), ".tasks.d", "config.yml"),
-		"/etc/taskforge/config.yml",
-	}
-
-	for _, path := range possiblePaths {
+	for _, path := range configFilePaths {
 		if _, err := os.Stat(path); err == nil {
 			return path
 		}
 	}
 
-	return filepath.Join(os.Getenv("HOME"), ".tasks.d", "config.yml")
+	return ""
 }
 
 var config *Config
 
+type ServerConfig struct {
+	Port int
+	List map[string]interface{}
+}
+
 type Config struct {
-	DefaultContext string `yaml:"default_context"`
-	List           string
-	ListConfig     map[string]interface{} `yaml:"list_config" json:"list_config"`
+	Server ServerConfig
+	List   map[string]interface{}
 
 	listImpl list.List
 }
@@ -96,12 +82,17 @@ type Config struct {
 func (c *Config) list() (list.List, error) {
 	if c.listImpl == nil {
 		var err error
-		c.listImpl, err = list.GetByName(c.List)
+		name, ok := c.List["name"]
+		if !ok {
+			return nil, errors.New("must specify a list name")
+		}
+
+		c.listImpl, err = list.GetByName(name.(string))
 		if err != nil {
 			return nil, err
 		}
 
-		err = mapstructure.Decode(c.ListConfig, &c.listImpl)
+		err = mapstructure.Decode(c.List, &c.listImpl)
 		if err != nil {
 			return nil, err
 		}
