@@ -37,7 +37,7 @@ func init() {
 
 var next = &cobra.Command{
 	Use:     "next",
-	Aliases: []string{"current"},
+	Aliases: []string{"current", "x"},
 	Short:   "Show the current task",
 	Run: func(cmd *cobra.Command, args []string) {
 		l, err := config.list()
