@@ -16,18 +16,26 @@
 package list
 
 import (
-	"fmt"
-	"os"
+	"context"
+	"crypto/md5"
+	"encoding/hex"
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
 )
 
+func makeMongoValidDBName(testName string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(testName))
+	return hex.EncodeToString(hasher.Sum(nil))
+}
+
 func TestMongoList(t *testing.T) {
 	for _, test := range listTests {
+		dbName := makeMongoValidDBName(test.name)
 		config := Config{
 			"url": "mongodb://localhost:27017",
-			"db":  test.name,
+			"db":  dbName,
 		}
 
 		l := &MongoList{}
@@ -38,15 +46,22 @@ func TestMongoList(t *testing.T) {
 			return
 		}
 
+		if err := l.Init(); err != nil {
+			t.Errorf("unable to init list: %s", err)
+			return
+		}
+
+		l.client.Database(dbName).Drop(context.Background())
+
 		t.Run(test.name, func(t *testing.T) {
-			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.name))
+			defer l.Disconnect()
 
 			err := test.Test(l)
 			if err != nil {
+				t.Logf("Test: %s DB: %s\n", test.name, dbName)
 				t.Error(err)
 				return
 			}
-
 		})
 	}
 }
