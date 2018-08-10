@@ -4,53 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/chasinglogic/taskforge/list"
+	"github.com/chasinglogic/taskforge/ql/ast"
 	"github.com/chasinglogic/taskforge/ql/lexer"
 	"github.com/chasinglogic/taskforge/ql/parser"
 	"github.com/chasinglogic/taskforge/task"
 )
-
-func unsupportedMethod(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write(apiError{Message: "unsupported method"}.Marshal())
-}
-
-type apiError struct {
-	Message string
-}
-
-func (ae apiError) Marshal() []byte {
-	jsn, err := json.Marshal(ae)
-	if err != nil {
-		return []byte(err.Error())
-	}
-
-	return jsn
-}
-
-func fiveHundred(w http.ResponseWriter, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
-	sendJSON(w, apiError{Message: err.Error()})
-}
-
-func badRequest(w http.ResponseWriter, err error) {
-	w.WriteHeader(http.StatusBadRequest)
-	sendJSON(w, apiError{Message: err.Error()})
-}
-
-func sendJSON(w http.ResponseWriter, response interface{}) {
-	jsn, err := json.Marshal(response)
-	if err != nil {
-		fiveHundred(w, err)
-		return
-	}
-
-	_, err = w.Write(jsn)
-	if err != nil {
-		fmt.Println("ERROR writing to client:", err)
-	}
-}
 
 type ListAPI struct {
 	list list.List
@@ -85,11 +46,13 @@ func (l ListAPI) get(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
+		fmt.Println("q", q)
 		p := parser.New(lexer.New(q))
 		tree := p.Parse()
 
 		if p.Error() != nil {
 			err = p.Error()
+			fmt.Println(err)
 			break
 		}
 
@@ -103,7 +66,7 @@ func (l ListAPI) get(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 
-		w.Write(apiError{Message: err.Error()}.Marshal())
+		sendJSON(w, apiError{Message: err.Error()})
 		return
 	}
 
@@ -111,10 +74,30 @@ func (l ListAPI) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (l ListAPI) post(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	if strings.HasSuffix(r.URL.Path, "/query") {
+		var tree ast.AST
+		err := decoder.Decode(&tree)
+		if err != nil {
+			badRequest(w, err)
+			return
+		}
+
+		tasks, err := l.list.Search(tree)
+		if err != nil {
+			fiveHundred(w, err)
+			return
+		}
+
+		sendJSON(w, tasks)
+		return
+	}
+
 	var tasks []task.Task
-	err := json.NewDecoder(r.Body).Decode(&tasks)
+	err := decoder.Decode(&tasks)
 	if err != nil {
 		badRequest(w, err)
+		return
 	}
 
 	err = l.list.AddMultiple(tasks)
