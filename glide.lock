@@ -1,8 +1,10 @@
-hash: db61dbb89f557d88a11d62722e84718bd44a59d8642e0aa2523ce05630960aa7
-updated: 2018-08-09T21:24:53.045559142-04:00
+hash: b5ae6c12e3ca94a62c886a37bc0dc93ed87aae716a756ee031fec4a9b798591a
+updated: 2018-08-09T21:41:43.877577375-04:00
 imports:
 - name: github.com/buger/jsonparser
   version: f4dd9f5a6b441265aefc1d44872a6f8c10f42b37
+- name: github.com/BurntSushi/toml
+  version: b26d9c308763d68093482582cea63d69be07a0f0
 - name: github.com/go-stack/stack
   version: 259ab82a6cad3992b4e21ff5cac294ccb06474bc
 - name: github.com/gocarina/gocsv

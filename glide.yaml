@@ -6,3 +6,5 @@ import:
   subpackages:
   - mongo
 - package: github.com/gocarina/gocsv
+- package: github.com/BurntSushi/toml
+  version: ^0.3.0
