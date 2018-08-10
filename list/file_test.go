@@ -37,6 +37,11 @@ func TestFileList(t *testing.T) {
 			return
 		}
 
+		if err := l.Init(); err != nil {
+			t.Errorf("unable to init list: %s", err)
+			return
+		}
+
 		t.Run(test.name, func(t *testing.T) {
 			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.name))
 
