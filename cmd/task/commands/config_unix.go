@@ -15,5 +15,5 @@ var configFilePaths = []string{
 }
 
 func defaultDir() string {
-	return filepath.Join(os.Getenv("HOME"), "taskforge.d")
+	return filepath.Join(os.Getenv("HOME"), ".taskforge.d")
 }
