@@ -400,7 +400,7 @@ type qt struct {
 func queryTest(q qt) listTest {
 	fixture := q.fixture()
 	return listTest{
-		name: fmt.Sprintf("should return %d results with query: %s",
+		name: fmt.Sprintf("QUERYTEST: should return %d results with query: %s",
 			len(q.expected), q.query),
 		fixture: func() []task.Task { return fixture },
 		run: func(l List) error {
