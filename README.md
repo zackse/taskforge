@@ -1,26 +1,27 @@
 # taskforge, a task management cli
 
-It's like [taskwarrior](https://taskwarrior.org) but flexible in different ways.
+Task management tool that integrates well with other services.
 
 ## Installation
 
 ### Install from Release
 
-1. Navigate to [the Releases Page](https://github.com/chasinglogic/dfm/releases)
+1. Navigate to [the Releases Page](https://github.com/chasinglogic/taskforge/releases)
 2. Find the tar ball for your platform / architecture. For example, on 64 bit
-   Mac OSX, the archive is named `dfm_{version}_darwin_amd64.tar.gz`
+   Mac OSX, the archive is named `taskforge_{version}_darwin_amd64.tar.gz`
 3. Extract the tar ball
-4. Put the dfm binary in your `$PATH`
+4. Put the taskforge binary in your `$PATH`
 
 ### Install from Source
 
 Simply run go get:
 
 ```bash
-$ go get github.com/chasinglogic/dfm
+$ go get github.com/chasinglogic/taskforge/clients/cmd/task
 ```
 
-If your `$GOPATH/bin` is in your `$PATH` then you now have dfm installed.
+If your `$GOPATH/bin` is in your `$PATH` then you now have the taskforge CLI
+installed.
 
 ## Usage
 
@@ -28,7 +29,7 @@ If your `$GOPATH/bin` is in your `$PATH` then you now have dfm installed.
 Manage your tasks
 
 Usage:
-  taskforge [command]
+  task [command]
 
 Available Commands:
   complete    Complete tasks by ID
@@ -42,7 +43,7 @@ Available Commands:
 Flags:
   -h, --help   help for taskforge
 
-Use "taskforge [command] --help" for more information about a command.
+Use "task [command] --help" for more information about a command.
 ```
 
 ## Contributing
