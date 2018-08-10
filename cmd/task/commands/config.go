@@ -65,11 +65,43 @@ func findConfigFile() string {
 	return ""
 }
 
+func loadList(cfg map[string]interface{}) (list.List, error) {
+	var err error
+	name, ok := cfg["name"]
+	if !ok {
+		return nil, errors.New("must specify a list name")
+	}
+
+	var listImpl list.List
+
+	listImpl, err = list.GetByName(name.(string))
+	if err != nil {
+		return nil, err
+	}
+
+	err = mapstructure.Decode(cfg, &listImpl)
+	if err != nil {
+		return nil, err
+	}
+
+	return listImpl, nil
+}
+
 var config *Config
 
 type ServerConfig struct {
 	Port int
+	Addr string
 	List map[string]interface{}
+}
+
+func (sc *ServerConfig) list() (list.List, error) {
+	l, err := loadList(sc.List)
+	if err != nil {
+		return nil, err
+	}
+
+	return l, l.Init()
 }
 
 type Config struct {
@@ -82,17 +114,7 @@ type Config struct {
 func (c *Config) list() (list.List, error) {
 	if c.listImpl == nil {
 		var err error
-		name, ok := c.List["name"]
-		if !ok {
-			return nil, errors.New("must specify a list name")
-		}
-
-		c.listImpl, err = list.GetByName(name.(string))
-		if err != nil {
-			return nil, err
-		}
-
-		err = mapstructure.Decode(c.List, &c.listImpl)
+		c.listImpl, err = loadList(c.List)
 		if err != nil {
 			return nil, err
 		}
