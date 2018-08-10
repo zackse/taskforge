@@ -77,6 +77,7 @@ func New(title string) Task {
 		Title:       title,
 		CreatedDate: time.Now(),
 		Context:     "default",
+		Notes:       []Note{},
 	}
 }
 
