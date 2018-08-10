@@ -64,8 +64,8 @@ The server will have the following API endpoints with these purposes:
 
 - `GET /list(?q=.*)`
   - Get all tasks in the list, if the q form parameter is given it will
-  interpreted using the [Taskforge Query Language](https://github.com/chasinglogic/taskforge/blob/master/docs/design/Initial%20Design.md)
-  returning the matching documents as a JSON array.
+    interpreted using the [Taskforge Query Language](https://github.com/chasinglogic/taskforge/blob/master/docs/design/Initial%20Design.md)
+    returning the matching documents as a JSON array.
 - `GET /list/current`
   - Return the current task.
 - `POST /list`
@@ -76,12 +76,12 @@ The server will have the following API endpoints with these purposes:
   - Get a single task by Task ID
 - `PUT /task/$TASK_ID`
   - Update the task indicated by $TASK_ID, the request body should be a JSON Task
-  and the response will be the updated Task as JSON.
+    and the response will be the updated Task as JSON.
 - `PUT /task/$TASK_ID/complete`
   - Complete a task by ID. The response will be empty.
 - `PUT /task/$TASK_ID/addNote`
   - Add a Note to the task indicated by ID. The request body should be a JSON
-  Note. The response will be empty.
+    Note. The response will be empty.
 
 ### Future Work
 
