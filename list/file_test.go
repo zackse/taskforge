@@ -24,9 +24,9 @@ import (
 )
 
 func TestFileList(t *testing.T) {
-	for _, test := range listTests {
+	for _, test := range ListTests {
 		config := Config{
-			"dir": fmt.Sprintf(".test.file.%s", test.name),
+			"dir": fmt.Sprintf(".test.file.%s", test.Name),
 		}
 
 		l := &File{}
@@ -42,8 +42,8 @@ func TestFileList(t *testing.T) {
 			return
 		}
 
-		t.Run(test.name, func(t *testing.T) {
-			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.name))
+		t.Run(test.Name, func(t *testing.T) {
+			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.Name))
 
 			err := test.Test(l)
 			if err != nil {

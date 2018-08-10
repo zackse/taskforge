@@ -31,8 +31,8 @@ func makeMongoValidDBName(testName string) string {
 }
 
 func TestMongoList(t *testing.T) {
-	for _, test := range listTests {
-		dbName := makeMongoValidDBName(test.name)
+	for _, test := range ListTests {
+		dbName := makeMongoValidDBName(test.Name)
 		config := Config{
 			"url": "mongodb://localhost:27017",
 			"db":  dbName,
@@ -53,12 +53,12 @@ func TestMongoList(t *testing.T) {
 
 		l.client.Database(dbName).Drop(context.Background())
 
-		t.Run(test.name, func(t *testing.T) {
+		t.Run(test.Name, func(t *testing.T) {
 			defer l.Disconnect()
 
 			err := test.Test(l)
 			if err != nil {
-				t.Logf("Test: %s DB: %s\n", test.name, dbName)
+				t.Logf("Test: %s DB: %s\n", test.Name, dbName)
 				t.Error(err)
 				return
 			}

@@ -25,7 +25,7 @@ import (
 )
 
 type listTest struct {
-	name     string
+	Name     string
 	expected []int
 	fixture  func() []task.Task
 	run      func(List) error
@@ -61,9 +61,9 @@ func (bt listTest) Test(b List) error {
 	return nil
 }
 
-var listTests = []listTest{
+var ListTests = []listTest{
 	{
-		name: "should add one and find by id",
+		Name: "should add one and find by id",
 		run: func(b List) error {
 			t := task.New("task 1")
 			err := b.Add(t)
@@ -80,7 +80,7 @@ var listTests = []listTest{
 		},
 	},
 	{
-		name: "should add multiple",
+		Name: "should add multiple",
 		fixture: func() []task.Task {
 			return []task.Task{
 				task.New("task 1"),
@@ -95,7 +95,7 @@ var listTests = []listTest{
 		},
 	},
 	{
-		name: "should complete a task",
+		Name: "should complete a task",
 		fixture: func() []task.Task {
 			return []task.Task{
 				task.New("task to complete"),
@@ -126,7 +126,7 @@ var listTests = []listTest{
 		},
 	},
 	{
-		name: "should return correct current task",
+		Name: "should return correct current task",
 		fixture: func() []task.Task {
 			return []task.Task{
 				task.New("task 1"),
@@ -170,7 +170,7 @@ var listTests = []listTest{
 		},
 	},
 	{
-		name: "should add a note to a task",
+		Name: "should add a note to a task",
 		fixture: func() []task.Task {
 			return []task.Task{
 				task.New("task to be noted"),
@@ -208,7 +208,7 @@ var listTests = []listTest{
 		},
 	},
 	{
-		name: "should update a task",
+		Name: "should update a task",
 		fixture: func() []task.Task {
 			return []task.Task{
 				task.New("task to update"),
@@ -400,7 +400,7 @@ type qt struct {
 func queryTest(q qt) listTest {
 	fixture := q.fixture()
 	return listTest{
-		name: fmt.Sprintf("QUERYTEST: should return %d results with query: %s",
+		Name: fmt.Sprintf("QUERYTEST: should return %d results with query: %s",
 			len(q.expected), q.query),
 		fixture: func() []task.Task { return fixture },
 		run: func(l List) error {
