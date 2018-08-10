@@ -18,7 +18,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/chasinglogic/taskforge/clients/cmd/task/commands"
+	"github.com/chasinglogic/taskforge/cmd/task/commands"
 	"github.com/spf13/cobra"
 )
 
