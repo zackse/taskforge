@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -333,13 +332,8 @@ func eq(left, right ast.Expression) func(task.Task) bool {
 		case "completedDate":
 			return t.CompletedDate == right.(ast.DateLiteral).Value
 		case "completed":
-			boolStr := right.(ast.StringLiteral).Value
-			completed, err := strconv.ParseBool(boolStr)
-			if err != nil {
-				return false
-			}
-
-			return t.CompletedDate.IsZero() != completed
+			completed := right.(ast.BooleanLiteral).Value
+			return t.IsCompleted() == completed
 		default:
 			return false
 		}
