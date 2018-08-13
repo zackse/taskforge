@@ -1,5 +1,5 @@
-hash: b5ae6c12e3ca94a62c886a37bc0dc93ed87aae716a756ee031fec4a9b798591a
-updated: 2018-08-09T21:41:43.877577375-04:00
+hash: b1bc9b154ed0c5f01fd91ac47c6e39e69aba83ac092792b3cd17c70aaef03b45
+updated: 2018-08-13T10:44:15.04302743-04:00
 imports:
 - name: github.com/buger/jsonparser
   version: f4dd9f5a6b441265aefc1d44872a6f8c10f42b37
@@ -13,6 +13,8 @@ imports:
   version: 2e65f85255dbc3072edf28d6b5b8efc472979f5a
 - name: github.com/inconshreveable/mousetrap
   version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/mattn/go-runewidth
+  version: 9e777a8366cce605130a531d2cd6363d07ad7317
 - name: github.com/mitchellh/mapstructure
   version: f15292f7a699fcc1a38a80977f80a046874ba8ac
 - name: github.com/mongodb/mongo-go-driver
@@ -67,6 +69,8 @@ imports:
   - mongo/runcmdopt
   - mongo/sessionopt
   - mongo/updateopt
+- name: github.com/olekukonko/tablewriter
+  version: d4647c9c7a84d847478d890b816b7d8b62b0b279
 - name: github.com/spf13/cobra
   version: ef82de70bb3f60c65fb8eebacbb2d122ef517385
 - name: github.com/spf13/pflag
