@@ -217,8 +217,6 @@ func (mb *MongoList) AddNote(id string, note task.Note) error {
 func (mb *MongoList) Search(ast ast.AST) ([]task.Task, error) {
 	query := mb.eval(ast.Expression)
 
-	fmt.Println(query)
-
 	cur, err := mb.coll.Find(context.Background(), query, mongoSortOpt)
 	if err != nil {
 		return nil, err

@@ -46,7 +46,6 @@ func (l ListAPI) get(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		fmt.Println("q", q)
 		p := parser.New(lexer.New(q))
 		tree := p.Parse()
 
