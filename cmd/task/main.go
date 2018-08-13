@@ -17,6 +17,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/chasinglogic/taskforge/cmd/task/commands"
 	"github.com/spf13/cobra"
@@ -37,7 +38,11 @@ var versionCmd = &cobra.Command{
 	Aliases: []string{"v"},
 	Short:   "print version information",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("taskforge-%s-%s\n%s\n", commit, version,
+		if strings.Contains(version, "dev") || strings.Contains(version, "next") {
+			version = "dev-" + commit
+		}
+
+		fmt.Printf("taskforge %s\n%s\n", version,
 			`
 Copyright 2018 Mathew Robinson <chasinglogic@gmail.com>. All rights reserved.
 
