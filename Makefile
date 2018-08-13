@@ -21,3 +21,6 @@ dist/task: dist
 
 install:
 	go install ./cmd/task
+
+release: clean
+	goreleaser
