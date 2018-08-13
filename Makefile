@@ -22,5 +22,7 @@ dist/task: dist
 install:
 	go install ./cmd/task
 
-release: clean
+release-%: clean
+	git tag v$*
+	git push --tags
 	goreleaser
