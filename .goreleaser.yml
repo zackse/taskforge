@@ -50,3 +50,4 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+      - '*Makefile*'
