@@ -5,3 +5,4 @@ excludes:
   - glide.yaml
   - .md
   - vendor
+  - Makefile
