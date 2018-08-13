@@ -16,6 +16,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -23,7 +24,13 @@ import (
 	"github.com/chasinglogic/taskforge/ql/lexer"
 	"github.com/chasinglogic/taskforge/ql/parser"
 	"github.com/chasinglogic/taskforge/task"
+	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
+)
+
+var (
+	autoWrapText bool
+	outputFormat string
 )
 
 func init() {
@@ -50,6 +57,12 @@ Additional help topics:{{range .Commands}}{{if .IsAdditionalHelpTopicCommand}}
 
 Use "{{.CommandPath}} [command] --help" for more information about a command.{{end}}
 `)
+
+	query.Flags().StringVarP(&outputFormat, "output", "o", "table", "How to output matching tasks. Options are: table, text, json, csv")
+	query.Flags().BoolVarP(&autoWrapText, "wrap", "w", false,
+		`Whether to wrap text or not. For smaller terminals this will improve
+	display but for larger terminals this will allow titles to be longer before
+	wrapping weirdly`)
 }
 
 var query = &cobra.Command{
@@ -93,8 +106,73 @@ var query = &cobra.Command{
 	},
 }
 
-func printList(l []task.Task) {
-	for i := range l {
-		fmt.Printf("%s \"%s\"\n", l[i].ID, l[i].Title)
+func printList(taskList []task.Task) {
+	switch outputFormat {
+	case "text":
+		printText(taskList)
+	case "csv":
+		printCSV(taskList)
+	case "json":
+		printJSON(taskList)
+	case "table":
+		printTable(taskList)
+	default:
+		fmt.Printf("%s is not a valid output format, defaulting to table.", outputFormat)
+		printTable(taskList)
+	}
+}
+
+func printTable(taskList []task.Task) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Title"})
+	table.SetRowLine(true)
+	table.SetAutoWrapText(autoWrapText)
+
+	for _, t := range taskList {
+		table.Append([]string{t.ID, t.Title})
+	}
+
+	table.Render()
+}
+
+func printJSON(taskList []task.Task) {
+	jsn, err := json.MarshalIndent(taskList, "", "\t")
+	if err != nil {
+		fmt.Println("ERROR unable to marshal json:", err)
+	}
+
+	fmt.Println(string(jsn))
+}
+
+func printCSV(taskList []task.Task) {
+	// print headers
+	fmt.Println("ID,Title,Context,Priority,Body,CreatedDate,CompletedDate")
+
+	// print rows
+	for _, t := range taskList {
+		fmt.Printf(
+			//id,title,context,priority,body,createdDate,
+			"%s,%s,%s,%.1f,%s,%s,",
+			t.ID,
+			t.Title,
+			t.Context,
+			t.Priority,
+			t.Body,
+			t.CreatedDate.String(),
+		)
+
+		// if completed print date
+		if t.IsCompleted() {
+			fmt.Printf("%s\n", t.CompletedDate.String())
+		} else {
+			// else print nothing
+			fmt.Printf("\n")
+		}
+	}
+}
+
+func printText(taskList []task.Task) {
+	for _, t := range taskList {
+		fmt.Println(t.ID, t.Title)
 	}
 }
