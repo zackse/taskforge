@@ -74,10 +74,11 @@ func New(l *lexer.Lexer) *Parser {
 	}
 
 	p.prefixParseFns = map[token.Type]prefixParseFn{
-		token.STRING: p.parseString,
-		token.NUMBER: p.parseNumberLiteral,
-		token.DATE:   p.parseDateLiteral,
-		token.LPAREN: p.parseGroupedExpression,
+		token.STRING:  p.parseString,
+		token.NUMBER:  p.parseNumberLiteral,
+		token.DATE:    p.parseDateLiteral,
+		token.BOOLEAN: p.parseBooleanLiteral,
+		token.LPAREN:  p.parseGroupedExpression,
 	}
 
 	p.infixParseFns = map[token.Type]infixParseFn{
@@ -240,6 +241,19 @@ func (p *Parser) parseDateLiteral() ast.Expression {
 		p.addError(fmt.Errorf("not a valid date format: %s", p.curToken.Literal))
 	}
 
+	return lit
+}
+
+func (p *Parser) parseBooleanLiteral() ast.Expression {
+	lit := ast.BooleanLiteral{Token: p.curToken}
+
+	value, err := strconv.ParseBool(p.curToken.Literal)
+	if err != nil {
+		p.addError(fmt.Errorf("could not parse boolean: %s", p.curToken.Literal))
+		return nil
+	}
+
+	lit.Value = value
 	return lit
 }
 

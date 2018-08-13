@@ -45,6 +45,7 @@ const (
 	STRING
 	NUMBER
 	DATE
+	BOOLEAN
 
 	ILLEGAL
 	UNEXPECTED
@@ -84,6 +85,8 @@ func (t Type) String() string {
 		return "NUMBER"
 	case DATE:
 		return "DATE"
+	case BOOLEAN:
+		return "BOOLEAN"
 	case ILLEGAL:
 		return "ILLEGAL"
 	case UNEXPECTED:
@@ -106,6 +109,14 @@ func LookupKeyword(value string) Type {
 		fallthrough
 	case "AND":
 		return AND
+	case "false":
+		fallthrough
+	case "False":
+		fallthrough
+	case "true":
+		fallthrough
+	case "True":
+		return BOOLEAN
 	}
 
 	return STRING

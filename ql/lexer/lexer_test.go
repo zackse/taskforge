@@ -47,6 +47,24 @@ func TestLexer(t *testing.T) {
 			},
 		},
 		{
+			name:  "boolean lex",
+			input: "completed = false",
+			expected: []token.Token{
+				{
+					Type:    token.STRING,
+					Literal: "completed",
+				},
+				{
+					Type:    token.EQ,
+					Literal: "=",
+				},
+				{
+					Type:    token.BOOLEAN,
+					Literal: "false",
+				},
+			},
+		},
+		{
 			name:  "single grouped expression",
 			input: "(priority > 0)",
 			expected: []token.Token{

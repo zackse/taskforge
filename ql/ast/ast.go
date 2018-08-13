@@ -80,10 +80,10 @@ func (nl NumberLiteral) String() string            { return fmt.Sprint(nl.Value)
 // GetValue returns the value for this literal
 func (nl NumberLiteral) GetValue() interface{} { return nl.Value }
 
-// BooleanLiteral is a literal number in a query
+// BooleanLiteral is a literal boolean in a query
 type BooleanLiteral struct {
 	Token token.Token
-	Value float64
+	Value bool
 }
 
 func (nl BooleanLiteral) expression() {}

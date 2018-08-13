@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package parser
 
 import (
@@ -55,6 +54,32 @@ func TestParser(t *testing.T) {
 							Literal: "cookies",
 						},
 						Value: "cookies",
+					},
+				},
+			},
+		},
+		{
+			name:  "boolean parse",
+			input: "completed = false",
+			output: ast.AST{
+				Expression: ast.InfixExpression{
+					Operator: token.Token{
+						Type:    token.EQ,
+						Literal: "=",
+					},
+					Left: ast.StringLiteral{
+						Token: token.Token{
+							Type:    token.STRING,
+							Literal: "completed",
+						},
+						Value: "completed",
+					},
+					Right: ast.BooleanLiteral{
+						Token: token.Token{
+							Type:    token.BOOLEAN,
+							Literal: "false",
+						},
+						Value: false,
 					},
 				},
 			},
