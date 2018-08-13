@@ -47,6 +47,6 @@ snapshot:
 changelog:
   sort: asc
   filters:
-  exclude:
-    - '^docs:'
-    - '^test:'
+    exclude:
+      - '^docs:'
+      - '^test:'
