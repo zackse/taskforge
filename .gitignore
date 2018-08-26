@@ -1,2 +1,4 @@
 taskforge
 dist/*
+build/*
+*node_modules/*
