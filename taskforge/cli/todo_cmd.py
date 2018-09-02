@@ -1,6 +1,4 @@
-"""
-Implements the todo subcommand
-"""
+"""Implements the todo subcommand."""
 
 from ..ql.ast import AST, Expression
 from ..ql.tokens import Token
@@ -10,7 +8,7 @@ from .utils import inject_list
 
 @inject_list
 def todo_task(args, task_list=None):
-    """Print the current task in task_list"""
+    """Print the current task in task_list."""
     ast = AST(Expression(
         Token('='),
         left=Expression(Token('completed')),
@@ -21,7 +19,7 @@ def todo_task(args, task_list=None):
     print_tasks(tasks, output=args.output)
 
 def todo_cmd(parser):
-    """Add the next command to parser"""
+    """Add the next command to parser."""
     sub_parser = parser.add_parser(
         'todo',
         aliases=[],

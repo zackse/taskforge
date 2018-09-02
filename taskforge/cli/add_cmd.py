@@ -1,6 +1,4 @@
-"""
-Implements the new subcommand
-"""
+"""Implements the new subcommand."""
 
 import json
 
@@ -10,7 +8,7 @@ from .utils import inject_list
 
 @inject_list
 def add_task(args, task_list=None):
-    """Print the current task in task_list"""
+    """Print the current task in task_list."""
     if args.from_file:
         with open(args.from_file) as tasks_file:
             task = json.load(tasks_file)
@@ -30,7 +28,7 @@ def add_task(args, task_list=None):
 
 
 def add_cmd(parser):
-    """Add the next command to parser"""
+    """Add the next command to parser."""
     sub_parser = parser.add_parser(
         'add',
         aliases=['new', 'a'],

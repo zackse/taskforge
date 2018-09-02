@@ -1,4 +1,5 @@
 lint:
+	pydocstyle taskforge
 	pylint taskforge tests
 
 clean:

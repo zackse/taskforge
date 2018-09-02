@@ -1,10 +1,15 @@
+"""Contains the Parser class for the Taskforge Query Language."""
+
 from enum import IntEnum
 
+from .ast import AST, Expression
 from .lexer import Lexer
 from .tokens import Token, Type
-from .ast import AST, Expression
+
 
 class Precedence(IntEnum):
+    """Operator precedence."""
+
     LOWEST = 0
     STRING = 1
     ANDOR = 2
@@ -24,15 +29,27 @@ PRECEDENCES = {
     Type.STRING: Precedence.STRING,
 }
 
+
 class ParseError(Exception):
-    """Raised by the Parser when invalid syntax occurs"""
+    """Raised by the Parser when invalid syntax occurs."""
+
     pass
 
-class Parser:
-    """Parser for the taskforge query language"""
 
-    def __init__(self, query=''):
-        self.lexer = Lexer(query)
+class Parser:
+    """Parser for the taskforge query language."""
+
+    def __init__(self, query='', lexer=None):
+        """Create a lexer and parser for query.
+
+        If lexer is not None use that lexer instead of creating one
+        for query.
+        """
+        if lexer is None:
+            self.lexer = Lexer(query)
+        else:
+            self.lexer = lexer
+
         self.current_token = None
         self.peek_token = None
 
@@ -63,9 +80,11 @@ class Parser:
         next(self)
 
     def __iter__(self):
+        """Return self, an iterator over tokens."""
         return self
 
     def __next__(self):
+        """Get the next token from input."""
         self.current_token = self.peek_token
         try:
             self.peek_token = next(self.lexer)
@@ -82,10 +101,11 @@ class Parser:
 
     @classmethod
     def from_lexer(cls, lexer):
-        self.lexer = lexer
+        """Create a Parser from lexer."""
+        return cls(lexer=lexer)
 
     def set_input(self, query):
-        """Change the input of this parser"""
+        """Change the input of this parser."""
         self.lexer = Lexer(query)
 
     def parse(self):
@@ -93,7 +113,7 @@ class Parser:
         return AST(self._parse_expression(Precedence.LOWEST))
 
     def _parse_expression(self, precedence):
-        """Parse an expression"""
+        """Parse an expression."""
         prefix_fun = self.prefixes.get(self.current_token.token_type)
         if prefix_fun is None:
             raise ParseError(
@@ -117,7 +137,7 @@ class Parser:
 
 
     def _parse_infix_expression(self, left):
-        """Parse a an infix expression"""
+        """Parse a an infix expression."""
         expression = Expression(self.current_token, left=left)
         if (
                 (expression.operator.token_type == Type.AND or
@@ -144,7 +164,7 @@ class Parser:
 
 
     def _concat(self, left):
-        """Concat multiple unquoted strings into one value"""
+        """Concat multiple unquoted strings into one value."""
         if not left.is_literal() or type(left.value) is not str:
             raise ParseError('can only concat strings got: {}'.format(type(left.value)))
 
@@ -154,13 +174,11 @@ class Parser:
 
 
     def _parse_literal(self):
-        """Return an expression for a literal value from the current
-        token of parser"""
+        """Return a literal expression from the current token of parser."""
         return Expression(self.current_token)
 
     def _parse_grouped_expression(self):
-        """Return an expression with a lower precedence to force it
-        further down the AST"""
+        """Return an expression with a the LOWEST precedence."""
         # Skip the (
         next(self)
 

@@ -1,6 +1,4 @@
-"""
-Implements the complete subcommand
-"""
+"""Implements the complete subcommand."""
 
 import sys
 
@@ -11,7 +9,7 @@ from .utils import inject_list
 
 @inject_list
 def complete_task(args, task_list=None):
-    """Print the current task in task_list"""
+    """Print the current task in task_list."""
     tasks = []
     if args.id:
         tasks = args.id
@@ -28,7 +26,7 @@ def complete_task(args, task_list=None):
 
 
 def complete_cmd(parser):
-    """Add the next command to parser"""
+    """Add the next command to parser."""
     sub_parser = parser.add_parser(
         'complete',
         aliases=['done', 'd'],

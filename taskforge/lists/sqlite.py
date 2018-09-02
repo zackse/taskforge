@@ -1,4 +1,4 @@
-"""Provides a SQLite 3 backed list implementation"""
+"""Provides a SQLite 3 backed list implementation."""
 
 import os
 import sqlite3
@@ -59,6 +59,16 @@ FROM tasks
             file_name='',
             create_tables=False,
     ):
+        """Create a SQLiteList from the given configuration.
+
+        Either directory or file_name should be provided. Raises
+        InvalidConfigError if neither are provided. If both are
+        provided then file_name is used.
+
+        create_tables forces the table creation query to
+        run. Otherwise will create tables if the resulting sqlite db
+        file does not already exist.
+        """
         if file_name == '' and directory == '':
             raise InvalidConfigError('either directory or file_name must be provided')
 
@@ -80,7 +90,7 @@ FROM tasks
 
     @staticmethod
     def note_from_row(row):
-        """Converts a SQL row tuple back into a Note object"""
+        """Convert a SQL row tuple back into a Note object."""
         return Note(
             id=row[0],
             body=row[1],
@@ -89,8 +99,7 @@ FROM tasks
 
     @staticmethod
     def task_to_row(task):
-        """Converts a task to a tuple of data in the order of the
-        columns in the SQL table."""
+        """Convert a task to a tuple with the correct column order."""
         return (
             task.id,
             task.title,
@@ -103,7 +112,7 @@ FROM tasks
         )
 
     def task_from_row(self, row):
-        """Converts a SQL row tuple back into a Task object
+        """Convert a SQL row tuple back into a Task object.
 
         Raises a NotFoundError if row is None
         """
@@ -135,14 +144,13 @@ FROM tasks
         ]
 
     def add(self, task):
-        """Add a task to the List"""
+        """Add a task to the List."""
         self.conn.\
             execute(self.__insert, SQLiteList.task_to_row(task))
         self.conn.commit()
 
     def add_multiple(self, tasks):
-        """Add multiple tasks to the List, should be more efficient
-        resource utilization."""
+        """Add multiple tasks to the List."""
         self.conn.\
             executemany(
                 self.__insert,
@@ -150,21 +158,20 @@ FROM tasks
         self.conn.commit()
 
     def list(self):
-        """Return a python list of the Task in this List"""
+        """Return a python list of the Task in this List."""
         return [
             self.task_from_row(row) for row in
             self.conn.execute(self.__select)
         ]
 
     def find_by_id(self, id):
-        """Find a task by id"""
+        """Find a task by id."""
         cursor = self.conn.execute(
             self.__select + 'WHERE id = ?', (id,))
         return self.task_from_row(cursor.fetchone())
 
     def current(self):
-        """Return the current task, meaning the oldest uncompleted
-        task in the List"""
+        """Return the current task."""
         return self.task_from_row(
             self.conn.\
             execute(
@@ -175,7 +182,7 @@ FROM tasks
             fetchone())
 
     def complete(self, id):
-        """Complete a task by id"""
+        """Complete a task by id."""
         self.conn.\
             execute(
                 'UPDATE tasks SET completed_date = ? WHERE id = ?',
@@ -184,8 +191,10 @@ FROM tasks
         self.conn.commit()
 
     def update(self, task):
-        """Update a task in the list, finding the original by the
-        id of the given task"""
+        """Update a task in the list.
+
+        The original is retrieved using the id of the given task.
+        """
         update_tuple = SQLiteList.task_to_row(task)
         # move id to the end
         update_tuple = (
@@ -209,7 +218,7 @@ WHERE id = ?
         self.conn.commit()
 
     def add_note(self, id, note):
-        """Add note to a task by id"""
+        """Add note to a task by id."""
         self.conn.\
             execute(
                 'INSERT INTO notes (task_id, id, body, created_date) VALUES (?, ?, ?, ?)',
@@ -223,7 +232,7 @@ WHERE id = ?
         self.conn.commit()
 
     def search(self, ast):
-        """Evaluate the AST and return a List of matching results"""
+        """Evaluate the AST and return a List of matching results."""
         where, values = SQLiteList.__eval(ast.expression)
         return [self.task_from_row(task) for task in
                 self.conn.execute(
@@ -231,8 +240,7 @@ WHERE id = ?
 
     @staticmethod
     def __eval(expression):
-        """Evaluate expression returning a where clause and a
-        dictionary of values"""
+        """Evaluate expression returning a where clause and a dictionary of values."""
         if expression.is_str_literal():
             return SQLiteList.__eval_str_literal(expression)
 
@@ -243,6 +251,7 @@ WHERE id = ?
 
     @staticmethod
     def __eval_str_literal(expression):
+        """Evaluate a string literal query."""
         ident = uuid1().hex
         return (
             "(title LIKE :{ident} OR body LIKE :{ident})".format(ident=ident),
@@ -250,6 +259,7 @@ WHERE id = ?
 
     @staticmethod
     def __eval_infix(expression):
+        """Evaluate an infix expression."""
         if expression.is_logical_infix():
             left, left_values = SQLiteList.__eval(expression.left)
             right, right_values = SQLiteList.__eval(expression.right)

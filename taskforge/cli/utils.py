@@ -1,6 +1,4 @@
-"""
-Decorators and configuration file loading for the CLI
-"""
+"""Decorators and configuration file loading for the CLI."""
 
 import os
 import sys
@@ -16,7 +14,7 @@ CONFIG_FILES = [
 ]
 
 def default_config():
-    """Returns a dict with the default config values"""
+    """Return a dict with the default config values."""
     return {
         'list': {
             'name': 'sqlite',
@@ -36,7 +34,7 @@ def default_config():
     }
 
 def load_config():
-    """Loads the config file from the default locations"""
+    """Load the config file from the default locations."""
     for filename in CONFIG_FILES:
         if os.path.isfile(filename):
             with open(filename) as config_file:
@@ -45,7 +43,7 @@ def load_config():
 
 
 def config(func):
-    """Load config and inject it as the keyword argument cfg"""
+    """Load config and inject it as the keyword argument cfg."""
     def wrapper(*args, **kwargs):
         kwargs['cfg'] = load_config()
         return func(*args, **kwargs)
@@ -58,7 +56,7 @@ LISTS = {
 }
 
 def load_list(cfg):
-    """Load the correct List implementation based on the provided config"""
+    """Load the correct List implementation based on the provided config."""
     impl = LISTS.get(cfg['list']['name'])
     if impl is None:
         print('Unknown list: {}'.format(cfg['list']['name']))
@@ -68,8 +66,7 @@ def load_list(cfg):
 
 
 def inject_list(func):
-    """Injects a keyword argument task_list which has the configured
-    list loaded"""
+    """Injects a kwarg task_list which contains a configured list object."""
     @config
     def wrapper(*args, **kwargs):
         kwargs['task_list'] = load_list(kwargs['cfg'])

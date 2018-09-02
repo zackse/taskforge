@@ -1,3 +1,5 @@
+"""Contains the Token and Type classes."""
+
 import re
 from enum import Enum, auto
 
@@ -5,6 +7,8 @@ DATE_REGEX = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2})? ?(AM|P
 NUMBER_REGEX = re.compile('^[0-9]{1,}')
 
 class Type(Enum):
+    """Represents the various token types."""
+
     GT = 'GT'
     LT = 'LT'
     GTE = 'GTE'
@@ -54,9 +58,13 @@ LITERAL_TYPES = {
 }
 
 class Token:
-    """A query language lexical Token"""
+    """A query language lexical Token."""
 
     def __init__(self, literal, token_type=None):
+        """Return a token for literal.
+
+        If token_type is None will be determined from literal.
+        """
         self.literal = literal
         if token_type is not None:
             self.token_type = token_type
@@ -72,8 +80,10 @@ class Token:
             self.token_type = Type.STRING
 
     def __repr__(self):
+        """Return a string representation of this token."""
         return 'Token({}, {})'.format(self.token_type, self.literal)
 
     def __eq__(self, other):
+        """Return equal if other's literal and token_type are the same."""
         return (self.literal == other.literal and
                 self.token_type == other.token_type)

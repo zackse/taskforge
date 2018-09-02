@@ -1,69 +1,83 @@
+"""Contains the List base class as well as error types."""
+
 from abc import ABC, abstractmethod
 
 
 class InvalidConfigError(Exception):
-    """Indicates an invalid configuration was provided to the List"""
+    """Indicate an invalid configuration was provided to the List."""
+
     pass
 
 
 class NotFoundError(Exception):
-    """Indicates a task with the given id does not exist"""
+    """Indicate a task with the given id does not exist."""
 
-    def __init__(self, id):
-        self.id
+    def __init__(self, id=None):
+        """Return a NotFoundError for id."""
+        super().__init__()
+        self.id = id
 
     def __repr__(self):
-        return 'no task with id {} exists'.format(self.id)
+        """Return a human friendly error message."""
+        if self.id:
+            return 'no task with id {} exists'.format(self.id)
+        return 'no task that matched query found'
 
 
 class List(ABC):
-    """An abstract base class that all list implementations but derive
-    from."""
+    """An base class that all list implementations must derive from."""
 
     @abstractmethod
     def search(self, ast):
-        """Evaluate the AST and return a List of matching results"""
+        """Evaluate the AST and return a List of matching results."""
         raise NotImplementedError
 
     @abstractmethod
     def add(self, task):
-        """Add a task to the List"""
+        """Add a task to the List."""
         raise NotImplementedError
 
     @abstractmethod
     def add_multiple(self, tasks):
-        """Add multiple tasks to the List, should be more efficient
-        resource utilization."""
+        """Add multiple tasks to the List.
+
+        Ideally should be more efficient resource utilization.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def list(self):
-        """Return a python list of the Task in this List"""
+        """Return a python list of the Task in this List."""
         raise NotImplementedError
 
     @abstractmethod
     def find_by_id(self, id):
-        """Find a task by id"""
+        """Find a task by id."""
         raise NotImplementedError
 
     @abstractmethod
     def current(self):
-        """Return the current task, meaning the oldest uncompleted
-        task in the List"""
+        """Return the current task.
+
+        The current task is defined as the oldest uncompleted
+        task in the List.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def complete(self, id):
-        """Complete a task by id"""
+        """Complete a task by id."""
         raise NotImplementedError
 
     @abstractmethod
     def update(self, task):
-        """Update a task in the listist, finding the original by the
-        id of the given task"""
+        """Update a task in the list.
+
+        The original is retrived using the id of the given task.
+        """
         raise NotImplementedError
 
     @abstractmethod
     def add_note(self, id, note):
-        """Add note to a task by id"""
+        """Add note to a task by id."""
         raise NotImplementedError

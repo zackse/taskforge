@@ -1,6 +1,4 @@
-"""
-Implements the query subcommand
-"""
+"""Implements the query subcommand."""
 
 import csv
 import json
@@ -12,7 +10,7 @@ from .utils import inject_list
 
 
 def print_table(tasks):
-    """Print an ASCII table of the tasks"""
+    """Print an ASCII table of the tasks."""
     rows = [
         [
             'ID',
@@ -49,13 +47,13 @@ def print_table(tasks):
 
 
 def print_text(tasks):
-    """Print the __repr__ of all tasks in the list"""
+    """Print the __repr__ of all tasks in the list."""
     for task in tasks:
         print(task)
 
 
 def print_json(tasks):
-    """Print a list of tasks as json to stdout"""
+    """Print a list of tasks as json to stdout."""
     dicts = [task.to_dict() for task in tasks]
     json.dump(dicts, sys.stdout, indent="\t")
     # add a newline to output
@@ -63,7 +61,7 @@ def print_json(tasks):
 
 
 def print_csv(tasks):
-    """Print a list of tasks as csv to stdout"""
+    """Print a list of tasks as csv to stdout."""
     writer = csv.DictWriter(
         sys.stdout,
         extrasaction='ignore',
@@ -83,7 +81,7 @@ def print_csv(tasks):
         writer.writerow(task.to_dict())
 
 def print_tasks(tasks, output='table'):
-    """Print tasks using the print function which corresponds to output"""
+    """Print tasks using the print function which corresponds to output."""
     if output == 'table':
         print_table(tasks)
     elif output == 'text':
@@ -98,7 +96,7 @@ def print_tasks(tasks, output='table'):
 
 @inject_list
 def query_task(args, task_list=None):
-    """Print the current task in task_list"""
+    """Print the current task in task_list."""
     if args.query:
         ast = Parser(' '.join(args.query)).parse()
         tasks = task_list.search(ast)
@@ -109,7 +107,7 @@ def query_task(args, task_list=None):
 
 
 def query_cmd(parser):
-    """Add the next command to parser"""
+    """Add the next command to parser."""
     sub_parser = parser.add_parser(
         'query',
         aliases=['q', 's', 'search', 'list'],

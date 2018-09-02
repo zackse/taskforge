@@ -1,13 +1,11 @@
-"""
-Implements the next subcommand
-"""
+"""Implements the next subcommand."""
 
 from .utils import inject_list
 
 
 @inject_list
 def print_next(args, task_list=None):
-    """Print the current task in task_list"""
+    """Print the current task in task_list."""
     task = task_list.current()
 
     if args.title_only:
@@ -19,7 +17,7 @@ def print_next(args, task_list=None):
 
 
 def next_cmd(parser):
-    """Add the next command to parser"""
+    """Add the next command to parser."""
     sub_parser = parser.add_parser(
         'next',
         aliases=['n'],

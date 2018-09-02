@@ -1,3 +1,5 @@
+"""Entry point for the Taskforge CLI."""
+
 import argparse
 
 from .add_cmd import add_cmd
@@ -9,6 +11,7 @@ from .todo_cmd import todo_cmd
 
 
 def main():
+    """Entry point function for the Taskforge CLI."""
     parser = argparse.ArgumentParser(
         prog='task',
     )

@@ -1,6 +1,4 @@
-"""
-Provides Task and Note classes for use within this application.
-"""
+"""Provides Task and Note classes for use within this application."""
 
 from datetime import datetime
 from uuid import uuid4
@@ -9,7 +7,7 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 class Note:
-    """A note or "comment" on a task"""
+    """A note or "comment" on a task."""
 
     def __init__(
             self,
@@ -17,6 +15,7 @@ class Note:
             id=None,
             created_date=None
     ):
+        """Create a note with body."""
         if id is None:
             id = uuid4().hex
         self.id = id
@@ -28,20 +27,22 @@ class Note:
         self.body = body
 
     def __eq__(self, other):
+        """Return True if self and other have the same id."""
         if not isinstance(other, Note):
             return False
         return self.id == other.id
 
     def __repr__(self):
+        """Return a simple string of note id and body."""
         return 'Note-{}: {}'.format(self.id, self.body)
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Create a note instance from a JSON dictionary"""
+        """Create a note instance from a JSON dictionary."""
         return cls(**dictionary)
 
     def to_dict(self):
-        """Convert this note object into a dictionary for JSON serialization"""
+        """Convert this note object into a dictionary for JSON serialization."""
         return {
             'id': self.id,
             'created_date': self.created_date.strftime(DATE_FORMAT),
@@ -50,7 +51,7 @@ class Note:
 
 
 class Task: # pylint: disable=too-many-instance-attributes
-    """Represents a task in a Task List"""
+    """Represents a task in a Task List."""
 
     def __init__( # pylint: disable=too-many-arguments
             self,
@@ -63,6 +64,11 @@ class Task: # pylint: disable=too-many-instance-attributes
             completed_date=None,
             body='',
     ):
+        """Create a Task with title.
+
+        All other fields are optional and id should not be set unless
+        instantiating from an existing task.
+        """
         if id is None:
             id = uuid4().hex
         self.id = id
@@ -83,12 +89,13 @@ class Task: # pylint: disable=too-many-instance-attributes
         self.body = body
 
     def __eq__(self, other):
+        """Return True if self and other have the same id."""
         if not isinstance(other, Task):
             return False
         return self.id == other.id
 
     def __lt__(self, other):
-        """Sorts highest priority first then oldest first"""
+        """Sorts highest priority first then oldest first."""
         if self.priority > other.priority:
             return True
 
@@ -98,11 +105,12 @@ class Task: # pylint: disable=too-many-instance-attributes
         return self.created_date < other.created_date
 
     def __repr__(self):
+        """Return a simple string of the task id and title."""
         return '{}: {}'.format(self.id, self.title)
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Creates a Task from a dictionary representation"""
+        """Create a Task from a dictionary representation."""
         if dictionary.get('notes'):
             dictionary['notes'] = [Note.from_dict(note)
                                    for note in dictionary['notes']]
@@ -112,7 +120,7 @@ class Task: # pylint: disable=too-many-instance-attributes
         return cls(**dictionary)
 
     def to_dict(self):
-        """Convert this task object into a dictionary for JSON serialization"""
+        """Convert this task object into a dictionary for JSON serialization."""
         return {
             'id': self.id,
             'title': self.title,
@@ -126,14 +134,14 @@ class Task: # pylint: disable=too-many-instance-attributes
         }
 
     def complete(self):
-        """Complete this task"""
+        """Complete this task."""
         self.completed_date = datetime.now()
         return self
 
     def is_complete(self):
-        """Indicates whether this task is completed or not"""
+        """Indicate whether this task is completed or not."""
         return self.is_completed()
 
     def is_completed(self):
-        """Indicates whether this task is completed or not"""
+        """Indicate whether this task is completed or not."""
         return self.completed_date is not None
