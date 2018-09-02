@@ -42,7 +42,7 @@ optional arguments:
 
 All pull requests should go to the develop branch not master. Thanks!
 
-See the [DESIGN.md](https://github.com/chasinglogic/taskforge/blob/master/DESIGN.md)
+See the [DESIGN.md](https://github.com/chasinglogic/taskforge/blob/master/docs/designs/Initial%20Design.md)
 for more info. Not everything laid out there is implemented yet.
 
 ## License
