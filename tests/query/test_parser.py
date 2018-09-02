@@ -1,8 +1,8 @@
 import unittest
 
 from taskforge.ql import Parser
-from taskforge.ql.tokens import Token
 from taskforge.ql.ast import AST, Expression
+from taskforge.ql.tokens import Token
 
 PARSER_TESTS = [
     {
@@ -56,7 +56,7 @@ PARSER_TESTS = [
                 left=Expression(
                     Token('and'),
                     right=Expression(
-                        Token('^'),
+                        Token('~'),
                         right=Expression(Token('take out the trash')),
                         left=Expression(Token('title'))
                     ),

@@ -1,4 +1,5 @@
 import unittest
+
 from taskforge.ql import Lexer
 from taskforge.ql.tokens import Token, Type
 
@@ -51,7 +52,7 @@ LEXER_TESTS = [
             Token('5'),
             Token('and'),
             Token('title'),
-            Token('^'),
+            Token('~'),
             Token('take out the trash'),
             Token(')'),
             Token('or'),
