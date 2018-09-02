@@ -13,6 +13,8 @@ install:
 	python setup.py install
 
 install-dev:
+	pip install --editable .
+	pip install -e --editable .[cli]
 	pip install -r requirements.dev.txt
 
 test:
