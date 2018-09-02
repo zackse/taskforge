@@ -1,13 +1,13 @@
-import unittest
+# pylint: disable=missing-docstring
 
+import unittest
 from datetime import datetime
 
 from taskforge.ql.ast import Expression
-from taskforge.ql.tokens import Token, Type
+from taskforge.ql.tokens import Token
 
 
 class ExpressionTests(unittest.TestCase):
-
     def test_expression_values_literals(self):
         literals = [
             {
@@ -31,7 +31,8 @@ class ExpressionTests(unittest.TestCase):
                 self.assertEqual(exp.value, literal['value'])
 
     def test_is_infix(self):
-        infix = Expression(Token('='), left=Token('title'), right=Token('right'))
+        infix = Expression(
+            Token('='), left=Token('title'), right=Token('right'))
         self.assertTrue(infix.is_infix())
 
     def test_is_literal(self):
@@ -46,27 +47,39 @@ class ExpressionTests(unittest.TestCase):
             },
             {
                 'date_string': '2018-01-01 01:01',
-                'expected': datetime(year=2018, month=1, day=1, hour=1, minute=1)
+                'expected': datetime(
+                    year=2018, month=1, day=1, hour=1, minute=1)
             },
             {
-                'date_string': '2018-01-01 01:01:10',
-                'expected': datetime(year=2018, month=1, day=1, hour=1, minute=1, second=10)
+                'date_string':
+                '2018-01-01 01:01:10',
+                'expected':
+                datetime(
+                    year=2018, month=1, day=1, hour=1, minute=1, second=10)
             },
             {
-                'date_string': '2018-01-01 01:01:10 PM',
-                'expected': datetime(year=2018, month=1, day=1, hour=13, minute=1, second=10)
+                'date_string':
+                '2018-01-01 01:01:10 PM',
+                'expected':
+                datetime(
+                    year=2018, month=1, day=1, hour=13, minute=1, second=10)
             },
             {
-                'date_string': '2018-01-01 01:01:10PM',
-                'expected': datetime(year=2018, month=1, day=1, hour=13, minute=1, second=10)
+                'date_string':
+                '2018-01-01 01:01:10PM',
+                'expected':
+                datetime(
+                    year=2018, month=1, day=1, hour=13, minute=1, second=10)
             },
             {
                 'date_string': '2018-01-01 01:01 PM',
-                'expected': datetime(year=2018, month=1, day=1, hour=13, minute=1)
+                'expected': datetime(
+                    year=2018, month=1, day=1, hour=13, minute=1)
             },
             {
                 'date_string': '2018-01-01 01:01PM',
-                'expected': datetime(year=2018, month=1, day=1, hour=13, minute=1)
+                'expected': datetime(
+                    year=2018, month=1, day=1, hour=13, minute=1)
             },
         ]
 

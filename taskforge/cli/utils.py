@@ -13,6 +13,7 @@ CONFIG_FILES = [
     '/etc/taskforge.d/config.toml'
 ]
 
+
 def default_config():
     """Return a dict with the default config values."""
     return {
@@ -33,6 +34,7 @@ def default_config():
         }
     }
 
+
 def load_config():
     """Load the config file from the default locations."""
     for filename in CONFIG_FILES:
@@ -44,9 +46,12 @@ def load_config():
 
 def config(func):
     """Load config and inject it as the keyword argument cfg."""
+    cfg = load_config()
+
     def wrapper(*args, **kwargs):
-        kwargs['cfg'] = load_config()
+        kwargs['cfg'] = cfg
         return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -54,6 +59,7 @@ LISTS = {
     'sqlite': SQLiteList,
     'file': SQLiteList,
 }
+
 
 def load_list(cfg):
     """Load the correct List implementation based on the provided config."""
@@ -65,11 +71,13 @@ def load_list(cfg):
     return impl(**cfg['list']['config'])
 
 
-def inject_list(func):
+def inject_list(func):  # noqa: D202
     """Injects a kwarg task_list which contains a configured list object."""
+
     @config
     def wrapper(*args, **kwargs):
         kwargs['task_list'] = load_list(kwargs['cfg'])
         del kwargs['cfg']
         return func(*args, **kwargs)
+
     return wrapper

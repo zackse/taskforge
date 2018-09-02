@@ -34,9 +34,12 @@ def add_cmd(parser):
         aliases=['new', 'a'],
         help='Add a new task to the list',
     )
-    sub_parser.add_argument('--from-file', '-f', type=str,
-                            help='A JSON file which to load tasks from, '
-                            'if provided all other arguments are ignored.')
+    sub_parser.add_argument(
+        '--from-file',
+        '-f',
+        type=str,
+        help='A JSON file which to load tasks from, '
+        'if provided all other arguments are ignored.')
     sub_parser.add_argument('--priority', '-p', type=float, default=1.0)
     sub_parser.add_argument('--context', '-c', type=str, default='default')
     sub_parser.add_argument('--body', '-b', type=str)

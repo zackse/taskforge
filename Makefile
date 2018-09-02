@@ -2,6 +2,9 @@ lint:
 	pydocstyle taskforge
 	pylint taskforge tests
 
+fmt:
+	yapf --recursive -i taskforge tests
+
 clean:
 	rm -rf *.egg-info build dist
 	find . -path ./.venv -prune -type f -name '*.pyc'

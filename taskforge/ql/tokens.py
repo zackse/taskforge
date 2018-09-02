@@ -1,10 +1,12 @@
 """Contains the Token and Type classes."""
 
 import re
-from enum import Enum, auto
+from enum import Enum
 
-DATE_REGEX = re.compile('^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2})? ?(AM|PM|pm|am)?')
+DATE_REGEX = re.compile(
+    '^[0-9]{4}-[0-9]{2}-[0-9]{2}( [0-9]{2}:[0-9]{2})? ?(AM|PM|pm|am)?')
 NUMBER_REGEX = re.compile('^[0-9]{1,}')
+
 
 class Type(Enum):
     """Represents the various token types."""
@@ -57,6 +59,7 @@ LITERAL_TYPES = {
     ")": Type.RPAREN,
 }
 
+
 class Token:
     """A query language lexical Token."""
 
@@ -85,5 +88,5 @@ class Token:
 
     def __eq__(self, other):
         """Return equal if other's literal and token_type are the same."""
-        return (self.literal == other.literal and
-                self.token_type == other.token_type)
+        return (self.literal == other.literal
+                and self.token_type == other.token_type)

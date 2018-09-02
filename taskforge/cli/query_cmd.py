@@ -5,33 +5,18 @@ import json
 import sys
 
 from ..ql import Parser
-from ..task import DATE_FORMAT
 from .utils import inject_list
 
 
 def print_table(tasks):
     """Print an ASCII table of the tasks."""
-    rows = [
-        [
-            'ID',
-            'Created Date',
-            'Completed Date',
-            'Priority',
-            'Title',
-            'Context'
-        ]
-    ]
-    rows += [
-        [
-            task.id,
-            task.created_date,
-            task.completed_date,
-            task.priority,
-            task.title,
-            task.context
-        ]
-        for task in tasks
-    ]
+    rows = [[
+        'ID', 'Created Date', 'Completed Date', 'Priority', 'Title', 'Context'
+    ]]
+    rows += [[
+        task.id, task.created_date, task.completed_date, task.priority,
+        task.title, task.context
+    ] for task in tasks]
 
     wcolumns = None
     for columns in rows:
@@ -73,12 +58,12 @@ def print_csv(tasks):
             'title',
             'context',
             'body',
-        ]
-    )
+        ])
 
     writer.writeheader()
     for task in tasks:
         writer.writerow(task.to_dict())
+
 
 def print_tasks(tasks, output='table'):
     """Print tasks using the print function which corresponds to output."""
@@ -91,7 +76,7 @@ def print_tasks(tasks, output='table'):
     elif output == 'csv':
         print_csv(tasks)
     else:
-        print('{} is not a valid output format'.format(args.output))
+        print('{} is not a valid output format'.format(output))
 
 
 @inject_list
@@ -114,10 +99,10 @@ def query_cmd(parser):
         help='Query tasks in the list.',
     )
     sub_parser.add_argument(
-        '--output', '-o',
+        '--output',
+        '-o',
         type=str,
         default='table',
-        choices=['text', 'table', 'json', 'csv']
-    )
+        choices=['text', 'table', 'json', 'csv'])
     sub_parser.add_argument('query', metavar='QUERY', nargs='*', type=str)
     sub_parser.set_defaults(func=query_task)

@@ -23,6 +23,7 @@ class AST:
         """
         return self.expression.__repr__()
 
+
 class Expression:
     """An expression is a statement that yields a value."""
 
@@ -71,18 +72,13 @@ class Expression:
     def __repr__(self):
         """Return a string representation of this expression."""
         if self.is_infix() and self.token.token_type in [Type.AND, Type.OR]:
-            return '({} {} {})'.format(
-                self.left,
-                self.operator.literal,
-                self.right)
+            return '({} {} {})'.format(self.left, self.operator.literal,
+                                       self.right)
 
         if self.is_infix():
             return '({} {} {})'.format(
-                self.left.value
-                if self.left is not None
-                else self.left,
-                self.operator.literal,
-                self.right)
+                self.left.value if self.left is not None else self.left,
+                self.operator.literal, self.right)
 
         if isinstance(self.value, str):
             return "'{}'".format(self.value)
@@ -92,14 +88,11 @@ class Expression:
     def __eq__(self, other):
         """Return True if other is the same kind of expression with the same values."""
         if self.is_infix():
-            return (other.is_infix() and
-                    self.left == other.left and
-                    self.operator == other.operator and
-                    self.right == other.right)
+            return (other.is_infix() and self.left == other.left
+                    and self.operator == other.operator
+                    and self.right == other.right)
 
-        return (self.value == other.value and
-                self.token == other.token)
-
+        return self.value == other.value and self.token == other.token
 
     @staticmethod
     def parse_date(date_string):
@@ -130,30 +123,24 @@ class Expression:
 
     def is_and_infix(self):
         """Indicate if this is a logical AND expression."""
-        return (self.is_infix() and
-                self.operator.token_type == Type.AND)
+        return self.is_infix() and self.operator.token_type == Type.AND
 
     def is_or_infix(self):
         """Indicate if this is a logical OR expression."""
-        return (self.is_infix() and
-                self.operator.token_type == Type.OR)
+        return self.is_infix() and self.operator.token_type == Type.OR
 
     def is_str_literal(self):
         """Indicate whether this expression is a string value."""
-        return (self.is_literal() and
-                self.token.token_type == Type.STRING)
+        return self.is_literal() and self.token.token_type == Type.STRING
 
     def is_date_literal(self):
         """Indicate whether this expression is a date value."""
-        return (self.is_literal() and
-                self.token.token_type == Type.DATE)
+        return self.is_literal() and self.token.token_type == Type.DATE
 
     def is_number_literal(self):
         """Indicate whether this expression is a number value."""
-        return (self.is_literal() and
-                self.token.token_type == Type.NUMBER)
+        return self.is_literal() and self.token.token_type == Type.NUMBER
 
     def is_boolean_literal(self):
         """Indicate whether this expression is a boolean value."""
-        return (self.is_literal() and
-                self.token.token_type == Type.BOOLEAN)
+        return self.is_literal() and self.token.token_type == Type.BOOLEAN

@@ -70,7 +70,8 @@ FROM tasks
         file does not already exist.
         """
         if file_name == '' and directory == '':
-            raise InvalidConfigError('either directory or file_name must be provided')
+            raise InvalidConfigError(
+                'either directory or file_name must be provided')
 
         if file_name == '':
             directory = directory.replace('~', os.getenv('HOME'))
@@ -94,8 +95,7 @@ FROM tasks
         return Note(
             id=row[0],
             body=row[1],
-            created_date=datetime.fromtimestamp(row[2])
-        )
+            created_date=datetime.fromtimestamp(row[2]))
 
     @staticmethod
     def task_to_row(task):
@@ -107,8 +107,7 @@ FROM tasks
             task.context,
             task.priority,
             task.created_date.timestamp(),
-            task.completed_date.timestamp()
-            if task.completed_date else 0,
+            task.completed_date.timestamp() if task.completed_date else 0,
         )
 
     def task_from_row(self, row):
@@ -129,18 +128,14 @@ FROM tasks
             context=row[3],
             priority=row[4],
             created_date=datetime.fromtimestamp(row[5]),
-            completed_date=datetime.fromtimestamp(row[6])
-            if row[6] else None,
-            notes=self.__get_notes(row[0])
-        )
+            completed_date=datetime.fromtimestamp(row[6]) if row[6] else None,
+            notes=self.__get_notes(row[0]))
 
     def __get_notes(self, id):
         return [
-            SQLiteList.note_from_row(row) for row in
-            self.conn.execute(
+            SQLiteList.note_from_row(row) for row in self.conn.execute(
                 'SELECT id, body, created_date FROM notes WHERE task_id = ?',
-                (id,)
-            )
+                (id, ))
         ]
 
     def add(self, task):
@@ -160,14 +155,12 @@ FROM tasks
     def list(self):
         """Return a python list of the Task in this List."""
         return [
-            self.task_from_row(row) for row in
-            self.conn.execute(self.__select)
+            self.task_from_row(row) for row in self.conn.execute(self.__select)
         ]
 
     def find_by_id(self, id):
         """Find a task by id."""
-        cursor = self.conn.execute(
-            self.__select + 'WHERE id = ?', (id,))
+        cursor = self.conn.execute(self.__select + 'WHERE id = ?', (id, ))
         return self.task_from_row(cursor.fetchone())
 
     def current(self):
@@ -205,7 +198,8 @@ FROM tasks
             update_tuple[5],
             update_tuple[0],
         )
-        self.conn.execute(r"""
+        self.conn.execute(
+            r"""
 UPDATE tasks
 SET
     title = ?,
@@ -234,9 +228,10 @@ WHERE id = ?
     def search(self, ast):
         """Evaluate the AST and return a List of matching results."""
         where, values = SQLiteList.__eval(ast.expression)
-        return [self.task_from_row(task) for task in
-                self.conn.execute(
-                    self.__select + 'WHERE ' + where, values)]
+        return [
+            self.task_from_row(task) for task in self.conn.execute(
+                self.__select + 'WHERE ' + where, values)
+        ]
 
     @staticmethod
     def __eval(expression):
@@ -255,7 +250,9 @@ WHERE id = ?
         ident = uuid1().hex
         return (
             "(title LIKE :{ident} OR body LIKE :{ident})".format(ident=ident),
-            {ident: '%{}%'.format(expression.value)})
+            {
+                ident: '%{}%'.format(expression.value)
+            })
 
     @staticmethod
     def __eval_infix(expression):
@@ -263,28 +260,27 @@ WHERE id = ?
         if expression.is_logical_infix():
             left, left_values = SQLiteList.__eval(expression.left)
             right, right_values = SQLiteList.__eval(expression.right)
-            return (
-                '({}) {} ({})'.format(
-                    left,
-                    expression.operator.literal,
-                    right,
-                ),
-                {**left_values, **right_values})
+            return ('({}) {} ({})'.format(
+                left,
+                expression.operator.literal,
+                right,
+            ), {
+                **left_values,
+                **right_values
+            })
 
         ident = uuid1().hex
-        if (expression.left.value == 'completed' and
-            expression.right.is_boolean_literal()):
+        if (expression.left.value == 'completed'
+                and expression.right.is_boolean_literal()):
             return ('completed_date != 0'
-                    if expression.right.value
-                    else 'completed_date = 0', {})
+                    if expression.right.value else 'completed_date = 0', {})
 
         if expression.operator.token_type == Type.LIKE:
-            return (
-                '({} LIKE :{})'.format(expression.left.value, ident),
-                {ident: '%{}%'.format(expression.right.value)}
-            )
+            return ('({} LIKE :{})'.format(expression.left.value, ident), {
+                ident: '%{}%'.format(expression.right.value)
+            })
 
-        return (
-            '({} {} :{})'.format(expression.left.value, expression.operator.literal, ident),
-            {ident: expression.right.value}
-        )
+        return ('({} {} :{})'.format(expression.left.value,
+                                     expression.operator.literal, ident), {
+                                         ident: expression.right.value
+                                     })

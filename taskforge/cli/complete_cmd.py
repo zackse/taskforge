@@ -3,7 +3,6 @@
 import sys
 
 from ..lists import NotFoundError
-from ..task import Task
 from .utils import inject_list
 
 

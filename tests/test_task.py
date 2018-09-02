@@ -1,44 +1,37 @@
+# pylint: disable=missing-docstring
+
 import unittest
 
 from taskforge.task import Task
 
 
 class TaskTests(unittest.TestCase):
-
     def test_unique_ids(self):
-        t1 = Task('task 1')
-        t2 = Task('task 2')
-        t3 = Task('task 3')
-        self.assertNotEqual(t1, t2)
-        self.assertNotEqual(t1, t3)
-        self.assertNotEqual(t2, t3)
-        self.assertNotEqual(t1.created_date, t3.created_date)
+        task1 = Task('task 1')
+        task2 = Task('task 2')
+        task3 = Task('task 3')
+        self.assertNotEqual(task1, task2)
+        self.assertNotEqual(task1, task3)
+        self.assertNotEqual(task2, task3)
+        self.assertNotEqual(task1.created_date, task3.created_date)
 
     def test_sort_order(self):
-        t1 = Task('task 1')
-        t2 = Task('task 2')
-        t3 = Task('task 3')
+        task1 = Task('task 1')
+        task2 = Task('task 2')
+        task3 = Task('task 3')
 
-        list1 = sorted([
-            t3,
-            t2,
-            t1
-        ])
+        listask1 = sorted([task3, task2, task1])
 
-        self.assertEqual(list1[0], t1)
-        self.assertEqual(list1[1], t2)
-        self.assertEqual(list1[2], t3)
+        self.assertEqual(listask1[0], task1)
+        self.assertEqual(listask1[1], task2)
+        self.assertEqual(listask1[2], task3)
 
-        t1.priority = 3.0
-        t2.priority = 1.0
-        t3.priority = 2.0
+        task1.priority = 3.0
+        task2.priority = 1.0
+        task3.priority = 2.0
 
-        list2 = sorted([
-            t3,
-            t2,
-            t1
-        ])
+        listask2 = sorted([task3, task2, task1])
 
-        self.assertEqual(list2[0], t1)
-        self.assertEqual(list2[1], t3)
-        self.assertEqual(list2[2], t2)
+        self.assertEqual(listask2[0], task1)
+        self.assertEqual(listask2[1], task3)
+        self.assertEqual(listask2[2], task2)

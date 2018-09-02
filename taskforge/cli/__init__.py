@@ -12,9 +12,7 @@ from .todo_cmd import todo_cmd
 
 def main():
     """Entry point function for the Taskforge CLI."""
-    parser = argparse.ArgumentParser(
-        prog='task',
-    )
+    parser = argparse.ArgumentParser(prog='task', )
     subparsers = parser.add_subparsers()
     next_cmd(subparsers)
     add_cmd(subparsers)

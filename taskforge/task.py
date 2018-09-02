@@ -9,12 +9,7 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 class Note:
     """A note or "comment" on a task."""
 
-    def __init__(
-            self,
-            body,
-            id=None,
-            created_date=None
-    ):
+    def __init__(self, body, id=None, created_date=None):
         """Create a note with body."""
         if id is None:
             id = uuid4().hex
@@ -50,10 +45,10 @@ class Note:
         }
 
 
-class Task: # pylint: disable=too-many-instance-attributes
+class Task:  # pylint: disable=too-many-instance-attributes
     """Represents a task in a Task List."""
 
-    def __init__( # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments
             self,
             title,
             id=None,
@@ -112,8 +107,9 @@ class Task: # pylint: disable=too-many-instance-attributes
     def from_dict(cls, dictionary):
         """Create a Task from a dictionary representation."""
         if dictionary.get('notes'):
-            dictionary['notes'] = [Note.from_dict(note)
-                                   for note in dictionary['notes']]
+            dictionary['notes'] = [
+                Note.from_dict(note) for note in dictionary['notes']
+            ]
         else:
             dictionary['notes'] = []
 
@@ -122,13 +118,20 @@ class Task: # pylint: disable=too-many-instance-attributes
     def to_dict(self):
         """Convert this task object into a dictionary for JSON serialization."""
         return {
-            'id': self.id,
-            'title': self.title,
-            'body': self.body,
-            'context': self.context,
-            'priority': self.priority,
-            'created_date': self.created_date.strftime(DATE_FORMAT),
-            'completed_date': self.completed_date.strftime(DATE_FORMAT)
+            'id':
+            self.id,
+            'title':
+            self.title,
+            'body':
+            self.body,
+            'context':
+            self.context,
+            'priority':
+            self.priority,
+            'created_date':
+            self.created_date.strftime(DATE_FORMAT),
+            'completed_date':
+            self.completed_date.strftime(DATE_FORMAT)
             if self.completed_date else None,
             'notes': [n.to_dict() for n in self.notes],
         }

@@ -33,7 +33,6 @@ class ListTests:
         result = self.list.find_by_id(task.id)
         self.assertEqual(result.is_complete(), True)
 
-
     def test_return_correct_current_task(self):
         tasks = [
             Task("task 1"),
@@ -103,7 +102,8 @@ class ListTests:
             Task("task 4"),
         ]
         self.run_query_test(
-            query="title = \"task 4\" or title = \"task 1\" or title = \"other task\"",
+            query=
+            "title = \"task 4\" or title = \"task 1\" or title = \"other task\"",
             fixture=fixture,
             expected=[fixture[0], fixture[4], fixture[2]],
         )
@@ -117,7 +117,8 @@ class ListTests:
             Task("task 4"),
         ]
         self.run_query_test(
-            query="(title = \"task 1\" and context = \"default\") or (context = \"other\")",
+            query=
+            "(title = \"task 1\" and context = \"default\") or (context = \"other\")",
             fixture=fixture,
             expected=[fixture[0], fixture[2]],
         )
@@ -133,8 +134,9 @@ class ListTests:
         self.run_query_test(
             query="task",
             fixture=fixture,
-            expected=[fixture[0], fixture[1], fixture[2], fixture[3], fixture[4]]
-        )
+            expected=[
+                fixture[0], fixture[1], fixture[2], fixture[3], fixture[4]
+            ])
 
     def test_query_priority_equals_1_0(self):
         fixture = [
@@ -147,8 +149,9 @@ class ListTests:
         self.run_query_test(
             query="priority = 1.0",
             fixture=fixture,
-            expected=[fixture[0], fixture[1], fixture[2], fixture[3], fixture[4]]
-        )
+            expected=[
+                fixture[0], fixture[1], fixture[2], fixture[3], fixture[4]
+            ])
 
     def test_query_priority_gt_1(self):
         fixture = [
@@ -159,7 +162,4 @@ class ListTests:
             Task("task 4"),
         ]
         self.run_query_test(
-            query="priority > 1",
-            fixture=fixture,
-            expected=[fixture[2]]
-        )
+            query="priority > 1", fixture=fixture, expected=[fixture[2]])

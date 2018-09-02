@@ -1,9 +1,11 @@
+# pylint: disable=missing-docstring
+
 import unittest
+
 from taskforge.ql.tokens import Token, Type
 
 
 class TestTokens(unittest.TestCase):
-
     def test_token_types(self):
         self.assertEqual(Token('or').token_type, Type.OR)
         self.assertEqual(Token('OR').token_type, Type.OR)

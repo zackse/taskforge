@@ -18,7 +18,7 @@ class Lexer:
         """Return self, for use with for loops."""
         return self
 
-    def __next__(self): # pylint: disable=too-many-branches
+    def __next__(self):  # pylint: disable=too-many-branches
         """Return the next token from input."""
         self._skip_whitespace()
 
@@ -116,4 +116,4 @@ class Lexer:
         return self._read(lambda c: c.isdigit() or c == '.')
 
     def _quoted_string(self):
-        return self._read(lambda c: c != '"' and c != "'")
+        return self._read(lambda c: c not in ('"', "'"))

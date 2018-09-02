@@ -19,10 +19,7 @@ def print_next(args, task_list=None):
 def next_cmd(parser):
     """Add the next command to parser."""
     sub_parser = parser.add_parser(
-        'next',
-        aliases=['n'],
-        help='Print the next task in the list'
-    )
+        'next', aliases=['n'], help='Print the next task in the list')
     sub_parser.add_argument('--title-only', '-t', action='store_true')
     sub_parser.add_argument('--id-only', '-i', action='store_true')
     sub_parser.set_defaults(func=print_next)
