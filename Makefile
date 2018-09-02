@@ -12,5 +12,8 @@ clean:
 install:
 	python setup.py install
 
+install-dev:
+	pip install -r requirements.dev.txt
+
 test:
 	python -m unittest discover
