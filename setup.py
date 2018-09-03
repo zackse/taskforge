@@ -35,7 +35,11 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
-    extras_requires=extras,
+    extras_require={
+        'dev': ['pylint', 'yapf', 'pydocstyle'],
+        'cli': ['toml==0.9.4'],
+        'mongo': ['pymongo==3.7.1']
+    },
     entry_points={
         'console_scripts': [
             'task = taskforge.cli:main',

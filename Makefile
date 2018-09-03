@@ -13,9 +13,9 @@ install:
 	python setup.py install
 
 install-dev:
-	python setup.py develop
-	pip install -r requirements.dev.txt
-	pip install -r requirements.cli.txt
+	pip install --editable .
+	pip install --editable ".[mongo]"
+	pip install --editable ".[cli]"
 
 test:
 	python -m unittest discover
