@@ -14,7 +14,8 @@ install:
 
 install-dev:
 	python setup.py develop
-	find . -name requirements\* -depth 1 -exec pip install -r {} \;
+	pip install -r requirements.dev.txt
+	pip install -r requirements.cli.txt
 
 test:
 	python -m unittest discover
