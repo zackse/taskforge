@@ -1,7 +1,17 @@
-"""
-A task management tool that integrates with 3rd party services
-"""
+"""A task management tool that integrates with 3rd party services."""
+
+from glob import iglob
+
 from setuptools import find_packages, setup
+
+extras = {}
+extras_files = iglob('requirements.*.txt')
+
+for extra_file in extras_files:
+    extras_spec = extra_file.split('.')[1]
+
+    with open(extra_file) as reqs:
+        extras[extras_spec] = [line.strip() for line in reqs if line != '']
 
 with open('requirements.txt') as reqs:
     dependencies = reqs.read().split('\n')
@@ -25,11 +35,7 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=dependencies,
-    extras_requires={
-        'cli': [
-            'toml==0.9.4'
-        ]
-    },
+    extras_requires=extras,
     entry_points={
         'console_scripts': [
             'task = taskforge.cli:main',
@@ -48,5 +54,4 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Topic :: Software Development :: Libraries :: Python Modules',
-    ]
-)
+    ])

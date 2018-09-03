@@ -13,9 +13,8 @@ install:
 	python setup.py install
 
 install-dev:
-	pip install --editable .
-	pip install -e --editable .[cli]
-	pip install -r requirements.dev.txt
+	python setup.py develop
+	find . -name requirements\* -d 1 -exec pip install -r {} \;
 
 test:
 	python -m unittest discover
