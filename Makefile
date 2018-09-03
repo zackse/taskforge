@@ -14,7 +14,7 @@ install:
 
 install-dev:
 	python setup.py develop
-	find . -name requirements\* -d 1 -exec pip install -r {} \;
+	find . -name requirements\* -depth 1 -exec pip install -r {} \;
 
 test:
 	python -m unittest discover
