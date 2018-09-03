@@ -4,18 +4,6 @@ from glob import iglob
 
 from setuptools import find_packages, setup
 
-extras = {}
-extras_files = iglob('requirements.*.txt')
-
-for extra_file in extras_files:
-    extras_spec = extra_file.split('.')[1]
-
-    with open(extra_file) as reqs:
-        extras[extras_spec] = [line.strip() for line in reqs if line != '']
-
-with open('requirements.txt') as reqs:
-    dependencies = reqs.read().split('\n')
-
 with open('README.md') as f:
     long_description = f.read()
 
@@ -34,7 +22,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=dependencies,
+    install_requires=[],
     extras_require={
         'dev': ['pylint', 'yapf', 'pydocstyle'],
         'cli': ['toml==0.9.4'],
