@@ -3,6 +3,7 @@
 from datetime import datetime
 
 import pymongo
+
 from taskforge.ql.tokens import Type
 from taskforge.task import Task
 
@@ -12,7 +13,7 @@ from . import List
 class MongoDBList(List):
     """A MongoDB backed list implementation."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
             self,
             host='localhost',
             port=27017,

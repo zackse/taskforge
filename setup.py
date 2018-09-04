@@ -22,7 +22,6 @@ setup(
     platforms='any',
     install_requires=[],
     extras_require={
-        'dev': ['pylint', 'yapf', 'pydocstyle'],
         'cli': ['toml==0.9.4'],
         'mongo': ['pymongo==3.7.1']
     },
