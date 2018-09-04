@@ -18,9 +18,18 @@ class MongoDBList(List):
             port=27017,
             db='taskforge',
             collection='tasks',
+            username=None,
+            password=None,
+            ssl=False,
     ):
         """Create a MongoDBList from the given configuration."""
-        self._client = pymongo.MongoClient(host, port)
+        conn_url = 'mongodb://'
+        if username and password:
+            conn_url += '{}:{}@'.format(username, password)
+        elif username:
+            conn_url += '{}@'.format(username)
+        conn_url += '{}:{}'.format(host, port)
+        self._client = pymongo.MongoClient(conn_url, ssl=ssl)
         self._db = self._client[db]
         self._collection = self._db[collection]
 
