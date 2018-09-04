@@ -1,12 +1,17 @@
 """Implements the next subcommand."""
 
+from ..lists import NotFoundError
 from .utils import inject_list
 
 
 @inject_list
 def print_next(args, task_list=None):
     """Print the current task in task_list."""
-    task = task_list.current()
+    try:
+        task = task_list.current()
+    except NotFoundError:
+        print('No current task!')
+        return
 
     if args.title_only:
         print(task.title)

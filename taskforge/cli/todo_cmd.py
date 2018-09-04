@@ -1,5 +1,6 @@
 """Implements the todo subcommand."""
 
+from ..lists import NotFoundError
 from ..ql.ast import AST, Expression
 from ..ql.tokens import Token
 from .query_cmd import print_tasks
@@ -15,8 +16,11 @@ def todo_task(args, task_list=None):
             left=Expression(Token('completed')),
             right=Expression(Token('false'))))
 
-    tasks = task_list.search(ast)
-    print_tasks(tasks, output=args.output)
+    try:
+        tasks = task_list.search(ast)
+        print_tasks(tasks, output=args.output)
+    except NotFoundError:
+        print('No incomplete tasks!')
 
 
 def todo_cmd(parser):

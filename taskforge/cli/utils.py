@@ -6,6 +6,7 @@ import sys
 import toml
 
 from ..lists.sqlite import SQLiteList
+from ..lists import InvalidConfigError
 
 CONFIG_FILES = [
     'taskforge.toml',
@@ -68,7 +69,14 @@ def load_list(cfg):
         print('Unknown list: {}'.format(cfg['list']['name']))
         sys.exit(1)
 
-    return impl(**cfg['list']['config'])
+    try:
+        return impl(**cfg['list']['config'])
+    except InvalidConfigError as invalid_config:
+        print('Invalid config: {}'.format(invalid_config))
+        sys.exit(1)
+    except TypeError as unknown_key:
+        print('Invalid config unkown config key: {}'.format(unknown_key))
+        sys.exit(1)
 
 
 def inject_list(func):  # noqa: D202

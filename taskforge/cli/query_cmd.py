@@ -5,6 +5,7 @@ import json
 import sys
 
 from ..ql import Parser
+from ..lists import NotFoundError
 from .utils import inject_list
 
 
@@ -82,17 +83,20 @@ def print_tasks(tasks, output='table'):
 @inject_list
 def query_task(args, task_list=None):
     """Print the current task in task_list."""
-    if args.query:
-        ast = Parser(' '.join(args.query)).parse()
-        tasks = task_list.search(ast)
-    else:
-        tasks = task_list.list()
+    try:
+        if args.query:
+            ast = Parser(' '.join(args.query)).parse()
+            tasks = task_list.search(ast)
+        else:
+            tasks = task_list.list()
+    except NotFoundError:
+        tasks = []
 
     print_tasks(tasks, output=args.output)
 
 
 def query_cmd(parser):
-    """Add the next command to parser."""
+    """Add the query command to parser."""
     sub_parser = parser.add_parser(
         'query',
         aliases=['q', 's', 'search', 'list'],
