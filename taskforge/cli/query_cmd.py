@@ -4,8 +4,8 @@ import csv
 import json
 import sys
 
-from ..ql import Parser
 from ..lists import NotFoundError
+from ..ql import Parser
 from .utils import inject_list
 
 
@@ -40,7 +40,7 @@ def print_text(tasks):
 
 def print_json(tasks):
     """Print a list of tasks as json to stdout."""
-    dicts = [task.to_dict() for task in tasks]
+    dicts = [task.to_json() for task in tasks]
     json.dump(dicts, sys.stdout, indent="\t")
     # add a newline to output
     print()

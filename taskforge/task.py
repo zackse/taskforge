@@ -36,11 +36,17 @@ class Note:
         """Create a note instance from a JSON dictionary."""
         return cls(**dictionary)
 
+    def to_json(self):
+        """Convert this note object into a dictionary with JSON incompatible types serialized."""
+        dictionary = self.to_dict()
+        dictionary['created_date'] = self.created_date.strftime(DATE_FORMAT)
+        return dictionary
+
     def to_dict(self):
         """Convert this note object into a dictionary for JSON serialization."""
         return {
             'id': self.id,
-            'created_date': self.created_date.strftime(DATE_FORMAT),
+            'created_date': self.created_date,
             'body': self.body,
         }
 
@@ -115,24 +121,26 @@ class Task:  # pylint: disable=too-many-instance-attributes
 
         return cls(**dictionary)
 
+    def to_json(self):
+        """Convert to a dictionary which has JSON incompatible types serialized."""
+        dictionary = self.to_dict()
+        dictionary['notes'] = [n.to_json() for n in self.notes]
+        dictionary['created_date'] = self.created_date.strftime(DATE_FORMAT)
+        if self.completed_date:
+            dictionary['completed_date'] = self.completed_date.strftime(
+                DATE_FORMAT)
+        return dictionary
+
     def to_dict(self):
         """Convert this task object into a dictionary for JSON serialization."""
         return {
-            'id':
-            self.id,
-            'title':
-            self.title,
-            'body':
-            self.body,
-            'context':
-            self.context,
-            'priority':
-            self.priority,
-            'created_date':
-            self.created_date.strftime(DATE_FORMAT),
-            'completed_date':
-            self.completed_date.strftime(DATE_FORMAT)
-            if self.completed_date else None,
+            'id': self.id,
+            'title': self.title,
+            'body': self.body,
+            'context': self.context,
+            'priority': self.priority,
+            'created_date': self.created_date,
+            'completed_date': self.completed_date,
             'notes': [n.to_dict() for n in self.notes],
         }
 
