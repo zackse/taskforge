@@ -32,5 +32,6 @@ def complete_cmd(parser):
         help='Complete tasks in the list. If no ID given will'
         ' complete the current task.',
     )
-    sub_parser.add_argument('id', metavar='ID', nargs='+', type=str)
+
+    sub_parser.add_argument('id', metavar='ID', nargs='?', type=str)
     sub_parser.set_defaults(func=complete_task)
