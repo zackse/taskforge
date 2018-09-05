@@ -2,10 +2,10 @@
 
 from datetime import datetime
 
-import pymongo
-
 from taskforge.ql.tokens import Type
 from taskforge.task import Task
+
+import pymongo
 
 from . import List
 
@@ -150,11 +150,10 @@ class MongoDBList(List):
 
         if (expression.left.value == 'completed'
                 and expression.right.is_boolean_literal()):
-            return {
-                "completed_date": {
-                    "$ne": None
-                } if expression.right.value else None
-            }
+            if expression.right.value:
+                return {"completed_date": {"$ne": None}}
+
+            return {"completed_date": None}
 
         if expression.operator.token_type == Type.LIKE:
             return {expression.left.value: {"$regex": expression.right.value}}

@@ -8,7 +8,7 @@ from taskforge.lists.mongo import MongoDBList
 from .list_utils import ListTests
 
 
-class SQLiteListTests(unittest.TestCase, ListTests):
+class MongoDBListTests(unittest.TestCase, ListTests):
     def setUp(self):
         self.list = MongoDBList(db=uuid1().hex)
 
