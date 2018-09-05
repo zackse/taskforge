@@ -33,5 +33,5 @@ def complete_cmd(parser):
         ' complete the current task.',
     )
 
-    sub_parser.add_argument('id', metavar='ID', nargs='?', type=str)
+    sub_parser.add_argument('id', metavar='ID', nargs='*', type=str)
     sub_parser.set_defaults(func=complete_task)
