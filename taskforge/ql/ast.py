@@ -61,7 +61,7 @@ class Expression:
         elif token.token_type == Type.NUMBER:
             self.value = float(token.literal)
         elif token.token_type == Type.BOOLEAN:
-            self.value = bool(token.literal)
+            self.value = token.literal.lower() == 'true'
         elif token.token_type == Type.DATE:
             self.value = Expression.parse_date(token.literal)
         else:

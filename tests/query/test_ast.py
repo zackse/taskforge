@@ -9,20 +9,28 @@ from taskforge.ql.tokens import Token
 
 class ExpressionTests(unittest.TestCase):
     def test_expression_values_literals(self):
-        literals = [
-            {
-                'literal': '1.0',
-                'value': 1.0,
-            },
-            {
-                'literal': 'hello world',
-                'value': 'hello world',
-            },
-            {
-                'literal': '2018-01-01',
-                'value': datetime(year=2018, month=1, day=1)
-            },
-        ]
+        literals = [{
+            'literal': '1.0',
+            'value': 1.0,
+        }, {
+            'literal': 'hello world',
+            'value': 'hello world',
+        }, {
+            'literal': '2018-01-01',
+            'value': datetime(year=2018, month=1, day=1)
+        }, {
+            'literal': 'True',
+            'value': True,
+        }, {
+            'literal': 'true',
+            'value': True,
+        }, {
+            'literal': 'False',
+            'value': False,
+        }, {
+            'literal': 'false',
+            'value': False,
+        }]
 
         for literal in literals:
             with self.subTest(**literal):

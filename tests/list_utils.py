@@ -2,6 +2,8 @@
 # will be there when this class is subclassed
 # pylint: skip-file
 
+from datetime import datetime
+
 from taskforge.ql import Parser
 from taskforge.task import Note, Task
 
@@ -163,3 +165,31 @@ class ListTests:
         ]
         self.run_query_test(
             query="priority > 1", fixture=fixture, expected=[fixture[2]])
+
+    def test_completed_false(self):
+        fixture = [
+            Task("task 1"),
+            Task("task 2", completed_date=datetime.now()),
+            Task("other task", context="other", priority=2.0),
+            Task("task 3", completed_date=datetime.now()),
+            Task("task 4"),
+        ]
+
+        self.run_query_test(
+            query="completed = false",
+            fixture=fixture,
+            expected=[fixture[0], fixture[2], fixture[4]])
+
+    def test_completed_true(self):
+        fixture = [
+            Task("task 1"),
+            Task("task 2", completed_date=datetime.now()),
+            Task("other task", context="other", priority=2.0),
+            Task("task 3", completed_date=datetime.now()),
+            Task("task 4"),
+        ]
+
+        self.run_query_test(
+            query="completed = true",
+            fixture=fixture,
+            expected=[fixture[1], fixture[3]])
