@@ -122,14 +122,29 @@ func printList(taskList []task.Task) {
 	}
 }
 
+const dateFormat = "2006-01-02 03:04PM MST"
+
 func printTable(taskList []task.Task) {
 	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"ID", "Title"})
-	table.SetRowLine(true)
+	table.SetHeader([]string{
+		"ID", "Created Date", "Completed Date", "Priority", "Title", "Context",
+	})
 	table.SetAutoWrapText(autoWrapText)
 
 	for _, t := range taskList {
-		table.Append([]string{t.ID, t.Title})
+		completedDate := "None"
+		if t.IsCompleted() {
+			completedDate = t.CompletedDate.Format(dateFormat)
+		}
+
+		table.Append([]string{
+			t.ID,
+			t.CreatedDate.Format(dateFormat),
+			completedDate,
+			fmt.Sprintf("%.1f", t.Priority),
+			t.Title,
+			t.Context,
+		})
 	}
 
 	table.Render()
