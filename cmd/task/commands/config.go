@@ -16,7 +16,6 @@
 package commands
 
 import (
-	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -25,6 +24,8 @@ import (
 	"github.com/chasinglogic/taskforge/list"
 	"github.com/mitchellh/mapstructure"
 )
+
+var config *Config
 
 func loadConfigFile(path string) (*Config, error) {
 	if _, err := os.Stat(filepath.Dir(path)); err != nil && os.IsNotExist(err) {
@@ -48,9 +49,11 @@ func loadConfigFile(path string) (*Config, error) {
 
 func defaultConfig() *Config {
 	return &Config{
-		List: map[string]interface{}{
-			"name": "file",
-			"dir":  defaultDir(),
+		List: ListConfig{
+			Name: "file",
+			Config: map[string]interface{}{
+				"directory": defaultDir(),
+			},
 		},
 	}
 }
@@ -65,16 +68,11 @@ func findConfigFile() string {
 	return ""
 }
 
-func loadList(cfg map[string]interface{}) (list.List, error) {
+func loadList(name string, cfg map[string]interface{}) (list.List, error) {
 	var err error
-	name, ok := cfg["name"]
-	if !ok {
-		return nil, errors.New("must specify a list name")
-	}
-
 	var listImpl list.List
 
-	listImpl, err = list.GetByName(name.(string))
+	listImpl, err = list.GetByName(name)
 	if err != nil {
 		return nil, err
 	}
@@ -87,16 +85,19 @@ func loadList(cfg map[string]interface{}) (list.List, error) {
 	return listImpl, nil
 }
 
-var config *Config
+type ListConfig struct {
+	Name   string
+	Config map[string]interface{}
+}
 
 type ServerConfig struct {
 	Port int
 	Addr string
-	List map[string]interface{}
+	List ListConfig
 }
 
 func (sc *ServerConfig) list() (list.List, error) {
-	l, err := loadList(sc.List)
+	l, err := loadList(sc.List.Name, sc.List.Config)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +107,7 @@ func (sc *ServerConfig) list() (list.List, error) {
 
 type Config struct {
 	Server ServerConfig
-	List   map[string]interface{}
+	List   ListConfig
 
 	listImpl list.List
 }
@@ -114,7 +115,7 @@ type Config struct {
 func (c *Config) list() (list.List, error) {
 	if c.listImpl == nil {
 		var err error
-		c.listImpl, err = loadList(c.List)
+		c.listImpl, err = loadList(c.List.Name, c.List.Config)
 		if err != nil {
 			return nil, err
 		}

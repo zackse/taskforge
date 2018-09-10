@@ -165,7 +165,6 @@ func printCSV(taskList []task.Task) {
 		if t.IsCompleted() {
 			fmt.Printf("%s\n", t.CompletedDate.String())
 		} else {
-			// else print nothing
 			fmt.Printf("\n")
 		}
 	}

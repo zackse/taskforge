@@ -27,9 +27,9 @@ import (
 
 // File is a list which is stored in a JSON file
 type File struct {
-	Dir string
+	Dir string `mapstructure:"directory"`
 
-	MemoryList `yaml:"-" json:"-"`
+	MemoryList `yaml:"-" json:"-" mapstructure:"-"`
 }
 
 // Init will load tasks from the JSON file if found, otherwise just init an

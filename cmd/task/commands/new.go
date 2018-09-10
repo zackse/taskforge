@@ -16,6 +16,7 @@
 package commands
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -41,7 +42,7 @@ func init() {
 	new.Flags().StringVarP(&body, "body", "b", "",
 		"the text body to give this task")
 	new.Flags().StringVarP(&fromFile, "from-file", "", "",
-		"a yaml or csv file of tasks to create")
+		"a yaml, json, or csv file of tasks to create")
 	new.Flags().Float64VarP(&priority, "priority", "p", 0.0,
 		"priority with which to give this task")
 
@@ -72,7 +73,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 var new = &cobra.Command{
 	Use:     "new",
-	Aliases: []string{"n", "create"},
+	Aliases: []string{"n", "create", "add", "a"},
 	Short:   "Create a new task",
 	Run: func(cmd *cobra.Command, args []string) {
 		l, err := config.list()
@@ -127,6 +128,11 @@ func getTasksFromFile() ([]task.Task, error) {
 	var tasks []task.Task
 
 	switch {
+	case strings.HasSuffix(fromFile, ".json"):
+		decoder := json.NewDecoder(taskFile)
+		if err := decoder.Decode(&tasks); err != nil {
+			return nil, err
+		}
 	case strings.HasSuffix(fromFile, ".csv"):
 		if err := gocsv.UnmarshalFile(taskFile, &tasks); err != nil {
 			return nil, err
