@@ -91,3 +91,8 @@ func (t *Task) Complete() {
 func (t *Task) IsCompleted() bool {
 	return !t.CompletedDate.IsZero()
 }
+
+// IsComplete is an alias for task.IsCompleted
+func (t *Task) IsComplete() bool {
+	return t.IsCompleted()
+}

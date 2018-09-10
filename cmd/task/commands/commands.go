@@ -40,6 +40,7 @@ func init() {
 	Root.AddCommand(next)
 	Root.AddCommand(serverCmd)
 	Root.AddCommand(todo)
+	Root.AddCommand(doctor)
 }
 
 const taskIDUsageTemplate = `Usage:{{if .Runnable}}

@@ -32,7 +32,7 @@ type File struct {
 	MemoryList `yaml:"-" json:"-" mapstructure:"-"`
 }
 
-// Init will load tasks from the JSON file if found, otherwise just init an
+// Init will Load tasks from the JSON file if found, otherwise just init an
 // empty list
 func (f *File) Init() error {
 	if f.MemoryList != nil {
@@ -47,7 +47,7 @@ func (f *File) Init() error {
 		f.Dir = strings.Replace(f.Dir, "~", os.Getenv("HOME"), 1)
 	}
 
-	return f.load()
+	return f.Load()
 }
 
 // Add a task to the list
@@ -57,7 +57,7 @@ func (f *File) Add(t task.Task) error {
 		return err
 	}
 
-	return f.save()
+	return f.Save()
 }
 
 // AddMultiple tasks to the list
@@ -67,7 +67,7 @@ func (f *File) AddMultiple(t []task.Task) error {
 		return err
 	}
 
-	return f.save()
+	return f.Save()
 }
 
 // Update a task in the list
@@ -77,7 +77,7 @@ func (f *File) Update(t task.Task) error {
 		return err
 	}
 
-	return f.save()
+	return f.Save()
 }
 
 // Complete a task in the list
@@ -87,7 +87,7 @@ func (f *File) Complete(id string) error {
 		return err
 	}
 
-	return f.save()
+	return f.Save()
 }
 
 // AddNote to a task in the list
@@ -97,10 +97,11 @@ func (f *File) AddNote(id string, note task.Note) error {
 		return err
 	}
 
-	return f.save()
+	return f.Save()
 }
 
-func (f *File) save() error {
+// Save tasks to file
+func (f *File) Save() error {
 	if err := os.MkdirAll(f.Dir, os.ModePerm); err != nil {
 		return err
 	}
@@ -114,7 +115,8 @@ func (f *File) save() error {
 	return ioutil.WriteFile(stateFile, jsn, 0644)
 }
 
-func (f *File) load() error {
+// Load tasks from file
+func (f *File) Load() error {
 	stateFile := filepath.Join(f.Dir, "tasks.json")
 
 	content, err := ioutil.ReadFile(stateFile)
