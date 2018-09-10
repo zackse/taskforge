@@ -67,7 +67,7 @@ Use "{{.CommandPath}} [command] --help" for more information about a command.{{e
 
 var query = &cobra.Command{
 	Use:     "query",
-	Aliases: []string{"q", "s", "search"},
+	Aliases: []string{"q", "s", "search", "list"},
 	Short:   "Search and list tasks",
 	Run: func(cmd *cobra.Command, args []string) {
 		l, err := config.list()
