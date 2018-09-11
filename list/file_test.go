@@ -88,3 +88,37 @@ func TestFileListPersistence(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkFindWhereIDAtEnd(b *testing.B) {
+	tasks := MemoryList{
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+		task.New("task 1"),
+	}
+
+	idToFind := tasks[len(tasks)-1].ID
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		tasks.findWhere(func(t task.Task) bool {
+			return t.ID == idToFind
+		})
+	}
+}
