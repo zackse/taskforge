@@ -17,6 +17,7 @@ package task
 
 import (
 	"encoding/json"
+	"sort"
 	"time"
 
 	"github.com/mongodb/mongo-go-driver/bson/objectid"
@@ -95,4 +96,16 @@ func (t *Task) IsCompleted() bool {
 // IsComplete is an alias for task.IsCompleted
 func (t *Task) IsComplete() bool {
 	return t.IsCompleted()
+}
+
+// Sort a slice of tasks using the expected sort order of
+// Priority then CreatedDate.
+func Sort(l []Task) []Task {
+	sort.Slice(l, func(i, j int) bool {
+		return (l[i].Priority > l[j].Priority) ||
+			(l[i].Priority == l[j].Priority &&
+				l[i].CreatedDate.Before(l[j].CreatedDate))
+	})
+
+	return l
 }
