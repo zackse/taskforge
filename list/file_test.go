@@ -16,41 +16,75 @@
 package list
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"testing"
 
+	"github.com/chasinglogic/taskforge/task"
 	"github.com/mitchellh/mapstructure"
+	"github.com/stretchr/testify/require"
 )
 
 func TestFileList(t *testing.T) {
 	for _, test := range ListTests {
 		config := Config{
-			"dir": fmt.Sprintf(".test.file.%s", test.Name),
+			"directory": fmt.Sprintf(".test.file.%s", test.Name),
 		}
 
 		l := &File{}
 
-		err := mapstructure.Decode(config, &l)
-		if err != nil {
-			t.Error(err)
-			return
-		}
-
-		if err := l.Init(); err != nil {
-			t.Errorf("unable to init list: %s", err)
-			return
-		}
+		require.Nil(t, mapstructure.Decode(config, &l))
+		require.Nil(t, l.Init())
 
 		t.Run(test.Name, func(t *testing.T) {
 			defer os.RemoveAll(fmt.Sprintf(".test.file.%s", test.Name))
-
-			err := test.Test(l)
-			if err != nil {
-				t.Error(err)
-				return
-			}
-
+			require.Nil(t, test.Test(l))
 		})
+	}
+}
+
+func TestFileListPersistence(t *testing.T) {
+	testDir := ".test.file.persistence"
+	l := &File{
+		Dir: testDir,
+	}
+
+	require.Nil(t, l.Init())
+	defer os.RemoveAll(testDir)
+
+	tasks := []task.Task{
+		task.New("task 1"),
+		task.New("task 2"),
+		task.New("task 3"),
+	}
+
+	require.Nil(t, l.AddMultiple(tasks))
+	require.Nil(t, l.Complete(tasks[1].ID))
+	tasks, err := l.Slice()
+	require.Nil(t, err)
+
+	other := &File{
+		Dir: testDir,
+	}
+
+	require.Nil(t, other.Init())
+	slice, err := other.Slice()
+
+	jsn1, _ := json.MarshalIndent(tasks, "", "\t")
+	jsn2, _ := json.MarshalIndent(slice, "", "\t")
+
+	require.Nil(t, err)
+
+	for i := range slice {
+		if slice[i].ID != tasks[i].ID {
+			t.Errorf("Expected %s Got %s", jsn1, jsn2)
+			return
+		}
+
+		if slice[i].IsCompleted() && !tasks[i].IsCompleted() {
+			t.Errorf("Expected %s Got %s", jsn1, jsn2)
+			return
+		}
 	}
 }
