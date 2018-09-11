@@ -83,18 +83,17 @@ func GetByName(name string) (List, error) {
 // MemoryList implements List for a slice of Tasks
 type MemoryList []task.Task
 
-// TODO: Would counting matching tasks first be faster since we
-// frontload allocation?
+// findWhere returns all tasks for which f returns true
 func (ml *MemoryList) findWhere(f func(t task.Task) bool) []task.Task {
-	new := []task.Task{}
-
-	for _, t := range *ml {
-		if f(t) {
-			new = append(new, t)
+	l := *ml
+	matched := []task.Task{}
+	for i := range l {
+		if f(l[i]) {
+			matched = append(matched, l[i])
 		}
 	}
 
-	return new
+	return matched
 }
 
 func (ml *MemoryList) sort() {
