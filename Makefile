@@ -28,7 +28,7 @@ install-snapshot: snapshot install-artifacts
 
 install-artifacts:
 	# TODO: Add docs and man pages here once written
-	cp dist/taskforge_*_${GOOS}_${GOARCH}/task /usr/local/bin/
+	cp dist/${GOOS}_${GOARCH}/task /usr/local/bin/
 
 snapshot: clean
 	goreleaser release --skip-publish --snapshot
