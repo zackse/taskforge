@@ -38,7 +38,7 @@ func init() {
 	Root.AddCommand(complete)
 	Root.AddCommand(edit)
 	Root.AddCommand(next)
-	Root.AddCommand(serverCmd)
+	Root.AddCommand(show)
 	Root.AddCommand(todo)
 	Root.AddCommand(doctor)
 }
