@@ -13,7 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 package list
 
 import (
@@ -326,16 +325,66 @@ func (mb *MongoList) evalInfixExp(exp ast.InfixExpression) *bson.Document {
 			),
 		)
 	case token.EQ:
+		fieldName := exp.Left.(ast.StringLiteral).Value
+		if fieldName == "completed" {
+			var value time.Time
+			if exp.Right.(ast.BooleanLiteral).Value {
+				return bson.NewDocument(
+					bson.EC.SubDocument(
+						"completeddate",
+						bson.NewDocument(
+							bson.EC.Time(
+								"$ne",
+								value,
+							),
+						),
+					),
+				)
+			}
+
+			return bson.NewDocument(
+				bson.EC.Time(
+					"completeddate",
+					value,
+				),
+			)
+		}
+
 		return bson.NewDocument(
 			bson.EC.Interface(
-				exp.Left.(ast.StringLiteral).Value,
+				fieldName,
 				exp.Right.(ast.Literal).GetValue(),
 			),
 		)
 	case token.NE:
+		fieldName := exp.Left.(ast.StringLiteral).Value
+		if fieldName == "completed" {
+			var value time.Time
+			if exp.Right.(ast.BooleanLiteral).Value {
+				return bson.NewDocument(
+					bson.EC.Time(
+						"completeddate",
+						value,
+					),
+				)
+			}
+
+			return bson.NewDocument(
+				bson.EC.SubDocument(
+					"completeddate",
+					bson.NewDocument(
+						bson.EC.Time(
+							"$ne",
+							value,
+						),
+					),
+				),
+			)
+		}
+
 		return bson.NewDocument(
 			bson.EC.SubDocument(
-				exp.Left.(ast.StringLiteral).Value,
+				fieldName,
 				bson.NewDocument(
 					bson.EC.Interface(
 						"$ne",
