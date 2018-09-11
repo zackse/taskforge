@@ -37,7 +37,6 @@ var complete = &cobra.Command{
 			os.Exit(1)
 		}
 
-		var idToComplete string
 		if len(args) == 0 {
 			current, err := l.Current()
 			if err != nil {
@@ -45,18 +44,14 @@ var complete = &cobra.Command{
 				os.Exit(1)
 			}
 
-			idToComplete = current.ID
-		} else if len(args) == 1 {
-			idToComplete = args[0]
-		} else {
-			fmt.Println("ERROR Incorrect number of args given.")
-			cmd.Help()
-			os.Exit(1)
+			args = []string{current.ID}
 		}
 
-		if err := l.Complete(idToComplete); err != nil {
-			fmt.Println("ERROR Unable to complete task:", err)
-			os.Exit(1)
+		for _, idToComplete := range args {
+			if err := l.Complete(idToComplete); err != nil {
+				fmt.Println("ERROR Unable to complete task:", err)
+				os.Exit(1)
+			}
 		}
 	},
 }
