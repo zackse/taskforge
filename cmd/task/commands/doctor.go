@@ -21,16 +21,23 @@ import (
 	"time"
 
 	"github.com/chasinglogic/taskforge/list"
+	"github.com/mongodb/mongo-go-driver/bson/objectid"
 	"github.com/spf13/cobra"
 )
 
 var (
 	makeTimesLocal = false
+	fixIds         = false
+	duplicateIds   = false
 )
 
 func init() {
 	doctor.Flags().BoolVarP(&makeTimesLocal, "local-times", "l", false,
 		"make all times current local time")
+	doctor.Flags().BoolVarP(&fixIds, "fix-ids", "i", false,
+		"verify all IDs are ObjectIds")
+	doctor.Flags().BoolVarP(&duplicateIds, "duplicate-ids", "d", false,
+		"generate new IDs for objects with duplicates")
 }
 
 var doctor = &cobra.Command{
@@ -50,6 +57,7 @@ var doctor = &cobra.Command{
 			os.Exit(1)
 		}
 
+		duplicate := map[string]struct{}{}
 		changed := false
 		for i := range tasks {
 			if tasks[i].CreatedDate.IsZero() {
@@ -76,6 +84,25 @@ var doctor = &cobra.Command{
 					changed = true
 				}
 			}
+
+			if fixIds {
+				_, err := objectid.FromHex(tasks[i].ID)
+				if err != nil {
+					fmt.Println("Task has an invalid object id, regenerating.")
+					tasks[i].ID = objectid.New().Hex()
+					changed = true
+				}
+			}
+
+			if duplicateIds {
+				if _, ok := duplicate[tasks[i].ID]; ok {
+					fmt.Println("Task has duplicate id, regenerating.")
+					tasks[i].ID = objectid.New().Hex()
+					changed = true
+				} else {
+					duplicate[tasks[i].ID] = struct{}{}
+				}
+			}
 		}
 
 		if !changed {
@@ -86,8 +113,7 @@ var doctor = &cobra.Command{
 		switch l.(type) {
 		case *list.File:
 			fileList := l.(*list.File)
-			newList := list.MemoryList(tasks)
-			fileList.MemoryList = newList
+			fileList.MemoryList = list.MemoryList(tasks)
 			fileList.Save()
 		}
 	},
