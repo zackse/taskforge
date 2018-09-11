@@ -16,13 +16,12 @@
 package parser
 
 import (
-	"encoding/json"
-	"reflect"
 	"testing"
 
 	"github.com/chasinglogic/taskforge/ql/ast"
 	"github.com/chasinglogic/taskforge/ql/lexer"
 	"github.com/chasinglogic/taskforge/ql/token"
+	"github.com/stretchr/testify/require"
 )
 
 func TestParser(t *testing.T) {
@@ -37,22 +36,13 @@ func TestParser(t *testing.T) {
 			input: "milk and cookies",
 			output: ast.AST{
 				Expression: ast.InfixExpression{
-					Operator: token.Token{
-						Type:    token.AND,
-						Literal: "and",
-					},
+					Operator: token.New("and"),
 					Left: ast.StringLiteral{
-						Token: token.Token{
-							Type:    token.STRING,
-							Literal: "milk",
-						},
+						Token: token.New("milk"),
 						Value: "milk",
 					},
 					Right: ast.StringLiteral{
-						Token: token.Token{
-							Type:    token.STRING,
-							Literal: "cookies",
-						},
+						Token: token.New("cookies"),
 						Value: "cookies",
 					},
 				},
@@ -63,22 +53,13 @@ func TestParser(t *testing.T) {
 			input: "completed = false",
 			output: ast.AST{
 				Expression: ast.InfixExpression{
-					Operator: token.Token{
-						Type:    token.EQ,
-						Literal: "=",
-					},
+					Operator: token.New("="),
 					Left: ast.StringLiteral{
-						Token: token.Token{
-							Type:    token.STRING,
-							Literal: "completed",
-						},
+						Token: token.New("completed"),
 						Value: "completed",
 					},
 					Right: ast.BooleanLiteral{
-						Token: token.Token{
-							Type:    token.BOOLEAN,
-							Literal: "false",
-						},
+						Token: token.New("false"),
 						Value: false,
 					},
 				},
@@ -89,10 +70,7 @@ func TestParser(t *testing.T) {
 			input: "milk -and cookies",
 			output: ast.AST{
 				Expression: ast.StringLiteral{
-					Token: token.Token{
-						Type:    token.STRING,
-						Literal: "milk and cookies",
-					},
+					Token: token.New("milk and cookies"),
 					Value: "milk and cookies",
 				},
 			},
@@ -102,114 +80,97 @@ func TestParser(t *testing.T) {
 			input: "(priority > 5 and title ^ \"take out the trash\") or (context = \"work\" and (priority >= 2 or (\"my little pony\")))",
 			output: ast.AST{
 				Expression: ast.InfixExpression{
-					Operator: token.Token{
-						Type:    token.OR,
-						Literal: "or",
-					},
+					Operator: token.New("or"),
 					Right: ast.InfixExpression{
-						Operator: token.Token{
-							Type:    token.AND,
-							Literal: "and",
-						},
+						Operator: token.New("and"),
 						Left: ast.InfixExpression{
-							Operator: token.Token{
-								Type:    token.EQ,
-								Literal: "=",
-							},
+							Operator: token.New("="),
 							Left: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "context",
-								},
+								Token: token.New("context"),
 								Value: "context",
 							},
 							Right: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "work",
-								},
+								Token: token.New("work"),
 								Value: "work",
 							},
 						},
 						Right: ast.InfixExpression{
-							Operator: token.Token{
-								Type:    token.OR,
-								Literal: "or",
-							},
+							Operator: token.New("or"),
 							Left: ast.InfixExpression{
-								Operator: token.Token{
-									Type:    token.GTE,
-									Literal: ">=",
-								},
+								Operator: token.New(">="),
 								Left: ast.StringLiteral{
-									Token: token.Token{
-										Type:    token.STRING,
-										Literal: "priority",
-									},
+									Token: token.New("priority"),
 									Value: "priority",
 								},
 								Right: ast.NumberLiteral{
-									Token: token.Token{
-										Type:    token.NUMBER,
-										Literal: "2",
-									},
+									Token: token.New("2"),
 									Value: 2.0,
 								},
 							},
 							Right: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "my little pony",
-								},
+								Token: token.New("my little pony"),
 								Value: "my little pony",
 							},
 						},
 					},
 					Left: ast.InfixExpression{
-						Operator: token.Token{
-							Type:    token.AND,
-							Literal: "and",
-						},
+						Operator: token.New("and"),
 						Right: ast.InfixExpression{
-							Operator: token.Token{
-								Type:    token.LIKE,
-								Literal: "^",
-							},
+							Operator: token.New("^"),
 							Right: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "take out the trash",
-								},
+								Token: token.New("take out the trash"),
 								Value: "take out the trash",
 							},
 							Left: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "title",
-								},
+								Token: token.New("title"),
 								Value: "title",
 							},
 						},
 						Left: ast.InfixExpression{
-							Operator: token.Token{
-								Type:    token.GT,
-								Literal: ">",
-							},
+							Operator: token.New(">"),
 							Left: ast.StringLiteral{
-								Token: token.Token{
-									Type:    token.STRING,
-									Literal: "priority",
-								},
+								Token: token.New("priority"),
 								Value: "priority",
 							},
 							Right: ast.NumberLiteral{
-								Token: token.Token{
-									Type:    token.NUMBER,
-									Literal: "5",
-								},
+								Token: token.New("5"),
 								Value: 5.0,
 							},
 						},
+					},
+				},
+			},
+		},
+		{
+			name:  "completed = false",
+			input: "completed = false",
+			output: ast.AST{
+				Expression: ast.InfixExpression{
+					Operator: token.New("="),
+					Left: ast.StringLiteral{
+						Token: token.New("completed"),
+						Value: "completed",
+					},
+					Right: ast.BooleanLiteral{
+						Token: token.New("false"),
+						Value: false,
+					},
+				},
+			},
+		},
+		{
+			name:  "completed = true",
+			input: "completed = true",
+			output: ast.AST{
+				Expression: ast.InfixExpression{
+					Operator: token.New("="),
+					Left: ast.StringLiteral{
+						Token: token.New("completed"),
+						Value: "completed",
+					},
+					Right: ast.BooleanLiteral{
+						Token: token.New("true"),
+						Value: true,
 					},
 				},
 			},
@@ -232,11 +193,7 @@ func TestParser(t *testing.T) {
 				return
 			}
 
-			if !reflect.DeepEqual(out, test.output) {
-				jsn1, _ := json.MarshalIndent(test.output, "", "\t")
-				jsn2, _ := json.MarshalIndent(out, "", "\t")
-				t.Errorf("Expected %s Got %s", jsn1, jsn2)
-			}
+			require.Equal(t, out, test.output)
 		})
 	}
 }

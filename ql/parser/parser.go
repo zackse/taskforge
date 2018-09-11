@@ -18,8 +18,6 @@ package parser
 import (
 	"errors"
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/chasinglogic/taskforge/ql/ast"
 	"github.com/chasinglogic/taskforge/ql/lexer"
@@ -74,10 +72,10 @@ func New(l *lexer.Lexer) *Parser {
 	}
 
 	p.prefixParseFns = map[token.Type]prefixParseFn{
-		token.STRING:  p.parseString,
-		token.NUMBER:  p.parseNumberLiteral,
-		token.DATE:    p.parseDateLiteral,
-		token.BOOLEAN: p.parseBooleanLiteral,
+		token.STRING:  p.parseLiteral,
+		token.NUMBER:  p.parseLiteral,
+		token.DATE:    p.parseLiteral,
+		token.BOOLEAN: p.parseLiteral,
 		token.LPAREN:  p.parseGroupedExpression,
 	}
 
@@ -165,7 +163,6 @@ func (p *Parser) noPrefixParseFnError(t token.Type) {
 }
 
 // Parse will turn the given query into an ast.AST
-// TODO: Write this
 func (p *Parser) Parse() ast.AST {
 	var a ast.AST
 	a.Expression = p.parseExpression(LOWEST)
@@ -201,8 +198,19 @@ func (p *Parser) parseExpression(precedence int) ast.Expression {
 	return leftExp
 }
 
-func (p *Parser) parseString() ast.Expression {
-	return ast.StringLiteral{Token: p.curToken, Value: p.curToken.Literal}
+func (p *Parser) parseLiteral() ast.Expression {
+	literal, err := ast.NewLiteral(p.curToken)
+	if err != nil {
+		p.addError(fmt.Errorf("could not parse %s: %s", p.curToken.Type, err))
+		return nil
+	}
+
+	if literal == nil {
+		p.addError(fmt.Errorf("not a valid literal type: %s", p.curToken.Type.String()))
+		return nil
+	}
+
+	return literal
 }
 
 func (p *Parser) concat(left ast.Expression) ast.Expression {
@@ -214,60 +222,6 @@ func (p *Parser) concat(left ast.Expression) ast.Expression {
 	sl.Token.Literal += " " + p.curToken.Literal
 	sl.Value += " " + p.curToken.Literal
 	return sl
-}
-
-var dateFormats = []string{
-	"2006-01-02 03:04:05 PM",
-	"2006-01-02 03:04 PM",
-	"2006-01-02 03:04:05PM",
-	"2006-01-02 03:04PM",
-	"2006-01-02 15:04:05",
-	"2006-01-02 15:04",
-	"2006-01-02",
-}
-
-func (p *Parser) parseDateLiteral() ast.Expression {
-	lit := ast.DateLiteral{Token: p.curToken}
-
-	for i := range dateFormats {
-		value, err := time.Parse(dateFormats[i], p.curToken.Literal)
-		if err == nil {
-			lit.Value = value
-			break
-		}
-	}
-
-	if lit.Value.IsZero() {
-		p.addError(fmt.Errorf("not a valid date format: %s", p.curToken.Literal))
-	}
-
-	return lit
-}
-
-func (p *Parser) parseBooleanLiteral() ast.Expression {
-	lit := ast.BooleanLiteral{Token: p.curToken}
-
-	value, err := strconv.ParseBool(p.curToken.Literal)
-	if err != nil {
-		p.addError(fmt.Errorf("could not parse boolean: %s", p.curToken.Literal))
-		return nil
-	}
-
-	lit.Value = value
-	return lit
-}
-
-func (p *Parser) parseNumberLiteral() ast.Expression {
-	lit := ast.NumberLiteral{Token: p.curToken}
-
-	value, err := strconv.ParseFloat(p.curToken.Literal, 64)
-	if err != nil {
-		p.addError(fmt.Errorf("could not parse float: %s", p.curToken.Literal))
-		return nil
-	}
-
-	lit.Value = value
-	return lit
 }
 
 func (p *Parser) parseLogicExpression(left ast.Expression) ast.Expression {

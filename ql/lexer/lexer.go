@@ -88,45 +88,32 @@ func (l *Lexer) read(valid func(byte) bool) string {
 	return l.input[start:l.position]
 }
 
-func (l *Lexer) number() token.Token {
-	tok := token.Token{
-		Literal: l.read(func(ch byte) bool {
-			return isDigit(ch) || ch == '-' || ch == '.' || ch == ':'
-		}),
-	}
-
-	tok.Type = token.DateOrNumber(tok.Literal)
-	return tok
+func (l *Lexer) number() string {
+	return l.read(func(ch byte) bool {
+		return isDigit(ch) || ch == '-' || ch == '.' || ch == ':'
+	})
 }
 
-func (l *Lexer) unquotedString() token.Token {
-	tok := token.Token{
-		Type: token.STRING,
-		Literal: l.read(func(ch byte) bool {
-			return isLetter(ch) || isDigit(ch)
-		}),
-	}
-
-	return tok
+func (l *Lexer) unquotedString() string {
+	return l.read(func(ch byte) bool {
+		return isLetter(ch) || isDigit(ch)
+	})
 }
 
-func (l *Lexer) quotedString() token.Token {
+func (l *Lexer) quotedString() string {
 	// Skip opening quote
 	l.readChar()
 
-	tok := token.Token{
-		Type: token.STRING,
-		Literal: l.read(func(ch byte) bool {
-			return isLetter(ch) || ch == ' ' || isDigit(ch)
-		}),
-	}
+	literal := l.read(func(ch byte) bool {
+		return isLetter(ch) || ch == ' ' || isDigit(ch)
+	})
 
 	// Check for closing quote
 	if l.ch != '"' {
-		return token.Token{Type: token.UNEXPECTED, Literal: string(l.ch)}
+		return ""
 	}
 
-	return tok
+	return literal
 }
 
 func (l *Lexer) skipWhitespace() {
@@ -142,59 +129,40 @@ func (l *Lexer) NextToken() token.Token {
 	l.skipWhitespace()
 
 	switch {
-	case l.ch == '=':
-		tok = token.Token{Type: token.EQ, Literal: string(l.ch)}
-	case l.ch == '<' || l.ch == '>':
-		tok = token.Token{Literal: string(l.ch)}
-		if l.ch == '<' {
-			tok.Type = token.LT
-		} else {
-			tok.Type = token.GT
-		}
-
+	case l.ch == '<' || l.ch == '>' || l.ch == '!':
+		literal := string(l.ch)
 		if l.peekChar() == '=' {
 			l.readChar()
-			tok.Literal += "="
-			if tok.Type == token.LT {
-				tok.Type = token.LTE
-			} else {
-				tok.Type = token.GTE
-			}
+			literal += "="
 		}
-	case l.ch == '!' || l.ch == '^':
+
+		tok = token.New(literal)
+	case l.ch == '^':
 		switch l.peekChar() {
 		case '=':
 			l.readChar()
-			tok = token.Token{Type: token.NE, Literal: "!="}
-		case '~':
+			tok = token.New(string(l.ch) + "=")
+		case '^':
 			l.readChar()
-			tok = token.Token{Type: token.NLIKE, Literal: "!~"}
-		case ' ':
-			tok = token.Token{Type: token.LIKE, Literal: "^"}
+			tok = token.New(string(l.ch) + "^")
 		default:
-			tok = token.Token{Type: token.ILLEGAL, Literal: string(l.ch)}
+			tok = token.New(string(l.ch))
 		}
-	case l.ch == '~':
-		tok = token.Token{Type: token.LIKE, Literal: string(l.ch)}
-	case l.ch == '(':
-		tok = token.Token{Type: token.LPAREN, Literal: string(l.ch)}
-	case l.ch == ')':
-		tok = token.Token{Type: token.RPAREN, Literal: string(l.ch)}
 	case l.ch == '"':
-		tok = l.quotedString()
+		tok = token.New(l.quotedString())
 	case '0' <= l.ch && l.ch <= '9':
-		return l.number()
+		return token.New(l.number())
 	case l.ch == '-':
 		// skip the -
 		l.readChar()
-		tok = l.unquotedString()
+		tok = token.New(l.unquotedString())
+		tok.Type = token.STRING
 	case 'a' <= l.ch && l.ch <= 'z' || 'A' <= l.ch && l.ch <= 'Z':
-		tok = l.unquotedString()
-		tok.Type = token.LookupKeyword(tok.Literal)
+		tok = token.New(l.unquotedString())
 	case l.ch == 0:
 		tok = token.Token{Type: token.EOF, Literal: ""}
 	default:
-		tok = token.Token{Type: token.ILLEGAL, Literal: string(l.ch)}
+		tok = token.New(string(l.ch))
 	}
 
 	l.readChar()

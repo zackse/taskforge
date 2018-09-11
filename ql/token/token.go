@@ -132,10 +132,56 @@ func DateOrNumber(value string) Type {
 	return NUMBER
 }
 
+// TypeFrom will give an inferred type based on literal
+func TypeFrom(literal string) Type {
+	switch {
+	case literal == "":
+		return EOF
+	case '0' <= literal[0] && literal[0] <= '9':
+		return DateOrNumber(literal)
+	case literal == "(":
+		return LPAREN
+	case literal == ")":
+		return RPAREN
+	case literal == "=":
+		return EQ
+	case literal == "!=":
+		fallthrough
+	case literal == "^=":
+		return NE
+	case literal == "~":
+		fallthrough
+	case literal == "^":
+		return LIKE
+	case literal == "!~":
+		fallthrough
+	case literal == "^^":
+		return NLIKE
+	case literal == ">":
+		return GT
+	case literal == ">=":
+		return GTE
+	case literal == "<":
+		return LT
+	case literal == "<=":
+		return LTE
+	default:
+		return LookupKeyword(literal)
+	}
+}
+
 // Token is a lexical token of input
 type Token struct {
 	Type    Type
 	Literal string
+}
+
+// New will return a token with a type based on the value of literal
+func New(literal string) Token {
+	return Token{
+		Type:    TypeFrom(literal),
+		Literal: literal,
+	}
 }
 
 func (t Token) String() string {

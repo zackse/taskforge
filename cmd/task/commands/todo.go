@@ -45,21 +45,13 @@ var todo = &cobra.Command{
 
 		ast := ast.AST{
 			Expression: ast.InfixExpression{
-				Operator: token.Token{
-					Type: token.EQ,
-				},
+				Operator: token.New("="),
 				Left: ast.StringLiteral{
-					Token: token.Token{
-						Type:    token.STRING,
-						Literal: "completed",
-					},
+					Token: token.New("completed"),
 					Value: "completed",
 				},
 				Right: ast.BooleanLiteral{
-					Token: token.Token{
-						Type:    token.BOOLEAN,
-						Literal: "false",
-					},
+					Token: token.New("false"),
 					Value: false,
 				},
 			},

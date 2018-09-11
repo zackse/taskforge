@@ -17,10 +17,23 @@ package ast
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/chasinglogic/taskforge/ql/token"
 )
+
+// valid dateFormats in queries
+var dateFormats = []string{
+	"2006-01-02 03:04:05 PM",
+	"2006-01-02 03:04 PM",
+	"2006-01-02 03:04:05PM",
+	"2006-01-02 03:04PM",
+	"2006-01-02 15:04:05",
+	"2006-01-02 15:04",
+	"2006-01-02",
+}
 
 // AST is the Abstract Syntax Tree for a query
 type AST struct {
@@ -29,6 +42,13 @@ type AST struct {
 
 func (a AST) String() string {
 	return a.Expression.String()
+}
+
+// New returns an AST for expression
+func (a AST) New(exp Expression) AST {
+	return AST{
+		Expression: exp,
+	}
 }
 
 // Node is implemented by all nodes in the tree
@@ -46,6 +66,54 @@ type Expression interface {
 // Literal is a literal value
 type Literal interface {
 	GetValue() interface{}
+}
+
+// NewLiteral returns a literal expression based on the given token
+func NewLiteral(tok token.Token) (Expression, error) {
+	var expression Expression
+
+	switch tok.Type {
+	case token.BOOLEAN:
+		expression = BooleanLiteral{
+			Token: tok,
+			Value: strings.ToLower(tok.Literal) == "true",
+		}
+	case token.DATE:
+		var value time.Time
+		var err error
+		for i := range dateFormats {
+			value, err = time.ParseInLocation(dateFormats[i], tok.Literal, time.Local)
+			if err == nil {
+				break
+			}
+		}
+
+		if value.IsZero() {
+			return nil, err
+		}
+
+		expression = DateLiteral{
+			Token: tok,
+			Value: value,
+		}
+	case token.NUMBER:
+		value, err := strconv.ParseFloat(tok.Literal, 64)
+		if err != nil {
+			return nil, err
+		}
+
+		expression = NumberLiteral{
+			Token: tok,
+			Value: value,
+		}
+	case token.STRING:
+		expression = StringLiteral{
+			Token: tok,
+			Value: tok.Literal,
+		}
+	}
+
+	return expression, nil
 }
 
 // InfixExpression is an infix AST node
