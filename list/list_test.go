@@ -357,6 +357,66 @@ var ListTests = []listTest{
 		},
 		expected: []int{2},
 	}),
+	queryTest(qt{
+		query: "completed = true",
+		fixture: func() []task.Task {
+			completed := task.New("completed task")
+			completed.Complete()
+			return []task.Task{
+				task.New("task 1"),
+				task.New("task 2"),
+				completed,
+				task.New("task 3"),
+				task.New("task 4"),
+			}
+		},
+		expected: []int{2},
+	}),
+	queryTest(qt{
+		query: "completed = false",
+		fixture: func() []task.Task {
+			completed := task.New("completed task")
+			completed.Complete()
+			return []task.Task{
+				task.New("task 1"),
+				task.New("task 2"),
+				completed,
+				task.New("task 3"),
+				task.New("task 4"),
+			}
+		},
+		expected: []int{0, 1, 3, 4},
+	}),
+	queryTest(qt{
+		query: "completed != true",
+		fixture: func() []task.Task {
+			completed := task.New("completed task")
+			completed.Complete()
+			return []task.Task{
+				task.New("task 1"),
+				task.New("task 2"),
+				completed,
+				task.New("task 3"),
+				task.New("task 4"),
+			}
+		},
+		expected: []int{0, 1, 3, 4},
+	}),
+	queryTest(qt{
+		query: "completed != false",
+		fixture: func() []task.Task {
+			completed := task.New("completed task")
+			completed.Complete()
+			return []task.Task{
+				task.New("task 1"),
+				task.New("task 2"),
+				completed,
+				task.New("task 3"),
+				task.New("task 4"),
+			}
+		},
+		expected: []int{2},
+	}),
 }
 
 func verify(received, fixture []task.Task, expected []int) error {
@@ -400,7 +460,7 @@ type qt struct {
 func queryTest(q qt) listTest {
 	fixture := q.fixture()
 	return listTest{
-		Name: fmt.Sprintf("QUERYTEST: should return %d results with query: %s",
+		Name: fmt.Sprintf("should return %d results with query: %s",
 			len(q.expected), q.query),
 		fixture: func() []task.Task { return fixture },
 		run: func(l List) error {
@@ -425,37 +485,3 @@ func queryTest(q qt) listTest {
 		},
 	}
 }
-
-// 	for _, test := range queryTests {
-// 		t.Run(test.query, func(t *testing.T) {
-// 			p := parser.New(lexer.New(test.query))
-// 			ast := p.Parse()
-
-// 			if err := p.Error(); err != nil {
-// 				t.Errorf("error parsing query: %s", err)
-// 				return
-// 			}
-
-// 			l, err := l.Search(ast)
-// 			if err != nil {
-// 				t.Errorf("error searching l: %s", err)
-// 				return
-// 			}
-
-// 			if len(l) != len(test.expected) {
-// 				t.Errorf("Expected %v Got %v", test.expected, l)
-// 			}
-
-// 		expectedTitles:
-// 			for x := range test.expected {
-// 				for y := range l {
-// 					if l[y].Title == test.expected[x] {
-// 						continue expectedTitles
-// 					}
-// 				}
-
-// 				t.Errorf("Expected %v Got %v", test.expected, l)
-// 			}
-// 		})
-// 	}
-// }
