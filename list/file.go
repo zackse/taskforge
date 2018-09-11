@@ -40,7 +40,7 @@ func (f *File) Init() error {
 	}
 
 	if f.MemoryList == nil {
-		f.MemoryList = make([]task.Task, 0)
+		f.MemoryList = MemoryList(make([]task.Task, 0))
 	}
 
 	if strings.HasPrefix(f.Dir, "~") {
