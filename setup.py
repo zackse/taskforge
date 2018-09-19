@@ -3,7 +3,7 @@
 from setuptools import find_packages, setup
 
 with open('README.md') as f:
-    long_description = f.read()
+    LONG_DESCRIPTION = f.read()
 
 setup(
     name='taskforge',
@@ -14,20 +14,21 @@ setup(
     author_email='chasinglogic@gmail.com',
     description='A task management library and tool that integrates'
     ' with 3rd party services',
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    packages=find_packages(exclude=['tests']),
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     include_package_data=True,
     zip_safe=False,
     platforms='any',
     install_requires=[],
-    extras_require={
-        'cli': ['toml==0.9.4'],
-        'mongo': ['pymongo==3.7.1']
-    },
+    extras_require={'mongo': ['pymongo==3.7.1']},
     entry_points={
         'console_scripts': [
             'task = taskforge.cli:main',
+        ],
+        'taskforge.lists': [
+            'mongodb = taskforge.lists.mongo',
         ],
     },
     classifiers=[

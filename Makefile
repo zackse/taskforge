@@ -15,8 +15,7 @@ install:
 install-dev:
 	pip install --editable .
 	pip install --editable ".[mongo]"
-	pip install --editable ".[cli]"
 	pip install yapf pydocstyle pylint
 
 test:
-	python -m unittest discover
+	PYTHONPATH="$$PYTHONPATH:src" python -m unittest discover
