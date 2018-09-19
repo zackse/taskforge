@@ -60,21 +60,37 @@ def print_table(tasks):
         'ID', 'Created Date', 'Completed Date', 'Priority', 'Title', 'Context'
     ]]
     rows += [[
-        task.id, task.created_date, task.completed_date, task.priority,
-        task.title, task.context
+        task.id,
+        str(task.created_date),
+        str(task.completed_date),
+        str(task.priority), task.title, task.context
     ] for task in tasks]
 
-    wcolumns = None
-    for columns in rows:
-        if not wcolumns:
-            wcolumns = [len(str(x)) for x in columns]
+    # Create a list of the lengths of the longest item in each column.
+    # Something like [10, 4, 3, 8]
+    column_widths = None
+    for row in rows:
+        if not column_widths:
+            # Get the initial length of our headers
+            column_widths = [len(x) for x in row]
         else:
-            wcolumns = [max(x, len(str(y))) for x, y in zip(wcolumns, columns)]
+            # Compare the current_width with the width of the data in that
+            # column on this row. If the width of the data is larger use that
+            # instead of our current width.
+            column_widths = [
+                max(current_width, len(column_data))
+                for current_width, column_data in zip(column_widths, row)
+            ]
 
-    # print columns with the maximum width
-    for columns in rows:
-        cols = [str(c).ljust(w) for w, c in zip(wcolumns, columns)]
-        print("| {} |".format(" | ".join(list(cols))))
+    # Insert the "separator" row
+    rows.insert(1, ['-' * x for x in column_widths])
+    for row in rows:
+        # ljust will add a number of spaces to the right of data to make it
+        # match the width of that column. So if we have the string "a task"
+        # which has a length of 6 (i.e. len("a task")) and the widest data for
+        # that column is 10 we will end up with "a task    ".
+        cols = [data.ljust(width) for width, data in zip(column_widths, row)]
+        print("| {} |".format(" | ".join(cols)))
 
 
 def print_text(tasks):
