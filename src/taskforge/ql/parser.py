@@ -158,8 +158,7 @@ class Parser:
         """Concat multiple unquoted strings into one value."""
         if not (left.is_literal() and isinstance(left.value, str)):
             raise ParseError(
-                'can only concat string literals got: Literal {} {}'.format(
-                    left.is_literal(), type(left.value)))
+                'can only concat string literals got: {}'.format(left))
 
         left.token.literal += ' ' + self.current_token.literal
         left.value += ' ' + self.current_token.literal
