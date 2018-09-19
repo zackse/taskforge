@@ -30,6 +30,24 @@ ALIASES = {
 }
 
 
+def print_lists():
+    """Print installed list implementations"""
+    from ..lists.load import get_all_lists
+    print('Available lists are:')
+    try:
+        lists = get_all_lists()
+    except ImportError as import_err:
+        print('unable to load lists: {}'.format(import_err))
+        sys.exit(1)
+
+    if not lists:
+        print('no lists are installed')
+        sys.exit(0)
+
+    for name, _ in lists:
+        print(f'  {name}')
+
+
 def main():
     """CLI entrypoint, handles subcommand parsing"""
     args = docopt(__doc__, version='task version 0.1.0', options_first=True)
@@ -40,7 +58,9 @@ def main():
     command = args['<command>']
     try:
         if command == 'help':
-            if args['<args>']:
+            if args['<args>'] and args['<args>'][0] == 'lists':
+                print_lists()
+            elif args['<args>']:
                 command_mod = import_module('taskforge.cli.{}_cmd'.format(
                     args['<args>'][0]))
                 print(command_mod.__doc__)
