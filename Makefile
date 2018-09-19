@@ -6,13 +6,14 @@ fmt:
 	yapf --recursive -i taskforge tests
 
 clean:
-	rm -rf *.egg-info build dist
+	rm -rf build dist
+	find . -regex '.*egg-info' -type d -exec rm -rf {} \;
 	find . -path ./.venv -prune -type f -name '*.pyc'
 
 install:
 	python setup.py install
 
-install-dev:
+install-dev: clean
 	pip install --editable .
 	pip install --editable ".[mongo]"
 	pip install yapf pydocstyle pylint
