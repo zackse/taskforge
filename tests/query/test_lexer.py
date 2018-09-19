@@ -88,9 +88,8 @@ class LexerTests(unittest.TestCase):
 
     def run_lexer_test(self, test):
         lex = Lexer(test['input'])
-        for expected in test['expected']:
-            token = lex.next_token()
-            if token is None and expected is not None:
-                self.fail('unexpected end of input')
-
+        tokens = list(lex)
+        expected = test['expected']
+        self.assertEqual(len(tokens), len(expected))
+        for token, expected in zip(tokens, expected):
             self.assertEqual(token.__dict__, expected.__dict__)
