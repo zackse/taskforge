@@ -2,7 +2,7 @@
 
 import unittest
 
-from taskforge.ql import Parser
+from taskforge.ql.parser import Parser
 from taskforge.ql.ast import AST, Expression
 from taskforge.ql.tokens import Token
 

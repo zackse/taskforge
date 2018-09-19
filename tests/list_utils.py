@@ -4,7 +4,7 @@
 
 from datetime import datetime
 
-from taskforge.ql import Parser
+from taskforge.ql.parser import Parser
 from taskforge.task import Note, Task
 
 

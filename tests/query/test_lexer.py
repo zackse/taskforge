@@ -2,7 +2,7 @@
 
 import unittest
 
-from taskforge.ql import Lexer
+from taskforge.ql.lexer import Lexer
 from taskforge.ql.tokens import Token, Type
 
 LEXER_TESTS = [{
