@@ -13,7 +13,7 @@ clean:
 install:
 	python setup.py install
 
-install-dev: clean
+install-dev:
 	pip install --editable .
 	pip install --editable ".[mongo]"
 	pip install yapf pydocstyle pylint
