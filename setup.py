@@ -21,7 +21,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     platforms='any',
-    install_requires=['docopt'],
+    install_requires=['docopt', 'toml'],
     extras_require={'mongo': ['pymongo==3.7.1']},
     entry_points={
         'console_scripts': [
@@ -29,6 +29,7 @@ setup(
         ],
         'taskforge.lists': [
             'mongodb = taskforge.lists.mongo',
+            'sqlite = taskforge.lists.sqlite',
         ],
     },
     classifiers=[

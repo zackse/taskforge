@@ -1,4 +1,4 @@
-"""Contains the List base class as well as error types."""
+"""Contains the List abstract base class as well as error types."""
 
 from abc import ABC, abstractmethod
 
@@ -12,15 +12,15 @@ class InvalidConfigError(Exception):
 class NotFoundError(Exception):
     """Indicate a task with the given id does not exist."""
 
-    def __init__(self, id=None):
+    def __init__(self, task_id=None):
         """Return a NotFoundError for id."""
         super().__init__()
-        self.id = id
+        self.task_id = task_id
 
     def __repr__(self):
         """Return a human friendly error message."""
-        if self.id:
-            return 'no task with id {} exists'.format(self.id)
+        if self.task_id:
+            return 'no task with id {} exists'.format(self.task_id)
         return 'no task that matched query found'
 
 
@@ -51,7 +51,7 @@ class List(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def find_by_id(self, id):
+    def find_by_id(self, task_id):
         """Find a task by id."""
         raise NotImplementedError
 
@@ -65,7 +65,7 @@ class List(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def complete(self, id):
+    def complete(self, task_id):
         """Complete a task by id."""
         raise NotImplementedError
 
@@ -78,6 +78,6 @@ class List(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def add_note(self, id, note):
+    def add_note(self, task_id, note):
         """Add note to a task by id."""
         raise NotImplementedError

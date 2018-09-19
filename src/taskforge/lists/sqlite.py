@@ -8,10 +8,10 @@ from uuid import uuid1
 from taskforge.ql.tokens import Type
 from taskforge.task import Note, Task
 
-from . import InvalidConfigError, List, NotFoundError
+from . import InvalidConfigError, List as AList, NotFoundError
 
 
-class SQLiteList(List):
+class List(AList):
     """A SQLite 3 backed list implementation."""
 
     __create_task_table = r"""
@@ -59,7 +59,7 @@ FROM tasks
             file_name='',
             create_tables=False,
     ):
-        """Create a SQLiteList from the given configuration.
+        """Create a List from the given configuration.
 
         Either directory or file_name should be provided. Raises
         InvalidConfigError if neither are provided. If both are
@@ -133,7 +133,7 @@ FROM tasks
 
     def __get_notes(self, id):
         return [
-            SQLiteList.note_from_row(row) for row in self.conn.execute(
+            List.note_from_row(row) for row in self.conn.execute(
                 'SELECT id, body, created_date FROM notes WHERE task_id = ?',
                 (id, ))
         ]
@@ -141,7 +141,7 @@ FROM tasks
     def add(self, task):
         """Add a task to the List."""
         self.conn.\
-            execute(self.__insert, SQLiteList.task_to_row(task))
+            execute(self.__insert, List.task_to_row(task))
         self.conn.commit()
 
     def add_multiple(self, tasks):
@@ -149,7 +149,7 @@ FROM tasks
         self.conn.\
             executemany(
                 self.__insert,
-                [SQLiteList.task_to_row(task) for task in tasks])
+                [List.task_to_row(task) for task in tasks])
         self.conn.commit()
 
     def list(self):
@@ -188,7 +188,7 @@ FROM tasks
 
         The original is retrieved using the id of the given task.
         """
-        update_tuple = SQLiteList.task_to_row(task)
+        update_tuple = List.task_to_row(task)
         # move id to the end
         update_tuple = (
             update_tuple[1],
@@ -227,7 +227,7 @@ WHERE id = ?
 
     def search(self, ast):
         """Evaluate the AST and return a List of matching results."""
-        where, values = SQLiteList.__eval(ast.expression)
+        where, values = List.__eval(ast.expression)
         return [
             self.task_from_row(task) for task in self.conn.execute(
                 self.__select + 'WHERE ' + where, values)
@@ -237,10 +237,10 @@ WHERE id = ?
     def __eval(expression):
         """Evaluate expression returning a where clause and a dictionary of values."""
         if expression.is_str_literal():
-            return SQLiteList.__eval_str_literal(expression)
+            return List.__eval_str_literal(expression)
 
         if expression.is_infix():
-            return SQLiteList.__eval_infix(expression)
+            return List.__eval_infix(expression)
 
         return ('', {})
 
@@ -258,8 +258,8 @@ WHERE id = ?
     def __eval_infix(expression):
         """Evaluate an infix expression."""
         if expression.is_logical_infix():
-            left, left_values = SQLiteList.__eval(expression.left)
-            right, right_values = SQLiteList.__eval(expression.right)
+            left, left_values = List.__eval(expression.left)
+            right, right_values = List.__eval(expression.right)
             return ('({}) {} ({})'.format(
                 left,
                 expression.operator.literal,

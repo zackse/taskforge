@@ -5,12 +5,12 @@ import sys
 
 import toml
 
-from ..lists.sqlite import SQLiteList
+from ..lists.load import get_list
 from ..lists import InvalidConfigError
 
 CONFIG_FILES = [
     'taskforge.toml',
-    os.path.join(os.getenv('HOME'), '.taskforge.d', 'config.toml'),
+    os.path.join(os.getenv('HOME', ''), '.taskforge.d', 'config.toml'),
     '/etc/taskforge.d/config.toml'
 ]
 
@@ -56,17 +56,11 @@ def config(func):
     return wrapper
 
 
-LISTS = {
-    'sqlite': SQLiteList,
-    'file': SQLiteList,
-}
-
-
 def load_list(cfg):
     """Load the correct List implementation based on the provided config."""
-    impl = LISTS.get(cfg['list']['name'])
+    impl = get_list(cfg['list']['name'])
     if impl is None:
-        print('Unknown list: {}'.format(cfg['list']['name']))
+        print('unknown list: {}'.format(cfg['list']['name']))
         sys.exit(1)
 
     try:

@@ -2,18 +2,23 @@
 
 from datetime import datetime
 
+try:
+    import pymongo
+except ImportError:
+    import sys
+    print('you must install pymongo to use the MongoDB list')
+    sys.exit(1)
+
 from taskforge.ql.tokens import Type
 from taskforge.task import Task
 
-import pymongo
-
-from . import List
+from . import List as AList
 
 
-class MongoDBList(List):
+class List(AList):
     """A MongoDB backed list implementation."""
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
             self,
             host='localhost',
             port=27017,
@@ -23,7 +28,7 @@ class MongoDBList(List):
             password=None,
             ssl=False,
     ):
-        """Create a MongoDBList from the given configuration."""
+        """Create a List from the given configuration."""
         conn_url = 'mongodb://'
         if username and password:
             conn_url += '{}:{}@'.format(username, password)
@@ -107,10 +112,10 @@ class MongoDBList(List):
     def __eval(expression):
         """Evaluate expression returning dictionary for use as a MongoDB query."""
         if expression.is_str_literal():
-            return MongoDBList.__eval_str_literal(expression)
+            return List.__eval_str_literal(expression)
 
         if expression.is_infix():
-            return MongoDBList.__eval_infix(expression)
+            return List.__eval_infix(expression)
 
         return {}
 
@@ -143,8 +148,8 @@ class MongoDBList(List):
         if expression.is_logical_infix():
             return {
                 "${}".format(expression.operator.literal.lower()): [
-                    MongoDBList.__eval(expression.left),
-                    MongoDBList.__eval(expression.right),
+                    List.__eval(expression.left),
+                    List.__eval(expression.right),
                 ]
             }
 
