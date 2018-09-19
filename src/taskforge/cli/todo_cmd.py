@@ -1,4 +1,15 @@
-"""Implements the todo subcommand."""
+"""usage: task todo [options]
+
+A convenience command for listing tasks which are incomplete.
+
+options:
+    -o <format>, --output <format>  How to display the tasks which match the
+                                    query. Available formats are: json, csv,
+                                    table, text. See 'task list --help' for
+                                    more information on how each format is
+                                    displayed. [default: table]
+
+"""
 
 from ..lists import NotFoundError
 from ..ql.ast import AST, Expression
@@ -8,7 +19,7 @@ from .utils import inject_list
 
 
 @inject_list
-def todo_task(args, task_list=None):
+def run(args, task_list=None):
     """Print the current task in task_list."""
     ast = AST(
         Expression(
@@ -18,23 +29,6 @@ def todo_task(args, task_list=None):
 
     try:
         tasks = task_list.search(ast)
-        print_tasks(tasks, output=args.output)
+        print_tasks(tasks, output=args['--output'])
     except NotFoundError:
         print('No incomplete tasks!')
-
-
-def todo_cmd(parser):
-    """Add the next command to parser."""
-    sub_parser = parser.add_parser(
-        'todo',
-        aliases=[],
-        help='Print incomplete tasks in the list',
-    )
-    sub_parser.add_argument(
-        '--output',
-        '-o',
-        type=str,
-        default='table',
-        choices=['text', 'table', 'json', 'csv'])
-    sub_parser.add_argument('todo', metavar='TODO', nargs='*', type=str)
-    sub_parser.set_defaults(func=todo_task)

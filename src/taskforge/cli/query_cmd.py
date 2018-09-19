@@ -1,11 +1,56 @@
-"""Implements the query subcommand."""
+"""usage: task query [options] [<query>...]
+
+Search or list tasks in this list.
+
+QUERY will be concatenated using spaces and will be interpreted using the
+Taskforge Query Language.
+
+If no query is provided all tasks will be returned.
+
+You can view information about the taskforge query
+language using 'task help ql' or by visiting:
+
+http://taskforge.io/docs/query_language
+
+options:
+    -o <format>, --output <format>  How to display the tasks which match the
+                                    query. Available formats are: json, csv,
+                                    table, text which are described below.
+                                    [default: table]
+
+output formats:
+
+   Text output format is the same as for task next where each task will be
+   printed on one line with the format:
+
+   $TASK_ID: $TASK_TITLE
+
+   Table output format lists tasks in an ascii table and it looks like this:
+
+   | ID  | Created Date  | Completed Date  | Priority  | Title  | Context  |
+   | --- | ------------- | --------------- | --------- | ------ | -------- |
+   | $ID | $CREATED_DATE | $COMPLETED_DATE | $PRIORITY | $TITLE | $CONTEXT |
+
+   JSON output format will "pretty print" a JSON array of the tasks in the list
+   to stdout.  They will be properly indented 4 spaces and should be fairly
+   human readable.  This is useful for migrating from one list implementation
+   for another as you can redirect this output to a file then import it with:
+   'task add --from-file $YOUR_JSON_FILE'
+
+   CSV will output all task metadata in a csv format. It will write to stdout
+   so you can use shell redirection to put it into a csv file like so:
+
+   'task list --output csv > my_tasks.csv'
+
+   This is useful for importing tasks into spreadsheet programs like Excel.
+"""
 
 import csv
 import json
 import sys
 
 from ..lists import NotFoundError
-from ..ql import Parser
+from ..ql.parser import ParseError, Parser
 from .utils import inject_list
 
 
@@ -77,36 +122,29 @@ def print_tasks(tasks, output='table'):
     elif output == 'csv':
         print_csv(tasks)
     else:
-        print('{} is not a valid output format'.format(output))
+        print('{} is not a valid output format. Defaulting to table.'.format(
+            output))
+        print_table(tasks)
 
 
 @inject_list
-def query_task(args, task_list=None):
-    """Print the current task in task_list."""
-    try:
-        if args.query:
-            ast = Parser(' '.join(args.query)).parse()
-            tasks = task_list.search(ast)
-        else:
-            tasks = task_list.list()
-    except NotFoundError:
-        tasks = []
+def query_tasks(query, task_list=None):
+    """Return tasks which match query or all tasks if query is blank"""
+    if query:
+        ast = Parser(query).parse()
+        return task_list.search(ast)
 
-    print_tasks(tasks, output=args.output)
+    return task_list.list()
 
 
-def query_cmd(parser):
+def run(args):
     """Add the query command to parser."""
-    sub_parser = parser.add_parser(
-        'query',
-        aliases=['q', 's', 'search', 'list'],
-        help='Query tasks in the list.',
-    )
-    sub_parser.add_argument(
-        '--output',
-        '-o',
-        type=str,
-        default='table',
-        choices=['text', 'table', 'json', 'csv'])
-    sub_parser.add_argument('query', metavar='QUERY', nargs='*', type=str)
-    sub_parser.set_defaults(func=query_task)
+    query = ' '.join(args['<query>']) if args['<query>'] else ''
+    try:
+        tasks = query_tasks(query)
+        print_tasks(tasks, output=args['--output'])
+    except NotFoundError:
+        print('no tasks matched query')
+    except ParseError as parse_error:
+        print('unable to parse query: {}'.format(parse_error))
+        sys.exit(1)
