@@ -134,8 +134,8 @@ FROM tasks
     def __get_notes(self, id):
         return [
             List.note_from_row(row) for row in self.conn.execute(
-                'SELECT id, body, created_date FROM notes WHERE task_id = ?',
-                (id, ))
+                'SELECT id, body, created_date FROM notes WHERE task_id = ?', (
+                    id, ))
         ]
 
     def add(self, task):
@@ -196,6 +196,7 @@ FROM tasks
             update_tuple[3],
             update_tuple[4],
             update_tuple[5],
+            update_tuple[6],
             update_tuple[0],
         )
         self.conn.execute(
@@ -203,6 +204,7 @@ FROM tasks
 UPDATE tasks
 SET
     title = ?,
+    body = ?,
     context = ?,
     priority = ?,
     created_date = ?,
@@ -229,8 +231,9 @@ WHERE id = ?
         """Evaluate the AST and return a List of matching results."""
         where, values = List.__eval(ast.expression)
         return [
-            self.task_from_row(task) for task in self.conn.execute(
-                self.__select + 'WHERE ' + where, values)
+            self.task_from_row(task)
+            for task in self.conn.execute(self.__select + 'WHERE ' +
+                                          where, values)
         ]
 
     @staticmethod
@@ -248,9 +251,8 @@ WHERE id = ?
     def __eval_str_literal(expression):
         """Evaluate a string literal query."""
         ident = uuid1().hex
-        return (
-            "(title LIKE :{ident} OR body LIKE :{ident})".format(ident=ident),
-            {
+        return ("(title LIKE :{ident} OR body LIKE :{ident})".format(
+            ident=ident), {
                 ident: '%{}%'.format(expression.value)
             })
 
