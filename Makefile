@@ -1,9 +1,11 @@
+PYTHON := python3
+
 lint:
-	pydocstyle taskforge
-	pylint taskforge tests
+	$(PYTHON) -m pydocstyle taskforge
+	$(PYTHON) -m pylint taskforge tests
 
 fmt:
-	yapf --recursive -i taskforge tests
+	$(PYTHON) -m yapf --recursive -i taskforge tests
 
 clean:
 	rm -rf build dist
@@ -11,10 +13,10 @@ clean:
 	find . -path ./.venv -prune -type f -name '*.pyc'
 
 build-docs:
-	python src/docs/build_docs.py
+	$(PYTHON) src/docs/build_docs.py
 
 install:
-	python setup.py install
+	$(PYTHON) setup.py install
 
 install-dev:
 	pip install --editable .
@@ -22,4 +24,4 @@ install-dev:
 	pip install -r requirements.dev.txt
 
 test:
-	PYTHONPATH="$$PYTHONPATH:src" python -m unittest discover
+	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m unittest discover
