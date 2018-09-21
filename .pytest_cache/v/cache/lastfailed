@@ -1,0 +1,23 @@
+{
+  "tests/lists/mongo/test_mongo_list.py::MongoDBListTests::test_query_benchmark": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_add_a_note_to_a_task": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_add_multiple": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_add_one_and_find_by_id": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_complete_a_task": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_completed_false": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_completed_true": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_benchmark": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_grouped_expressions": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_multiple_ors": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_other_context": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_priority_equals_1_0": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_priority_gt_1": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_simple_title": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_query_string_literal_only": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_return_correct_current_task": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_save_and_load": true,
+  "tests/lists/sqlite/test_sqlite_list.py::SQLiteListTests::test_update_a_task": true,
+  "tests/lists/sqlite/test_sqlite_list.py::TestSQLiteList::()::test_query_multiple_ors": true,
+  "tests/lists/sqlite/test_sqlite_list.py::TestSQLiteList::()::test_save_and_load": true,
+  "tests/query/test_parser.py::test_parser": true
+}

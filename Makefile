@@ -24,4 +24,4 @@ install-dev:
 	pip install -r requirements.dev.txt
 
 test:
-	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m unittest discover
+	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest
