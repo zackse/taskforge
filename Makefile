@@ -25,4 +25,7 @@ install-dev:
 	pip install -r requirements.dev.txt
 
 test:
-	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m unittest discover
+	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest -m 'not slow'
+
+test-all:
+	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest --disable-pytest-warnings

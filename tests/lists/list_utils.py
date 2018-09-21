@@ -3,8 +3,13 @@
 # pylint: skip-file
 
 from datetime import datetime
+import unittest
 
+import pytest
+
+from taskforge.ql.ast import AST, Expression
 from taskforge.ql.parser import Parser
+from taskforge.ql.tokens import Token
 from taskforge.task import Note, Task
 
 
@@ -15,7 +20,7 @@ class ListTests:
         task = Task("task 1")
         self.list.add(task)
         res = self.list.find_by_id(task.id)
-        self.assertEqual(task, res)
+        assert task == res
 
     def test_add_multiple(self):
         fixture = [
@@ -26,14 +31,14 @@ class ListTests:
 
         self.list.add_multiple(fixture)
         result = self.list.list()
-        self.assertCountEqual(fixture, result)
+        assert fixture == result
 
     def test_complete_a_task(self):
         task = Task('task to complete')
         self.list.add(task)
         self.list.complete(task.id)
         result = self.list.find_by_id(task.id)
-        self.assertEqual(result.is_complete(), True)
+        assert result.is_completed()
 
     def test_return_correct_current_task(self):
         tasks = [
@@ -43,10 +48,10 @@ class ListTests:
 
         self.list.add_multiple(tasks)
         current = self.list.current()
-        self.assertEqual(tasks[0], current)
+        assert tasks[0] == current
         self.list.complete(tasks[0].id)
         current = self.list.current()
-        self.assertEqual(tasks[1], current)
+        assert tasks[1] == current
 
     def test_add_a_note_to_a_task(self):
         task = Task("task to be noted")
@@ -54,7 +59,7 @@ class ListTests:
         note = Note("a note")
         self.list.add_note(task.id, note)
         noted = self.list.find_by_id(task.id)
-        self.assertCountEqual(noted.notes, [note])
+        assert noted.notes == [note]
 
     def test_update_a_task(self):
         task = Task("task to update")
@@ -63,7 +68,7 @@ class ListTests:
         to_update.title = "task updated"
         self.list.update(to_update)
         updated = self.list.find_by_id(task.id)
-        self.assertEqual(updated.title, "task updated")
+        assert updated.title == "task updated"
 
     def run_query_test(self, query='', fixture=None, expected=None):
         ast = Parser(query).parse()
@@ -193,3 +198,58 @@ class ListTests:
             query="completed = true",
             fixture=fixture,
             expected=[fixture[1], fixture[3]])
+
+
+@pytest.mark.slow
+class ListBenchmarks:
+    @pytest.fixture
+    def task_list(self):
+        raise NotImplemented
+
+    def test_query_benchmark(self, task_list, benchmark):
+        # Hand-crafted artisinal Abstract Syntax Tree
+        ast = AST(
+            Expression(
+                Token('or'),
+                right=Expression(
+                    Token('and'),
+                    left=Expression(
+                        Token('='),
+                        left=Expression(Token('context')),
+                        right=Expression(Token('work'))),
+                    right=Expression(
+                        Token('or'),
+                        left=Expression(
+                            Token('>='),
+                            left=Expression(Token('priority')),
+                            right=Expression(Token('2'))),
+                        right=Expression(Token('my little pony'))),
+                ),
+                left=Expression(
+                    Token('and'),
+                    right=Expression(
+                        Token('~'),
+                        right=Expression(Token('take out the trash')),
+                        left=Expression(Token('title'))),
+                    left=Expression(
+                        Token('>'),
+                        left=Expression(Token('priority')),
+                        right=Expression(Token('5'))),
+                ),
+            ), )
+
+        tasks = [
+            Task("my little pony"),
+            Task("this task won't match anything"),
+            Task("a priority 2 task", priority=2.0),
+            Task("take out the trash", priority=5.0),
+            Task("work task 1", context="work"),
+            Task("work task 2", context="work"),
+            Task("task 1"),
+            Task("task 2"),
+            Task("task 3"),
+            Task("task 4"),
+        ]
+
+        task_list.add_multiple(tasks)
+        benchmark(task_list.search, ast=ast)

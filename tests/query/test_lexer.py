@@ -1,55 +1,45 @@
 # pylint: disable=missing-docstring
 
-import unittest
+import pytest
 
 from taskforge.ql.lexer import Lexer
 from taskforge.ql.tokens import Token, Type
 
-LEXER_TESTS = [{
-    'name': "simple lex",
-    'input': "milk and cookies",
-    'expected': [
+
+@pytest.mark.parametrize("query,expected", [(
+    "milk and cookies",
+    [
         Token('milk'),
         Token('and'),
         Token('cookies'),
     ],
-}, {
-    'name': "boolean lex",
-    'input': "completed = false",
-    'expected': [
+), (
+    "completed = false",
+    [
         Token('completed'),
         Token('='),
         Token('false'),
     ],
-}, {
-    'name':
-    "single grouped expression",
-    'input':
+), (
     "(priority > 0)",
-    'expected': [
+    [
         Token('('),
         Token('priority'),
         Token('>'),
         Token('0'),
         Token(')'),
     ],
-}, {
-    'name':
-    "keyword excaped lex",
-    'input':
+), (
     "milk -and cookies",
-    'expected': [
+    [
         Token('milk'),
         Token('and', token_type=Type.STRING),
         Token('cookies'),
     ],
-}, {
-    'name':
-    "complicated lex",
-    'input':
+), (
     "(priority > 5 and title ^ \"take out the trash\") or "
     "(context = \"work\" and (priority >= 2 or (\"my little pony\")))",
-    'expected': [
+    [
         Token('('),
         Token('priority'),
         Token('>'),
@@ -76,20 +66,27 @@ LEXER_TESTS = [{
         Token(')'),
         Token(')'),
     ],
-}]
+)])
+def test_lexer(query, expected):
+    lex = Lexer(query)
+    tokens = list(lex)
+    assert tokens == expected
+    assert len(tokens) == len(expected)
 
 
-class LexerTests(unittest.TestCase):
-    def test_lexer_tokens(self):
-        """Test Lexer"""
-        for test in LEXER_TESTS:
-            with self.subTest(name=test['name'], query=test['input']):
-                self.run_lexer_test(test)
+@pytest.mark.slow
+@pytest.mark.parametrize("query", [
+    ('milk and cookies', ),
+    ('milk -and cookies', ),
+    ('completed = false', ),
+    ('(priority > 5 and title ^ \'take out the trash\') or '
+     '(context = "work" and (priority >= 2 or ("my little pony")))', ),
+])
+def test_lexer_performance(query, benchmark):
+    """Benchmark the performance of various queries."""
 
-    def run_lexer_test(self, test):
-        lex = Lexer(test['input'])
-        tokens = list(lex)
-        expected = test['expected']
-        self.assertEqual(len(tokens), len(expected))
-        for token, expected in zip(tokens, expected):
-            self.assertEqual(token.__dict__, expected.__dict__)
+    @benchmark
+    def parse_query():  # pylint: disable=unused-variable
+        """Benchmark query parsing"""
+        lexer = Lexer(query)
+        list(lexer)

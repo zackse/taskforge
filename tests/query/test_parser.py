@@ -1,44 +1,32 @@
 # pylint: disable=missing-docstring
 
-import unittest
+import pytest
 
-from taskforge.ql.parser import Parser
 from taskforge.ql.ast import AST, Expression
+from taskforge.ql.parser import Parser
 from taskforge.ql.tokens import Token
 
-PARSER_TESTS = [{
-    'name':
-    'simple parse',
-    'input':
+
+@pytest.mark.parametrize("query,ast", [(
     'milk and cookies',
-    'output':
     AST(
         Expression(
             Token('and'),
             left=Expression(Token('milk')),
             right=Expression(Token('cookies'))), ),
-}, {
-    'name':
-    'boolean parse',
-    'input':
+), (
     'completed = false',
-    'output':
     AST(
         Expression(
             Token('='),
             left=Expression(Token('completed')),
             right=Expression(Token('false'))), ),
-}, {
-    'name': 'simple all string parse',
-    'input': 'milk -and cookies',
-    'output': AST(Expression(Token('milk and cookies'))),
-}, {
-    'name':
-    'complex parse',
-    'input':
+), (
+    'milk -and cookies',
+    AST(Expression(Token('milk and cookies'))),
+), (
     '(priority > 5 and title ^ \'take out the trash\') or '
     '(context = "work" and (priority >= 2 or ("my little pony")))',
-    'output':
     AST(
         Expression(
             Token('or'),
@@ -68,24 +56,30 @@ PARSER_TESTS = [{
                     right=Expression(Token('5'))),
             ),
         ), ),
-}, {
-    'name':
-    'parse bool infix',
-    'input':
-    'completed = false',
-    'output':
+), ('completed = false',
     AST(
         Expression(
             Token('='),
             left=Expression(Token('completed')),
-            right=Expression(Token('false'))))
-}]
+            right=Expression(Token('false')))))])
+def test_parser(query, ast):
+    parser = Parser(query)
+    assert parser.parse() == ast
 
 
-class ParserTests(unittest.TestCase):
-    def test_parser(self):
-        for test in PARSER_TESTS:
-            with self.subTest(**test):
-                parser = Parser(test['input'])
-                ast = parser.parse()
-                self.assertEqual(ast, test['output'])
+@pytest.mark.slow
+@pytest.mark.parametrize("query", [
+    ('milk and cookies', ),
+    ('milk -and cookies', ),
+    ('completed = false', ),
+    ('(priority > 5 and title ^ \'take out the trash\') or '
+     '(context = "work" and (priority >= 2 or ("my little pony")))', ),
+])
+def test_parser_performance(query, benchmark):
+    """Benchmark the performance of various queries."""
+
+    @benchmark
+    def parse_query():  # pylint: disable=unused-variable
+        """Benchmark query parsing"""
+        parser = Parser(query)
+        parser.parse()
