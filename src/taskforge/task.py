@@ -29,7 +29,7 @@ class Note:
 
     def __repr__(self):
         """Return a simple string of note id and body."""
-        return 'Note-{}: {}'.format(self.id, self.body)
+        return f'Note({self.id})'
 
     @classmethod
     def from_dict(cls, dictionary):
@@ -107,7 +107,7 @@ class Task:  # pylint: disable=too-many-instance-attributes
 
     def __repr__(self):
         """Return a simple string of the task id and title."""
-        return '{}: {}'.format(self.id, self.title)
+        return f'Task({self.id})'
 
     @classmethod
     def from_dict(cls, dictionary):
