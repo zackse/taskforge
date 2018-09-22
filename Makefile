@@ -12,7 +12,8 @@ clean:
 	find . -regex '.*egg-info' -type d -exec rm -rf {} \;
 	find . -path ./.venv -prune -type f -name '*.pyc'
 
-build-docs:
+.PHONY: docs
+docs:
 	$(PYTHON) src/docs/build_docs.py
 
 install:

@@ -74,11 +74,13 @@ def main():
     templates = get_template_files()
     context = build_context()
     for template in templates:
+        targetfile = template.replace('src/docs/templates/', '')
+        targetfile = targetfile.replace('.j2', '')
+        print('Building', targetfile, 'from:', template)
+
         with open(template) as tmpl:
             rendered = jinja2.Template(tmpl.read()).render(**context)
 
-        targetfile = template.replace('scripts/templates/', '').replace(
-            '.j2', '')
         with open(targetfile, 'w') as target:
             target.write(rendered)
 

@@ -18,7 +18,7 @@ $ pip install taskforge-cli
 ### task 
 
 ```text
-usage: task [--version] <command> [<args>...]
+usage: task [--help] [--version] <command> [<args>...]
 
 A task management CLI that integrates with external services.
 
@@ -29,6 +29,7 @@ available commands:
    todo                Print incomplete tasks in the list
    complete (done, d)  Complete tasks in the list.
    query (q, s, list)  Search or list tasks in the list
+   workon              Move a task to the top of the list
 
 See 'task help <command>' for more information on a specific command.
 
@@ -152,6 +153,18 @@ options:
 
 
 ```
+
+### task workon
+
+```text
+usage: task workon <ID>
+
+Find task with ID and make it so the priority of the task is 0.1 higher than
+that of the current highest priority task. Effectively making it the "current"
+task in Taskforge terms.
+
+```
+
 
 ## Contributing
 
