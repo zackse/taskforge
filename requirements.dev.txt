@@ -5,3 +5,5 @@ pylint
 jinja2
 pytest
 pytest-benchmark
+sphinx
+sphinx-autobuild
