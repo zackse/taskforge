@@ -5,7 +5,7 @@ This document describes the goals of taskforge the library, and it’s
 design.
 
 Goals
-~~~~~
+-----
 
 -  Task management library that can be used with multiple frontends
 
@@ -33,7 +33,7 @@ Design
 ------
 
 Query Language
-~~~~~~~~~~~~~~
+++++++++++++++
 
 The query language for tasks will accept two “modes”.
 
@@ -95,8 +95,8 @@ Valid infix operators are:
    ``priority >= 5`` simply includes 5.0 as a valid value.
 -  ``<`` and ``<=`` Less than and Less than or equal to. The inverse of
    the above.
--  ``^`` or ``~`` A “LIKE” operator for strings, performs fuzzy matching
-   instead of strict equality. The ``~`` is the preferred form however
+-  ``^`` or ``+`` A “LIKE” operator for strings, performs fuzzy matching
+   instead of strict equality. The ``+`` is the preferred form however
    is inconvenient for terminal use so ``^`` is also valid.
 -  ``AND`` or ``and`` both the upper and lower case forms of ``and`` are
    acceptable. These perform a logical and of two expressions.
@@ -258,7 +258,7 @@ follows:
                    self.token.token_type == Type.BOOLEAN)
 
 Task Data
-~~~~~~~~~
++++++++++
 
 The pseudo-code representation of a task is:
 
@@ -290,7 +290,7 @@ list storage. This is a nice, 0 dependency, and easy to use UUID that
 can be made into a string.
 
 Task Lists
-~~~~~~~~~~
+++++++++++
 
 List will be an abstract class which all list implementations will need
 to subclass, it has the following definition:

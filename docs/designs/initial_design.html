@@ -16,6 +16,8 @@
     <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="task (CLI client)" href="cli_design.html" />
+    <link rel="prev" title="Taskforge Designs" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -64,12 +66,11 @@ sugar” in the title, body, and notes of tasks</li>
 </ul>
 </li>
 </ul>
+</div>
 <div class="section" id="design">
-<h3>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h3>
-</div>
-</div>
+<h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="query-language">
-<h2>Query Language<a class="headerlink" href="#query-language" title="Permalink to this headline">¶</a></h2>
+<h3>Query Language<a class="headerlink" href="#query-language" title="Permalink to this headline">¶</a></h3>
 <p>The query language for tasks will accept two “modes”.</p>
 <p>The first mode is a simple string search. A query which takes the form:
 <code class="docutils literal notranslate"><span class="pre">WORD^</span></code> such as: <code class="docutils literal notranslate"><span class="pre">milk</span> <span class="pre">and</span> <span class="pre">sugar</span></code> is a simple string search. It will
@@ -125,8 +126,8 @@ but the <code class="docutils literal notranslate"><span class="pre">!</span></c
 <code class="docutils literal notranslate"><span class="pre">priority</span> <span class="pre">&gt;=</span> <span class="pre">5</span></code> simply includes 5.0 as a valid value.</li>
 <li><code class="docutils literal notranslate"><span class="pre">&lt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> Less than and Less than or equal to. The inverse of
 the above.</li>
-<li><code class="docutils literal notranslate"><span class="pre">^</span></code> or <code class="docutils literal notranslate"><span class="pre">~</span></code> A “LIKE” operator for strings, performs fuzzy matching
-instead of strict equality. The <code class="docutils literal notranslate"><span class="pre">~</span></code> is the preferred form however
+<li><code class="docutils literal notranslate"><span class="pre">^</span></code> or <code class="docutils literal notranslate"><span class="pre">+</span></code> A “LIKE” operator for strings, performs fuzzy matching
+instead of strict equality. The <code class="docutils literal notranslate"><span class="pre">+</span></code> is the preferred form however
 is inconvenient for terminal use so <code class="docutils literal notranslate"><span class="pre">^</span></code> is also valid.</li>
 <li><code class="docutils literal notranslate"><span class="pre">AND</span></code> or <code class="docutils literal notranslate"><span class="pre">and</span></code> both the upper and lower case forms of <code class="docutils literal notranslate"><span class="pre">and</span></code> are
 acceptable. These perform a logical and of two expressions.</li>
@@ -164,6 +165,8 @@ notes.</li>
 </ul>
 </li>
 </ul>
+<div class="section" id="ast">
+<h4>AST<a class="headerlink" href="#ast" title="Permalink to this headline">¶</a></h4>
 <p>The AST for the query language returned by the parser is a class which
 has a single member variable <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AST</span><span class="p">:</span>
@@ -282,8 +285,9 @@ follows:</p>
 </pre></div>
 </div>
 </div>
+</div>
 <div class="section" id="task-data">
-<h2>Task Data<a class="headerlink" href="#task-data" title="Permalink to this headline">¶</a></h2>
+<h3>Task Data<a class="headerlink" href="#task-data" title="Permalink to this headline">¶</a></h3>
 <p>The pseudo-code representation of a task is:</p>
 <div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="nb">id</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
@@ -310,7 +314,7 @@ list storage. This is a nice, 0 dependency, and easy to use UUID that
 can be made into a string.</p>
 </div>
 <div class="section" id="task-lists">
-<h2>Task Lists<a class="headerlink" href="#task-lists" title="Permalink to this headline">¶</a></h2>
+<h3>Task Lists<a class="headerlink" href="#task-lists" title="Permalink to this headline">¶</a></h3>
 <p>List will be an abstract class which all list implementations will need
 to subclass, it has the following definition:</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -373,8 +377,10 @@ will need to check for missing required arguments or invalid
 configurations and raise a InvalidConfigError with a human readable
 message. Additionally any connecting or loading of files necessary for
 use will happen during object construction.</p>
+</div>
+</div>
 <div class="section" id="future-work-ideas">
-<h3>Future Work / Ideas<a class="headerlink" href="#future-work-ideas" title="Permalink to this headline">¶</a></h3>
+<h2>Future Work / Ideas<a class="headerlink" href="#future-work-ideas" title="Permalink to this headline">¶</a></h2>
 <p>Future ideas and features I will implement are as follows:</p>
 <ul class="simple">
 <li>Additional Lists:<ul>
@@ -386,7 +392,6 @@ use will happen during object construction.</p>
 <li>Modifier statements on queries such as <code class="docutils literal notranslate"><span class="pre">LIMIT</span></code> or <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span></code></li>
 <li>Task custom fields</li>
 </ul>
-</div>
 </div>
 </div>
 
@@ -407,7 +412,7 @@ use will happen during object construction.</p>
 
 
 <h3>Navigation</h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../query_language.html">Query Language</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../configuring_taskforge.html">Configuring Taskforge</a></li>
@@ -415,12 +420,21 @@ use will happen during object construction.</p>
 <li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/index.html">Advanced Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Taskforge Designs</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">taskforge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli_design.html">task (CLI client)</a></li>
+</ul>
+</li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Taskforge Designs</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Taskforge Designs</a></li>
+      <li>Next: <a href="cli_design.html" title="next chapter">task (CLI client)</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
