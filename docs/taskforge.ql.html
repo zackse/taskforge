@@ -1,0 +1,400 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>taskforge.ql package &#8212; Taskforge 0.1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="taskforge.task package" href="taskforge.task.html" />
+    <link rel="prev" title="taskforge.lists package" href="taskforge.lists.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="taskforge-ql-package">
+<h1>taskforge.ql package<a class="headerlink" href="#taskforge-ql-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-taskforge.ql.ast">
+<span id="taskforge-ql-ast-module"></span><h2>taskforge.ql.ast module<a class="headerlink" href="#module-taskforge.ql.ast" title="Permalink to this headline">¶</a></h2>
+<p>AST and Expression classes for the Taskforge query language.</p>
+<dl class="class">
+<dt id="taskforge.ql.ast.AST">
+<em class="property">class </em><code class="descclassname">taskforge.ql.ast.</code><code class="descname">AST</code><span class="sig-paren">(</span><em>expression</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#AST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.AST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Abstract syntax tree for the Taskforge query language.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="taskforge.ql.ast.Expression">
+<em class="property">class </em><code class="descclassname">taskforge.ql.ast.</code><code class="descname">Expression</code><span class="sig-paren">(</span><em>token</em>, <em>left=None</em>, <em>right=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An expression is a statement that yields a value.</p>
+<dl class="attribute">
+<dt id="taskforge.ql.ast.Expression.date_formats">
+<code class="descname">date_formats</code><em class="property"> = ['%Y-%m-%d %I:%M %p', '%Y-%m-%d %I:%M%p', '%Y-%m-%d %I:%M:%S %p', '%Y-%m-%d %I:%M:%S%p', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d %H:%M', '%Y-%m-%d']</em><a class="headerlink" href="#taskforge.ql.ast.Expression.date_formats" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_and_infix">
+<code class="descname">is_and_infix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_and_infix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_and_infix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate if this is a logical AND expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_boolean_literal">
+<code class="descname">is_boolean_literal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_boolean_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_boolean_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is a boolean value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_comparison_infix">
+<code class="descname">is_comparison_infix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_comparison_infix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_comparison_infix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate if this is a value comparison expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_date_literal">
+<code class="descname">is_date_literal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_date_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_date_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is a date value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_infix">
+<code class="descname">is_infix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_infix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_infix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is an infix expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_literal">
+<code class="descname">is_literal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is a literal value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_logical_infix">
+<code class="descname">is_logical_infix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_logical_infix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_logical_infix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate if this is a logical AND/OR expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_number_literal">
+<code class="descname">is_number_literal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_number_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_number_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is a number value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_or_infix">
+<code class="descname">is_or_infix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_or_infix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_or_infix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate if this is a logical OR expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.ast.Expression.is_str_literal">
+<code class="descname">is_str_literal</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.is_str_literal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.is_str_literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicate whether this expression is a string value.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="taskforge.ql.ast.Expression.parse_date">
+<em class="property">static </em><code class="descname">parse_date</code><span class="sig-paren">(</span><em>date_string</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/ast.html#Expression.parse_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.ast.Expression.parse_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a date_string using the first valid format.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-taskforge.ql.lexer">
+<span id="taskforge-ql-lexer-module"></span><h2>taskforge.ql.lexer module<a class="headerlink" href="#module-taskforge.ql.lexer" title="Permalink to this headline">¶</a></h2>
+<p>Contains the Lexer class for tokenizing input for the Taskforge Query Language.</p>
+<dl class="class">
+<dt id="taskforge.ql.lexer.Lexer">
+<em class="property">class </em><code class="descclassname">taskforge.ql.lexer.</code><code class="descname">Lexer</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/lexer.html#Lexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.lexer.Lexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Scans input producing tokens.</p>
+<dl class="method">
+<dt id="taskforge.ql.lexer.Lexer.next_token">
+<code class="descname">next_token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/lexer.html#Lexer.next_token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.lexer.Lexer.next_token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the next token from the input.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-taskforge.ql.parser">
+<span id="taskforge-ql-parser-module"></span><h2>taskforge.ql.parser module<a class="headerlink" href="#module-taskforge.ql.parser" title="Permalink to this headline">¶</a></h2>
+<p>Contains the Parser class for the Taskforge Query Language.</p>
+<dl class="exception">
+<dt id="taskforge.ql.parser.ParseError">
+<em class="property">exception </em><code class="descclassname">taskforge.ql.parser.</code><code class="descname">ParseError</code><a class="reference internal" href="_modules/taskforge/ql/parser.html#ParseError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.ParseError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Raised by the Parser when invalid syntax occurs.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="taskforge.ql.parser.Parser">
+<em class="property">class </em><code class="descclassname">taskforge.ql.parser.</code><code class="descname">Parser</code><span class="sig-paren">(</span><em>query=''</em>, <em>lexer=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/parser.html#Parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.Parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Parser for the taskforge query language.</p>
+<dl class="classmethod">
+<dt id="taskforge.ql.parser.Parser.from_lexer">
+<em class="property">classmethod </em><code class="descname">from_lexer</code><span class="sig-paren">(</span><em>lexer</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/parser.html#Parser.from_lexer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.Parser.from_lexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Parser from lexer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.parser.Parser.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/parser.html#Parser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.Parser.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the query returning an AST. Raises ParseError on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="taskforge.ql.parser.Parser.set_input">
+<code class="descname">set_input</code><span class="sig-paren">(</span><em>query</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/parser.html#Parser.set_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.Parser.set_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the input of this parser.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="taskforge.ql.parser.Precedence">
+<em class="property">class </em><code class="descclassname">taskforge.ql.parser.</code><code class="descname">Precedence</code><a class="reference internal" href="_modules/taskforge/ql/parser.html#Precedence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.parser.Precedence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.IntEnum" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></a></p>
+<p>Operator precedence.</p>
+<dl class="attribute">
+<dt id="taskforge.ql.parser.Precedence.ANDOR">
+<code class="descname">ANDOR</code><em class="property"> = 2</em><a class="headerlink" href="#taskforge.ql.parser.Precedence.ANDOR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.parser.Precedence.COMPARISON">
+<code class="descname">COMPARISON</code><em class="property"> = 3</em><a class="headerlink" href="#taskforge.ql.parser.Precedence.COMPARISON" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.parser.Precedence.LOWEST">
+<code class="descname">LOWEST</code><em class="property"> = 0</em><a class="headerlink" href="#taskforge.ql.parser.Precedence.LOWEST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.parser.Precedence.STRING">
+<code class="descname">STRING</code><em class="property"> = 1</em><a class="headerlink" href="#taskforge.ql.parser.Precedence.STRING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-taskforge.ql.tokens">
+<span id="taskforge-ql-tokens-module"></span><h2>taskforge.ql.tokens module<a class="headerlink" href="#module-taskforge.ql.tokens" title="Permalink to this headline">¶</a></h2>
+<p>Contains the Token and Type classes.</p>
+<dl class="class">
+<dt id="taskforge.ql.tokens.Token">
+<em class="property">class </em><code class="descclassname">taskforge.ql.tokens.</code><code class="descname">Token</code><span class="sig-paren">(</span><em>literal</em>, <em>token_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/ql/tokens.html#Token"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.tokens.Token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A query language lexical Token.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="taskforge.ql.tokens.Type">
+<em class="property">class </em><code class="descclassname">taskforge.ql.tokens.</code><code class="descname">Type</code><a class="reference internal" href="_modules/taskforge/ql/tokens.html#Type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.ql.tokens.Type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/enum.html#enum.Enum" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></a></p>
+<p>Represents the various token types.</p>
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.AND">
+<code class="descname">AND</code><em class="property"> = 'AND'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.AND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.BOOLEAN">
+<code class="descname">BOOLEAN</code><em class="property"> = 'BOOLEAN'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.BOOLEAN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.DATE">
+<code class="descname">DATE</code><em class="property"> = 'DATE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.DATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.EOF">
+<code class="descname">EOF</code><em class="property"> = 'EOF'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.EOF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.EQ">
+<code class="descname">EQ</code><em class="property"> = 'EQ'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.EQ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.GT">
+<code class="descname">GT</code><em class="property"> = 'GT'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.GT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.GTE">
+<code class="descname">GTE</code><em class="property"> = 'GTE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.GTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.LIKE">
+<code class="descname">LIKE</code><em class="property"> = 'LIKE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.LIKE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.LPAREN">
+<code class="descname">LPAREN</code><em class="property"> = 'LPAREN'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.LPAREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.LT">
+<code class="descname">LT</code><em class="property"> = 'LT'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.LT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.LTE">
+<code class="descname">LTE</code><em class="property"> = 'LTE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.LTE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.NE">
+<code class="descname">NE</code><em class="property"> = 'NE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.NE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.NLIKE">
+<code class="descname">NLIKE</code><em class="property"> = 'NLIKE'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.NLIKE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.NUMBER">
+<code class="descname">NUMBER</code><em class="property"> = 'NUMBER'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.NUMBER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.OR">
+<code class="descname">OR</code><em class="property"> = 'OR'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.OR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.RPAREN">
+<code class="descname">RPAREN</code><em class="property"> = 'RPAREN'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.RPAREN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.STRING">
+<code class="descname">STRING</code><em class="property"> = 'STRING'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.STRING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="taskforge.ql.tokens.Type.UNEXPECTED">
+<code class="descname">UNEXPECTED</code><em class="property"> = 'UNEXPECTED'</em><a class="headerlink" href="#taskforge.ql.tokens.Type.UNEXPECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-taskforge.ql">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-taskforge.ql" title="Permalink to this headline">¶</a></h2>
+<p>Contains the implementation of the Taskforge Query Language.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Taskforge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="query_language.html">Query Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuring_taskforge.html">Configuring Taskforge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lists/index.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli/index.html">CLI Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage/index.html">Advanced Usage</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="taskforge.html">taskforge package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="api.html">API</a><ul>
+  <li><a href="taskforge.html">taskforge package</a><ul>
+      <li>Previous: <a href="taskforge.lists.html" title="previous chapter">taskforge.lists package</a></li>
+      <li>Next: <a href="taskforge.task.html" title="next chapter">taskforge.task package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mathew Robinson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/taskforge.ql.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

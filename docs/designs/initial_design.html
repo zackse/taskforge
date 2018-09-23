@@ -1,0 +1,459 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>taskforge &#8212; Taskforge 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="taskforge">
+<h1>taskforge<a class="headerlink" href="#taskforge" title="Permalink to this headline">¶</a></h1>
+<p>This document describes the goals of taskforge the library, and it’s
+design.</p>
+<div class="section" id="goals">
+<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Task management library that can be used with multiple frontends<ul>
+<li>Supports querying tasks<ul>
+<li><a class="reference external" href="#query-language">Query Language Design</a></li>
+<li><a class="reference external" href="#task-data">Task Design</a></li>
+<li><a class="reference external" href="#lists">List Design</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Supports saving and loading of tasks from multiple “services” via
+List implementations<ul>
+<li><strong>MVP:</strong> Only supports one list: <a class="reference external" href="#sqlite-list">SQLite</a></li>
+</ul>
+</li>
+<li>Query Language supports both simple string searches and complex field
+based queries<ul>
+<li>For Example:<ul>
+<li>“milk sugar” will search through all tasks for the words “milk
+sugar” in the title, body, and notes of tasks</li>
+<li>“title = WORK” will find tasks whose title is the string WORK</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="design">
+<h3>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="query-language">
+<h2>Query Language<a class="headerlink" href="#query-language" title="Permalink to this headline">¶</a></h2>
+<p>The query language for tasks will accept two “modes”.</p>
+<p>The first mode is a simple string search. A query which takes the form:
+<code class="docutils literal notranslate"><span class="pre">WORD^</span></code> such as: <code class="docutils literal notranslate"><span class="pre">milk</span> <span class="pre">and</span> <span class="pre">sugar</span></code> is a simple string search. It will
+be a single expression which is a String Literal of “milk and sugar” if
+an interpreter finds a single String Literal expression as the root node
+of an AST then it should do a fuzzy string match on the title, body, and
+notes of Tasks.</p>
+<p>The second mode is a tree of infix expressions. An infix expression as
+the form <code class="docutils literal notranslate"><span class="pre">FIELD_NAME</span> <span class="pre">OPERATOR</span> <span class="pre">VALUE</span></code> or, in the case of logical
+operators, <code class="docutils literal notranslate"><span class="pre">EXPRESSION</span> <span class="pre">AND_OR</span> <span class="pre">EXPRESSION</span></code>. As in math and programming
+languages, the <code class="docutils literal notranslate"><span class="pre">(</span></code> and <code class="docutils literal notranslate"><span class="pre">)</span></code> characters will denote “grouped”
+expressions which will push them down the order of operations so they
+are evaluated first. The final kind of expression is with logical
+operators. A string literal inside of parens will be treated as an
+<code class="docutils literal notranslate"><span class="pre">EXPRESSION</span></code> will be interpreted as a fuzzy search as above so that
+<code class="docutils literal notranslate"><span class="pre">(STRING_LITERAL)</span> <span class="pre">AND_OR</span> <span class="pre">EXPRESSION</span></code> can be used for convenience.</p>
+<p>There are three “literal” expressions to represent values:</p>
+<ul class="simple">
+<li>String Literal</li>
+<li>Number Literal</li>
+<li>Date Literal</li>
+</ul>
+<p>Dates are any string which have the format <code class="docutils literal notranslate"><span class="pre">YYYY-MM-DD</span> <span class="pre">HH:MM</span> <span class="pre">(AM|PM)</span></code>
+whether quoted or unquoted.</p>
+<p>Important notes:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">FIELD_NAME</span></code> is lexed as a String Literal token. The parser will
+validate that it is a valid field name if it is part of an infix
+expression. Else the parser will concat multiple <code class="docutils literal notranslate"><span class="pre">FIELD_NAMES</span></code> into
+a single String Literal expression.</li>
+<li>All numbers are lexed as floats, however in a query string both 5 and
+5.0 are valid.</li>
+</ul>
+<p>There is only one “prefix operator” and is not seen by the parser or
+interpreter (so is not a true operator at all), and that is <code class="docutils literal notranslate"><span class="pre">-</span></code>. This
+is used during unquoted string queries to indicate that a keyword should
+be interpreted literally. Take our above example of <code class="docutils literal notranslate"><span class="pre">milk</span> <span class="pre">and</span> <span class="pre">sugar</span></code>.
+The lexer would normally interpret this as <code class="docutils literal notranslate"><span class="pre">STRING</span> <span class="pre">AND</span> <span class="pre">STRING</span></code>. If we
+instead want this to be taken as <code class="docutils literal notranslate"><span class="pre">STRING</span> <span class="pre">STRING</span> <span class="pre">STRING</span></code> we must put a
+<code class="docutils literal notranslate"><span class="pre">-</span></code> in front of and. This means the final query is
+<code class="docutils literal notranslate"><span class="pre">milk</span> <span class="pre">-and</span> <span class="pre">sugar</span></code>. The <code class="docutils literal notranslate"><span class="pre">-</span></code> is simply ignored by anything other than
+the lexer.</p>
+<p>Valid infix operators are:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">=</span></code> equality so that <code class="docutils literal notranslate"><span class="pre">title</span> <span class="pre">=</span> <span class="pre">foo</span></code> means if title is equal to
+“foo”</li>
+<li><code class="docutils literal notranslate"><span class="pre">!=</span></code> or <code class="docutils literal notranslate"><span class="pre">^=</span></code> negative equality so that <code class="docutils literal notranslate"><span class="pre">title</span> <span class="pre">!=</span> <span class="pre">foo</span></code> means
+find titles which are not equal to “foo” The <code class="docutils literal notranslate"><span class="pre">!=</span></code> form is preferred
+but the <code class="docutils literal notranslate"><span class="pre">!</span></code> character is troublesome in a shell environment so the
+<code class="docutils literal notranslate"><span class="pre">^=</span></code> form is provided as a convenience.</li>
+<li><code class="docutils literal notranslate"><span class="pre">&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code> Greater than and Greater than or equal to so that
+<code class="docutils literal notranslate"><span class="pre">priority</span> <span class="pre">&gt;</span> <span class="pre">5</span></code> means priority is greater than <code class="docutils literal notranslate"><span class="pre">5.0</span></code> similarly
+<code class="docutils literal notranslate"><span class="pre">priority</span> <span class="pre">&gt;=</span> <span class="pre">5</span></code> simply includes 5.0 as a valid value.</li>
+<li><code class="docutils literal notranslate"><span class="pre">&lt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> Less than and Less than or equal to. The inverse of
+the above.</li>
+<li><code class="docutils literal notranslate"><span class="pre">^</span></code> or <code class="docutils literal notranslate"><span class="pre">~</span></code> A “LIKE” operator for strings, performs fuzzy matching
+instead of strict equality. The <code class="docutils literal notranslate"><span class="pre">~</span></code> is the preferred form however
+is inconvenient for terminal use so <code class="docutils literal notranslate"><span class="pre">^</span></code> is also valid.</li>
+<li><code class="docutils literal notranslate"><span class="pre">AND</span></code> or <code class="docutils literal notranslate"><span class="pre">and</span></code> both the upper and lower case forms of <code class="docutils literal notranslate"><span class="pre">and</span></code> are
+acceptable. These perform a logical and of two expressions.</li>
+<li><code class="docutils literal notranslate"><span class="pre">OR</span></code> or <code class="docutils literal notranslate"><span class="pre">or</span></code> both the upper and lower case forms of <code class="docutils literal notranslate"><span class="pre">or</span></code> are
+acceptable. These perform a logical or of two expressions.</li>
+</ul>
+<p>Some example queries with literate explanations of interpreter behavior:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">title</span> <span class="pre">=</span> <span class="pre">&quot;take</span> <span class="pre">out</span> <span class="pre">the</span> <span class="pre">trash&quot;</span></code><ul>
+<li>Find all tasks which have the title “take out the trash”</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">title</span> <span class="pre">^</span> <span class="pre">&quot;take</span> <span class="pre">out</span> <span class="pre">the</span> <span class="pre">trash&quot;</span></code><ul>
+<li>Find all tasks whose title contains the string “take out the
+trash”</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">(&quot;milk</span> <span class="pre">and</span> <span class="pre">sugar&quot;)</span> <span class="pre">and</span> <span class="pre">priority</span> <span class="pre">&gt;</span> <span class="pre">5</span></code><ul>
+<li>Find all tasks which have the string “milk and sugar” fuzzy
+matched on their title, body, and notes. Additionally verify that
+they have a priority greater than 5.0</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">milk</span> <span class="pre">-and</span> <span class="pre">sugar</span></code><ul>
+<li>Find all tasks which have the string “milk and sugar” fuzzy
+matched on their title, body, and notes.</li>
+</ul>
+</li>
+<li><code class="docutils literal notranslate"><span class="pre">(priority</span> <span class="pre">&gt;</span> <span class="pre">5</span> <span class="pre">and</span> <span class="pre">title</span> <span class="pre">^</span> <span class="pre">&quot;take</span> <span class="pre">out</span> <span class="pre">the</span> <span class="pre">trash&quot;)</span> <span class="pre">or</span> <span class="pre">(context</span> <span class="pre">=</span> <span class="pre">&quot;work&quot;</span> <span class="pre">and</span> <span class="pre">(priority</span> <span class="pre">&gt;=</span> <span class="pre">2</span> <span class="pre">or</span> <span class="pre">(&quot;my</span> <span class="pre">little</span> <span class="pre">pony&quot;)))</span></code><ul>
+<li>Find all tasks which either have a priority greater than 5.0 and a
+title containing the string “take out the trash” or which are in
+the context “work” and have a priority greater than or equal to 2
+or have the string “my little pony” in their title, body, and
+notes.</li>
+</ul>
+</li>
+</ul>
+<p>The AST for the query language returned by the parser is a class which
+has a single member variable <code class="docutils literal notranslate"><span class="pre">expression</span></code>.</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AST</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Abstract syntax tree for the Taskforge query language&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="n">expression</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">expression</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">expression</span></code> is an Expression class object. The Expression class is as
+follows:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Expression</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An expression is a statement that yields a value&quot;&quot;&quot;</span>
+
+    <span class="o">...</span><span class="n">implementation</span> <span class="n">details</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">STRING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">literal</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">NUMBER</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">DATE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Expression</span><span class="o">.</span><span class="n">parse_date</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">token</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">right</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Type</span><span class="o">.</span><span class="n">AND</span><span class="p">,</span> <span class="n">Type</span><span class="o">.</span><span class="n">OR</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">operator</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">token</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is an infix expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">is_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is a literal value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">is_comparison_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates if this is a value comparison expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logical_infix</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">is_logical_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates if this is a logical AND/OR expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_and_infix</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_or_infix</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">is_and_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates if this is a logical AND expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">AND</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_or_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates if this is a logical OR expression&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">OR</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_str_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is a string value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">STRING</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_date_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is a date value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">DATE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_number_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is a number value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">NUMBER</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_boolean_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicates whether this expression is a boolean value&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="task-data">
+<h2>Task Data<a class="headerlink" href="#task-data" title="Permalink to this headline">¶</a></h2>
+<p>The pseudo-code representation of a task is:</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="n">title</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="n">context</span><span class="p">:</span> <span class="n">String</span>
+    <span class="n">created_date</span><span class="p">:</span> <span class="n">Date</span><span class="p">,</span>
+    <span class="n">completed_date</span><span class="p">:</span> <span class="n">Date</span> <span class="o">|</span> <span class="n">null</span><span class="p">,</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="n">priority</span><span class="p">:</span> <span class="n">Float</span><span class="p">,</span>
+    <span class="n">notes</span><span class="p">:</span> <span class="p">[</span><span class="n">Note</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A Note will be represented as:</p>
+<div class="code json highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+    <span class="n">created_date</span><span class="p">:</span> <span class="n">Date</span><span class="p">,</span>
+    <span class="n">body</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>All ID’s will be hex strings of python std library uuids regardless of
+list storage. This is a nice, 0 dependency, and easy to use UUID that
+can be made into a string.</p>
+</div>
+<div class="section" id="task-lists">
+<h2>Task Lists<a class="headerlink" href="#task-lists" title="Permalink to this headline">¶</a></h2>
+<p>List will be an abstract class which all list implementations will need
+to subclass, it has the following definition:</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An abstract base class that all list implementations but derive from.&quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ast</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the AST and return a List of matching results&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add a task to the List&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add multiple tasks to the List, should be more efficient</span>
+<span class="sd">        resource utilization.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a python list of the Task in this List&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find a task by id&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the current task, meaning the oldest uncompleted</span>
+<span class="sd">        task in the List&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Complete a task by id&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update a task in the listist, finding the original by the</span>
+<span class="sd">        id of the given task&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">add_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add note to a task by id&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div>
+</div>
+<p>Additionally each list will be instantiated with the dictionary of it’s
+configuration from the config file using the <code class="docutils literal notranslate"><span class="pre">**dictionary</span></code> syntax.
+This means that a list will need to implement keyword arguments in it’s
+<code class="docutils literal notranslate"><span class="pre">__init__</span></code> constructor for all configuration items. During this it
+will need to check for missing required arguments or invalid
+configurations and raise a InvalidConfigError with a human readable
+message. Additionally any connecting or loading of files necessary for
+use will happen during object construction.</p>
+<div class="section" id="future-work-ideas">
+<h3>Future Work / Ideas<a class="headerlink" href="#future-work-ideas" title="Permalink to this headline">¶</a></h3>
+<p>Future ideas and features I will implement are as follows:</p>
+<ul class="simple">
+<li>Additional Lists:<ul>
+<li>Postgres</li>
+<li>MongoDB</li>
+</ul>
+</li>
+<li>GUI Frontends (QT is a good choice)</li>
+<li>Modifier statements on queries such as <code class="docutils literal notranslate"><span class="pre">LIMIT</span></code> or <code class="docutils literal notranslate"><span class="pre">ORDER</span> <span class="pre">BY</span></code></li>
+<li>Task custom fields</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Taskforge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../query_language.html">Query Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuring_taskforge.html">Configuring Taskforge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lists/index.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage/index.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mathew Robinson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/designs/initial_design.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

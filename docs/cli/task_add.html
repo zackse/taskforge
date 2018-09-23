@@ -1,0 +1,153 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>task add &#8212; Taskforge 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Advanced Usage" href="../advanced_usage/index.html" />
+    <link rel="prev" title="CLI Commands" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-taskforge.cli.add_cmd">
+<span id="task-add"></span><h1>task add<a class="headerlink" href="#module-taskforge.cli.add_cmd" title="Permalink to this headline">¶</a></h1>
+<p>usage: task add [options] [&lt;title&gt;…]</p>
+<p>Add or import tasks into the list.</p>
+<dl class="docutils">
+<dt>options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>&lt;priority&gt;</var></span>, <span class="option">--priority <var>&lt;priority&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Create the task with the indicated
+priority, this can be an integer or
+float [default: 1.0]</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-b <var>&lt;body&gt;</var></span>, <span class="option">--body <var>&lt;body&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>The body or “description” of the task</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-c <var>&lt;context&gt;</var></span>, <span class="option">--context <var>&lt;context&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>The context in which to create the task</td></tr>
+</tbody>
+</table>
+</dd>
+<dt>import options:</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-f <var>&lt;file&gt;</var></span>, <span class="option">--from-file <var>&lt;file&gt;</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Import tasks from the indicated JSON file</td></tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<p>If an import option is provided all other options are ignored.</p>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Taskforge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../query_language.html">Query Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuring_taskforge.html">Configuring Taskforge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lists/index.html">Lists</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">CLI Commands</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">task add</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage/index.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">CLI Commands</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">CLI Commands</a></li>
+      <li>Next: <a href="../advanced_usage/index.html" title="next chapter">Advanced Usage</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mathew Robinson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/cli/task_add.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

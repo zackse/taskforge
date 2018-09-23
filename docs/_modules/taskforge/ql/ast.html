@@ -1,0 +1,249 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>taskforge.ql.ast &#8212; Taskforge 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for taskforge.ql.ast</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;AST and Expression classes for the Taskforge query language.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">.tokens</span> <span class="k">import</span> <span class="n">Type</span>
+
+
+<div class="viewcode-block" id="AST"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.AST">[docs]</a><span class="k">class</span> <span class="nc">AST</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Abstract syntax tree for the Taskforge query language.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expression</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build an AST from expression.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">=</span> <span class="n">expression</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if other has the same expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">expression</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of this AST.</span>
+
+<span class="sd">        The resulting string is parsable by a Parser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expression</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Expression"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression">[docs]</a><span class="k">class</span> <span class="nc">Expression</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;An expression is a statement that yields a value.&quot;&quot;&quot;</span>
+
+    <span class="n">date_formats</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c1"># Variations of 12 hour clock with AM/PM</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %I:%M %p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %I:%M%p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %I:%M:%S %p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %I:%M:%S%p&quot;</span><span class="p">,</span>
+        <span class="c1"># 24 hour formats</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M:%S&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2"> %H:%M&quot;</span><span class="p">,</span>
+        <span class="c1"># Day only</span>
+        <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Build an Expression from token.</span>
+
+<span class="sd">        If token is an operator left and right will be used to build</span>
+<span class="sd">        an infix expression.</span>
+
+<span class="sd">        Otherwise a literal will be returned parsing value from</span>
+<span class="sd">        token.literal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">STRING</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">literal</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">NUMBER</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">BOOLEAN</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;true&#39;</span>
+        <span class="k">elif</span> <span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">DATE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">Expression</span><span class="o">.</span><span class="n">parse_date</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">literal</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">token</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">right</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a string representation of this expression.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">Type</span><span class="o">.</span><span class="n">AND</span><span class="p">,</span> <span class="n">Type</span><span class="o">.</span><span class="n">OR</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="p">,</span>
+                                       <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
+            <span class="k">return</span> <span class="s1">&#39;(</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if other is the same kind of expression with the same values.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">left</span>
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">operator</span>
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">token</span>
+
+<div class="viewcode-block" id="Expression.parse_date"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.parse_date">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse_date</span><span class="p">(</span><span class="n">date_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse a date_string using the first valid format.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">date_format</span> <span class="ow">in</span> <span class="n">Expression</span><span class="o">.</span><span class="n">date_formats</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_string</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;date string did not match any known formats&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Expression.is_infix"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_infix">[docs]</a>    <span class="k">def</span> <span class="nf">is_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is an infix expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Expression.is_literal"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_literal">[docs]</a>    <span class="k">def</span> <span class="nf">is_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is a literal value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Expression.is_comparison_infix"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_comparison_infix">[docs]</a>    <span class="k">def</span> <span class="nf">is_comparison_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate if this is a value comparison expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_logical_infix</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Expression.is_logical_infix"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_logical_infix">[docs]</a>    <span class="k">def</span> <span class="nf">is_logical_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate if this is a logical AND/OR expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_and_infix</span><span class="p">()</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_or_infix</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Expression.is_and_infix"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_and_infix">[docs]</a>    <span class="k">def</span> <span class="nf">is_and_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate if this is a logical AND expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">AND</span></div>
+
+<div class="viewcode-block" id="Expression.is_or_infix"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_or_infix">[docs]</a>    <span class="k">def</span> <span class="nf">is_or_infix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate if this is a logical OR expression.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infix</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">OR</span></div>
+
+<div class="viewcode-block" id="Expression.is_str_literal"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_str_literal">[docs]</a>    <span class="k">def</span> <span class="nf">is_str_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is a string value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">STRING</span></div>
+
+<div class="viewcode-block" id="Expression.is_date_literal"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_date_literal">[docs]</a>    <span class="k">def</span> <span class="nf">is_date_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is a date value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">DATE</span></div>
+
+<div class="viewcode-block" id="Expression.is_number_literal"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_number_literal">[docs]</a>    <span class="k">def</span> <span class="nf">is_number_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is a number value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">NUMBER</span></div>
+
+<div class="viewcode-block" id="Expression.is_boolean_literal"><a class="viewcode-back" href="../../../taskforge.ql.html#taskforge.ql.ast.Expression.is_boolean_literal">[docs]</a>    <span class="k">def</span> <span class="nf">is_boolean_literal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Indicate whether this expression is a boolean value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_literal</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">token</span><span class="o">.</span><span class="n">token_type</span> <span class="o">==</span> <span class="n">Type</span><span class="o">.</span><span class="n">BOOLEAN</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Taskforge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../query_language.html">Query Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../configuring_taskforge.html">Configuring Taskforge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../lists/index.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cli/index.html">CLI Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_usage/index.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../designs/index.html">Taskforge Designs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mathew Robinson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

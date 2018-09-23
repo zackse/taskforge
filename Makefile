@@ -26,15 +26,16 @@ test:
 test-all:
 	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest --disable-pytest-warnings
 
-.PHONY: docs
-docs: html
-	mv src/docs/build/html/* docs/
-
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = src/docs
-BUILDDIR      = build
+BUILDDIR      = build/docs
+
+.PHONY: docs
+docs: html
+	rm -rf docs/*
+	mv build/docs/html/* docs/
 
 # Put it first so that "make" without argument is like "make help".
 help:

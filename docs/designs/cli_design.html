@@ -1,0 +1,240 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>task (CLI client) &#8212; Taskforge 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="task-cli-client">
+<h1>task (CLI client)<a class="headerlink" href="#task-cli-client" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goals">
+<h2>Goals<a class="headerlink" href="#goals" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Task management CLI as the first usable frontend<ul>
+<li>Supports use of different lists via a configuration file</li>
+<li>Follows Unix best practices</li>
+<li>Uses a subcommand interface the following commands will be
+supported:<ul>
+<li><a class="reference external" href="#new-subcommand">new</a></li>
+<li><a class="reference external" href="#note-subcommand">note</a></li>
+<li><a class="reference external" href="#complete-subcommand">complete</a></li>
+<li><a class="reference external" href="#query-subcommand">query</a></li>
+<li><a class="reference external" href="#next-subcommand">next</a></li>
+<li><a class="reference external" href="#edit-subcommand">edit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="design">
+<h2>Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="configuration-file">
+<h3>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this headline">¶</a></h3>
+<p>The task CLI will be configured with TOML.</p>
+<p>TODO: Write this section</p>
+</div>
+</div>
+<div class="section" id="new-subcommand">
+<h2>New Subcommand<a class="headerlink" href="#new-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The new subcommand will accept the following flags:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">--body</span> <span class="pre">TEXT_BODY</span></code> populates the task body</li>
+<li><code class="docutils literal notranslate"><span class="pre">--priority</span> <span class="pre">PRIORITY_NUMBER</span></code> populates the task priority</li>
+<li><code class="docutils literal notranslate"><span class="pre">--context</span> <span class="pre">CONTEXT</span></code> populates the task context</li>
+<li><code class="docutils literal notranslate"><span class="pre">--from-file</span> <span class="pre">PATH_TO_FILE</span></code> loads a task/s from a yaml file or csv
+file</li>
+</ul>
+<p>It takes VarArgs and concats them into the title of a new task. So that:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="n">new</span> <span class="n">write</span> <span class="n">a</span> <span class="n">design</span> <span class="n">doc</span>
+</pre></div>
+</div>
+<p>Will create a task with the title “write a design doc”. Flags as
+described above can be passed to populate other fields of the Task.
+Otherwise the flag fields will get the defaults described below:</p>
+<ul class="simple">
+<li>body: None</li>
+<li>priority: 0.0</li>
+<li>context: “default”</li>
+</ul>
+<p>The VarArgs are ignored if <code class="docutils literal notranslate"><span class="pre">--from-file</span></code> is provided. If the file is a
+.csv then new will assume it is a CSV with the following format:</p>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">title</span><span class="p">,</span><span class="n">body</span><span class="p">,</span><span class="n">context</span><span class="p">,</span><span class="n">priority</span>
+<span class="n">record_title</span><span class="p">,</span><span class="n">record_body</span><span class="p">,</span><span class="n">record_context</span><span class="p">,</span><span class="n">record_priority</span>
+</pre></div>
+</div>
+<p>The order of the columns is not important. Only the title, priority, and
+context columns are required. Values can be omitted for the optional
+comments for any record which does require them.</p>
+</div>
+<div class="section" id="note-subcommand">
+<h2>Note Subcommand<a class="headerlink" href="#note-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The note subcommand takes no flags and one argument: the ID of the task
+to add a note to. So that:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="n">note</span> <span class="n">TASK_ID</span>
+</pre></div>
+</div>
+<p>Opens up your <code class="docutils literal notranslate"><span class="pre">$EDITOR</span></code> and allows you to input text that will then be
+used as the body of a note which is attached to the task.</p>
+</div>
+<div class="section" id="complete-subcommand">
+<h2>Complete Subcommand<a class="headerlink" href="#complete-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The complete subcommand takes no flags and one argument: the ID of the
+task to add a note to. So that:</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">task</span> <span class="n">complete</span> <span class="n">TASK_ID</span>
+</pre></div>
+</div>
+<p>Will complete the task indicated by <code class="docutils literal notranslate"><span class="pre">TASK_ID</span></code>.</p>
+</div>
+<div class="section" id="query-subcommand">
+<h2>Query Subcommand<a class="headerlink" href="#query-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The query subcommand takes the following flags:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">--completed</span></code> a convenience flag to show completed results</li>
+<li><code class="docutils literal notranslate"><span class="pre">--csv</span></code> print results as a CSV</li>
+<li><code class="docutils literal notranslate"><span class="pre">--raw</span></code> print no decoration on task table (i.e.&nbsp;remove the “|” and
+“-” characters)</li>
+<li><code class="docutils literal notranslate"><span class="pre">--id-only</span></code> print only matching task ID’s</li>
+</ul>
+<p>It takes VarArgs and concatenates them into a query using the <a class="reference external" href="#query-language">Query
+Language</a> parser. It then prints each task in a
+table using the following format:</p>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">--------------------------------------------</span>
+<span class="o">|</span> <span class="n">ID</span>      <span class="o">|</span> <span class="n">Created</span> <span class="n">Date</span>      <span class="o">|</span> <span class="n">Title</span>      <span class="o">|</span>
+<span class="o">--------------------------------------------</span>
+<span class="o">|</span> <span class="n">TASK_ID</span> <span class="o">|</span> <span class="n">TASK_CREATED_DATE</span> <span class="o">|</span> <span class="n">TASK_TITLE</span> <span class="o">|</span>
+<span class="o">--------------------------------------------</span>
+</pre></div>
+</div>
+<p>If raw is given:</p>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ID</span>      <span class="n">Created</span> <span class="n">Date</span>      <span class="n">Title</span>
+<span class="n">TASK_ID</span> <span class="n">TASK_CREATED_DATE</span> <span class="n">TASK_TITLE</span>
+</pre></div>
+</div>
+<p>If ID is given only a newline separated list of
+TASK_IDs are printed with no headers.</p>
+</div>
+<div class="section" id="next-subcommand">
+<h2>Next Subcommand<a class="headerlink" href="#next-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The next subcommand takes the following flags:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">--title-only</span></code> print only the task title</li>
+<li><code class="docutils literal notranslate"><span class="pre">--id-only</span></code> print only the task id</li>
+</ul>
+<p>But it takes no arguments. It returns the item currently at the “top” of
+the list (sorted by oldest date and highest priority). It prints it like
+so:</p>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TASK_ID</span> <span class="n">TASK_CREATED_DATE</span> <span class="n">TASK_TITLE</span>
+</pre></div>
+</div>
+<p>If title or id only flags are given then only that field is printed.</p>
+</div>
+<div class="section" id="edit-subcommand">
+<h2>Edit Subcommand<a class="headerlink" href="#edit-subcommand" title="Permalink to this headline">¶</a></h2>
+<p>The edit subcommand takes one argument: the task ID. It opens the
+indicated task in <code class="docutils literal notranslate"><span class="pre">$EDITOR</span></code> as a yaml file and includes all fields
+from the task. Upon saving and exiting the file will be read, parsed,
+and the task will be updated with that info.</p>
+</div>
+<div class="section" id="future-work-ideas">
+<h2>Future Work / Ideas<a class="headerlink" href="#future-work-ideas" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Configurable canned queries</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Taskforge</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../query_language.html">Query Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configuring_taskforge.html">Configuring Taskforge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../lists/index.html">Lists</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cli/index.html">CLI Commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage/index.html">Advanced Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api.html">API</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Mathew Robinson.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="../_sources/designs/cli_design.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
