@@ -251,9 +251,9 @@ Further Reading
 ---------------
 
 You can safely run ``task done`` now since you've completed the getting started
-guide for Taskforge. From here you can start looking at using different :doc:`lists/index`
-or see the :doc:`advanced_usage` guide to find out how to integrate Taskforge with
-external reporting tools.
+guide for Taskforge. From here you can start looking at using different
+:doc:`lists/index` or see the :doc:`advanced_usage/index` guide to find out how
+to integrate Taskforge with external reporting tools.
 
 - :doc:`configuring_taskforge`
 - :doc:`query_language`
