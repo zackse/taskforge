@@ -6,7 +6,7 @@ with open('README.md') as f:
     LONG_DESCRIPTION = f.read()
 
 setup(
-    name='taskforge',
+    name='taskforge-cli',
     version='0.2.0',
     url='https://github.com/chasinglogic/taskforge',
     license='AGPL-3.0',
