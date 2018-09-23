@@ -32,4 +32,4 @@ def run(args, task_list=None):
     elif args['--id-only']:
         print(task.id)
     else:
-        print(task)
+        print(f'{task.id}: {task.title}')
