@@ -1,4 +1,4 @@
-"""Provides Task and Note classes for use within this application."""
+"""Provides the Task and Note classes used throughout Taskforge."""
 
 from datetime import datetime
 from uuid import uuid4
@@ -7,7 +7,23 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 class Note:
-    """A note or "comment" on a task."""
+    """A note or 'comment' on a task.
+
+    A basic note instantiation only requires the body field. All other fields
+    are optional and id should not be set unless instantiating from an existing
+    Note.
+
+    :param body: The body of the note.
+    :type body: str
+    :param id: The unique id for this note. If None this will be generated using
+               :func:`uuid.uuid4`. Should only be provided if deserializing an
+               existing :class:`Note`.
+    :type id: Optional[str].
+    :param created_date: The created_date for this note. If None this will be generated using
+               :meth:`datetime.datetime.now`. Should only be provided if deserializing an
+               existing :class:`Note`.
+    :type created_date: Optional[datetime.datetime].
+    """
 
     def __init__(self, body, id=None, created_date=None):
         """Create a note with body."""
@@ -33,17 +49,24 @@ class Note:
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Create a note instance from a JSON dictionary."""
+        """Create a note instance from a dictionary.
+
+        Handles JSON-deserialized types appropriately. i.e. datetime fields will
+        be properly parsed if in string form.
+        """
         return cls(**dictionary)
 
     def to_json(self):
-        """Convert this note object into a dictionary with JSON incompatible types serialized."""
+        """Convert this note object into a dictionary with JSON incompatible types serialized.
+
+        .. note:: For richer data types use :meth:`Note.to_dict` instead.
+        """
         dictionary = self.to_dict()
         dictionary['created_date'] = self.created_date.strftime(DATE_FORMAT)
         return dictionary
 
     def to_dict(self):
-        """Convert this note object into a dictionary for JSON serialization."""
+        """Convert this note object into a dictionary."""
         return {
             'id': self.id,
             'created_date': self.created_date,
@@ -52,7 +75,45 @@ class Note:
 
 
 class Task:  # pylint: disable=too-many-instance-attributes
-    """Represents a task in a Task List."""
+    """Represents a task in a Task List.
+
+    This class is the basic unit in Taskforge and is central to all
+    functionality.
+
+    The basic instantiation of a Task only requires a title and will fill out
+    any required metadata with default values:
+
+    >>> from taskforge.task import Task
+    >>> Task('An example Task')
+    Task(c659687d9ad54b308a258850a5a06af1)
+
+    All fields available for a task and their defaults are:
+
+    :param title: The title or 'summary' of a task.
+    :type title: str
+    :param id: The unique id for this task. If None this will be generated using
+               :func:`uuid.uuid4`. Should only be provided if deserializing an
+               existing :class:`Task`.
+    :type id: Optional[str].
+    :param created_date: A datetime object representing when this task was
+                         created. If not provided defaults to
+                         :meth:`datetime.now`. Should only be provided if
+                         deserializing an existing :class:`Task`.
+    :type created_date: Optional[datetime.datetime]
+    :param body: **Default** ("") - The body or 'description' of a task.
+    :type body: str
+    :param context: **Default** ("default") - The 'list' this task belongs to.
+                    Common values are work, personal etc.
+    :type context: str
+    :param priority: **Default** (1.0) - The priority of this task, this is the
+                     primary sorting criteria for tasks.
+    :type priority: float
+    :param notes: **Default** (None) - A list of Note objects to for this task.
+    :type notes: List[Note]
+    :param completed_date: **Default** (None) - A datetime object representing
+                           when this task was completed.
+    :type completed_date: datetime.datetime
+    """
 
     def __init__(  # pylint: disable=too-many-arguments
             self,
@@ -65,7 +126,7 @@ class Task:  # pylint: disable=too-many-instance-attributes
             completed_date=None,
             body='',
     ):
-        """Create a Task with title.
+        """Create a Task with the given fields, defaulting appropriate metadata.
 
         All other fields are optional and id should not be set unless
         instantiating from an existing task.
@@ -111,7 +172,11 @@ class Task:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Create a Task from a dictionary representation."""
+        """Create a Task from a dictionary representation.
+
+        Handles JSON-deserialized types appropriately. i.e. datetime fields will
+        be properly parsed if in string form.
+        """
         if dictionary.get('notes'):
             dictionary['notes'] = [
                 Note.from_dict(note) for note in dictionary['notes']
@@ -122,7 +187,10 @@ class Task:  # pylint: disable=too-many-instance-attributes
         return cls(**dictionary)
 
     def to_json(self):
-        """Convert to a dictionary which has JSON incompatible types serialized."""
+        """Convert to a dictionary which has JSON incompatible types properly serialized.
+
+        .. note:: For richer data types use :meth:`Task.to_dict` instead.
+        """
         dictionary = self.to_dict()
         dictionary['notes'] = [n.to_json() for n in self.notes]
         dictionary['created_date'] = self.created_date.strftime(DATE_FORMAT)
@@ -132,7 +200,7 @@ class Task:  # pylint: disable=too-many-instance-attributes
         return dictionary
 
     def to_dict(self):
-        """Convert this task object into a dictionary for JSON serialization."""
+        """Convert this task object into a dictionary."""
         return {
             'id': self.id,
             'title': self.title,
@@ -145,7 +213,10 @@ class Task:  # pylint: disable=too-many-instance-attributes
         }
 
     def complete(self):
-        """Complete this task."""
+        """Complete this task.
+
+        Sets self.completed_date using :meth:`datetime.datetime.now`.
+        """
         self.completed_date = datetime.now()
         return self
 
