@@ -18,3 +18,5 @@ services.
    advanced_usage/index
 
    api
+
+   designs/index

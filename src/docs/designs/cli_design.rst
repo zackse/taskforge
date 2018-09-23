@@ -11,12 +11,12 @@ Goals
    -  Uses a subcommand interface the following commands will be
       supported:
 
-      -  ``new`` `design <#new-subcommand>`__
-      -  ``note`` `design <#note-subcommand>`__
-      -  ``complete`` `design <#complete-subcommand>`__
-      -  ``query`` `design <#query-subcommand>`__
-      -  ``next`` `design <#next-subcommand>`__
-      -  ``edit`` `design <#edit-subcommand>`__
+      -  `new <#new-subcommand>`_
+      -  `note <#note-subcommand>`_
+      -  `complete <#complete-subcommand>`_
+      -  `query <#query-subcommand>`_
+      -  `next <#next-subcommand>`_
+      -  `edit <#edit-subcommand>`_
 
 Design
 ------
@@ -56,7 +56,7 @@ Otherwise the flag fields will get the defaults described below:
 The VarArgs are ignored if ``--from-file`` is provided. If the file is a
 .csv then new will assume it is a CSV with the following format:
 
-.. code:: csv
+.. code:: text
 
    title,body,context,priority
    record_title,record_body,record_context,record_priority
@@ -121,7 +121,7 @@ If raw is given:
    TASK_ID TASK_CREATED_DATE TASK_TITLE
 
 If ID is given only a newline separated list of
-TASK:raw-latex:`\IDs `are printed with no headers.
+TASK_IDs are printed with no headers.
 
 Next Subcommand
 ---------------
