@@ -9,8 +9,8 @@ fmt:
 
 clean:
 	rm -rf build dist
-	find . -regex '.*egg-info' -type d -exec rm -rf {} \;
-	find . -name '*.pyc'
+	rm -rf {} **/*.egg-info
+	rm -f **/*.pyc
 
 install:
 	$(PYTHON) setup.py install
@@ -25,6 +25,10 @@ test:
 
 test-all:
 	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest --disable-pytest-warnings
+
+publish: clean
+	python setup.py sdist bdist_wheel
+	twine upload dist/*
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
