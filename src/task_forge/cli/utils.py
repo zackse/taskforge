@@ -9,9 +9,9 @@ from ..lists.load import get_list
 from ..lists import InvalidConfigError
 
 CONFIG_FILES = [
-    'taskforge.toml',
-    os.path.join(os.getenv('HOME', ''), '.taskforge.d', 'config.toml'),
-    '/etc/taskforge.d/config.toml'
+    'task_forge.toml',
+    os.path.join(os.getenv('HOME', ''), '.task_forge.d', 'config.toml'),
+    '/etc/task_forge.d/config.toml'
 ]
 
 
@@ -21,7 +21,7 @@ def default_config():
         'list': {
             'name': 'sqlite',
             'config': {
-                'directory': '~/.taskforge.d'
+                'directory': '~/.task_forge.d'
             }
         },
         'server': {
@@ -29,7 +29,7 @@ def default_config():
             'list': {
                 'name': 'sqlite',
                 'config': {
-                    'directory': '~/.taskforge.d'
+                    'directory': '~/.task_forge.d'
                 }
             }
         }

@@ -83,7 +83,7 @@ class Task:  # pylint: disable=too-many-instance-attributes
     The basic instantiation of a Task only requires a title and will fill out
     any required metadata with default values:
 
-    >>> from taskforge.task import Task
+    >>> from task_forge.task import Task
     >>> Task('An example Task')
     Task(c659687d9ad54b308a258850a5a06af1)
 

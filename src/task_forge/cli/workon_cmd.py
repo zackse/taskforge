@@ -7,8 +7,8 @@ task in Taskforge terms.
 
 import sys
 
-from taskforge.cli.utils import inject_list
-from taskforge.lists import NotFoundError
+from task_forge.cli.utils import inject_list
+from task_forge.lists import NotFoundError
 
 
 @inject_list

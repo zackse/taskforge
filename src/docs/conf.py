@@ -12,7 +12,7 @@
 import sys
 import os
 
-# dirname dirname gives the src dir which has taskforge
+# dirname dirname gives the src dir which has task_forge
 sys.path.insert(0, os.path.abspath('./src'))
 
 # -- Project information -----------------------------------------------------
@@ -136,7 +136,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'taskforge', 'Taskforge Documentation', [author], 1)]
+man_pages = [(master_doc, 'task_forge', 'Taskforge Documentation', [author], 1)]
 
 # -- Options for Texinfo output ----------------------------------------------
 

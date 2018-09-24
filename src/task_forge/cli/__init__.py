@@ -62,7 +62,7 @@ def main():
             if args['<args>'] and args['<args>'][0] == 'lists':
                 print_lists()
             elif args['<args>']:
-                command_mod = import_module('taskforge.cli.{}_cmd'.format(
+                command_mod = import_module('task_forge.cli.{}_cmd'.format(
                     args['<args>'][0]))
                 print(command_mod.__doc__)
             else:
@@ -70,7 +70,7 @@ def main():
             sys.exit(0)
 
         command = ALIASES.get(command, command)
-        command_mod = import_module('taskforge.cli.{}_cmd'.format(command))
+        command_mod = import_module('task_forge.cli.{}_cmd'.format(command))
         argv = [command] + args['<args>']
         command_mod.run(docopt(command_mod.__doc__, argv=argv))
         sys.exit(0)

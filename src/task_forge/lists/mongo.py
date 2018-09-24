@@ -9,8 +9,8 @@ except ImportError:
     print('you must install pymongo to use the MongoDB list')
     sys.exit(1)
 
-from taskforge.ql.tokens import Type
-from taskforge.task import Task
+from task_forge.ql.tokens import Type
+from task_forge.task import Task
 
 from . import List as AList
 
@@ -22,7 +22,7 @@ class List(AList):
             self,
             host='localhost',
             port=27017,
-            db='taskforge',
+            db='task_forge',
             collection='tasks',
             username=None,
             password=None,

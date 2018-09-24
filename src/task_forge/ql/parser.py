@@ -38,7 +38,7 @@ class ParseError(Exception):
 
 
 class Parser:
-    """Parser for the taskforge query language."""
+    """Parser for the task_forge query language."""
 
     def __init__(self, query='', lexer=None):
         """Create a lexer and parser for query.

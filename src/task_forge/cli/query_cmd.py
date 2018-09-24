@@ -7,8 +7,8 @@ Taskforge Query Language.
 
 If no query is provided all tasks will be returned.
 
-You can view information about the taskforge query
-language using 'task help ql' or by visiting:
+You can view information about the Taskforge Query Language using 'task help ql'
+or by visiting:
 
 http://taskforge.io/docs/query_language
 
