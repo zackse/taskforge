@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setup(
     name='taskforge-cli',
-    version='0.2.1',
+    version='0.2.2',
     url='https://github.com/chasinglogic/taskforge',
     license='AGPL-3.0',
     author='Mathew Robinson',
@@ -25,11 +25,11 @@ setup(
     extras_require={'mongo': ['pymongo==3.7.1']},
     entry_points={
         'console_scripts': [
-            'task = taskforge.cli:main',
+            'task = task_forge.cli:main',
         ],
-        'taskforge.lists': [
-            'mongodb = taskforge.lists.mongo',
-            'sqlite = taskforge.lists.sqlite',
+        'task_forge.lists': [
+            'mongodb = task_forge.lists.mongo',
+            'sqlite = task_forge.lists.sqlite',
         ],
     },
     classifiers=[
