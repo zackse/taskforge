@@ -3,4 +3,4 @@
 import pytest
 import cProfile
 
-from taskforge.ql.parser import Parser
+from task_forge.ql.parser import Parser

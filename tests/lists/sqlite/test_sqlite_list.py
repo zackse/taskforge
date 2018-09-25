@@ -5,8 +5,8 @@ import unittest
 
 from tempfile import NamedTemporaryFile
 
-from taskforge.lists.sqlite import List
-from taskforge.task import Task
+from task_forge.lists.sqlite import List
+from task_forge.task import Task
 
 from ..list_utils import ListTests, ListBenchmarks
 

@@ -3,8 +3,8 @@
 import unittest
 from datetime import datetime
 
-from taskforge.ql.ast import Expression
-from taskforge.ql.tokens import Token
+from task_forge.ql.ast import Expression
+from task_forge.ql.tokens import Token
 
 
 class ExpressionTests(unittest.TestCase):

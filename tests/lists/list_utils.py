@@ -7,10 +7,10 @@ import unittest
 
 import pytest
 
-from taskforge.ql.ast import AST, Expression
-from taskforge.ql.parser import Parser
-from taskforge.ql.tokens import Token
-from taskforge.task import Note, Task
+from task_forge.ql.ast import AST, Expression
+from task_forge.ql.parser import Parser
+from task_forge.ql.tokens import Token
+from task_forge.task import Note, Task
 
 
 class ListTests:
@@ -20,7 +20,7 @@ class ListTests:
         task = Task("task 1")
         self.list.add(task)
         res = self.list.find_by_id(task.id)
-        assert task == res
+        self.assertEqual(task, res)
 
     def test_add_multiple(self):
         fixture = [
@@ -31,14 +31,25 @@ class ListTests:
 
         self.list.add_multiple(fixture)
         result = self.list.list()
-        assert fixture == result
+        self.assertCountEqual(fixture, result)
 
     def test_complete_a_task(self):
         task = Task('task to complete')
         self.list.add(task)
         self.list.complete(task.id)
         result = self.list.find_by_id(task.id)
-        assert result.is_completed()
+        self.assertEqual(result.is_completed(), True)
+
+    def test_list_all_tasks(self):
+        fixture = [
+            Task("task 1"),
+            Task("task 2"),
+            Task("task 3"),
+        ]
+
+        fixture[1].complete()
+        self.list.add_multiple(fixture)
+        self.assertCountEqual(fixture, self.list.list())
 
     def test_return_correct_current_task(self):
         tasks = [
@@ -48,10 +59,10 @@ class ListTests:
 
         self.list.add_multiple(tasks)
         current = self.list.current()
-        assert tasks[0] == current
+        self.assertEqual(tasks[0], current)
         self.list.complete(tasks[0].id)
         current = self.list.current()
-        assert tasks[1] == current
+        self.assertEqual(tasks[1], current)
 
     def test_add_a_note_to_a_task(self):
         task = Task("task to be noted")
@@ -59,7 +70,7 @@ class ListTests:
         note = Note("a note")
         self.list.add_note(task.id, note)
         noted = self.list.find_by_id(task.id)
-        assert noted.notes == [note]
+        self.assertCountEqual(noted.notes, [note])
 
     def test_update_a_task(self):
         task = Task("task to update")
@@ -68,7 +79,7 @@ class ListTests:
         to_update.title = "task updated"
         self.list.update(to_update)
         updated = self.list.find_by_id(task.id)
-        assert updated.title == "task updated"
+        self.assertEqual(updated, to_update)
 
     def run_query_test(self, query='', fixture=None, expected=None):
         ast = Parser(query).parse()

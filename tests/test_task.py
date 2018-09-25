@@ -2,7 +2,7 @@
 
 import unittest
 
-from taskforge.task import Task
+from task_forge.task import Task
 
 
 class TaskTests(unittest.TestCase):

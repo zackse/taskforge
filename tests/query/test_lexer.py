@@ -2,8 +2,8 @@
 
 import pytest
 
-from taskforge.ql.lexer import Lexer
-from taskforge.ql.tokens import Token, Type
+from task_forge.ql.lexer import Lexer
+from task_forge.ql.tokens import Token, Type
 
 
 @pytest.mark.parametrize("query,expected", [(

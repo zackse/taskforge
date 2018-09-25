@@ -2,7 +2,7 @@
 
 import unittest
 
-from taskforge.ql.tokens import Token, Type
+from task_forge.ql.tokens import Token, Type
 
 
 class TestTokens(unittest.TestCase):  # pylint: disable=too-many-public-methods
