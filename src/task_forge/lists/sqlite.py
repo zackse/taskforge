@@ -69,11 +69,11 @@ FROM tasks
         run. Otherwise will create tables if the resulting sqlite db
         file does not already exist.
         """
-        if file_name == '' and directory == '':
+        if not file_name and not directory:
             raise InvalidConfigError(
                 'either directory or file_name must be provided')
 
-        if file_name == '':
+        if not file_name:
             directory = directory.replace('~', os.getenv('HOME'))
             file_name = os.path.join(directory, 'tasks.sqlite3')
 
