@@ -146,7 +146,6 @@ def print_tasks(tasks, output='table'):
 @inject_list
 def query_tasks(query, task_list=None):
     """Return tasks which match query or all tasks if query is blank"""
-    print([t for t in task_list.conn.execute('select * from tasks')])
     if query:
         ast = Parser(query).parse()
         return task_list.search(ast)
