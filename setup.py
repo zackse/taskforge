@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setup(
     name='taskforge-cli',
-    version='0.2.3',
+    version='0.2.4',
     url='https://github.com/chasinglogic/taskforge',
     license='AGPL-3.0',
     author='Mathew Robinson',
