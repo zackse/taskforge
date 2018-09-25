@@ -1,15 +1,15 @@
-"""usage: task add [options] [<title>...]
+"""Usage: task add [options] [<title>...]
 
 Add or import tasks into the list.
 
-options:
+Options:
    -p <priority>, --priority <priority>  Create the task with the indicated
                                          priority, this can be an integer or
                                          float [default: 1.0]
    -b <body>, --body <body>              The body or "description" of the task
    -c <context>, --context <context>     The context in which to create the task
 
-import options:
+Import Options:
    -f <file>, --from-file <file>  Import tasks from the indicated JSON file
 
 If an import option is provided all other options are ignored.

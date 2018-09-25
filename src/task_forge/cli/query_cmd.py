@@ -1,4 +1,4 @@
-"""usage: task query [options] [<query>...]
+"""Usage: task query [options] [<query>...]
 
 Search or list tasks in this list.
 
@@ -12,7 +12,7 @@ or by visiting:
 
 http://taskforge.io/docs/query_language
 
-options:
+Options:
     -o <format>, --output <format>  How to display the tasks which match the
                                     query. Available formats are: json, csv,
                                     table, text which are described below.

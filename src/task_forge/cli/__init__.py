@@ -1,8 +1,8 @@
-"""usage: task [--help] [--version] <command> [<args>...]
+"""Usage: task [--help] [--version] <command> [<args>...]
 
 A task management CLI that integrates with external services.
 
-available commands:
+Commands:
    help                Print usage information about task commands
    add (new, a)        Add a new task to the list
    next (n)            Print the next or "current" task in the list

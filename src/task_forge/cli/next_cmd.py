@@ -1,4 +1,4 @@
-"""usage: task next [options]
+"""Usage: task next [options]
 
 Print the "next" or "current" task. This is calculated by the list as the
 highest priority, oldest task in the list.
@@ -9,7 +9,7 @@ $TASK_ID: $TASK_TITLE
 
 You can modify the output with the options below.
 
-options:
+Options:
     -i, --id-only     Print only the task ID
     -t, --title-only  Print only the task title
 """

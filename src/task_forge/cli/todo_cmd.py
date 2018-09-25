@@ -1,8 +1,8 @@
-"""usage: task todo [options]
+"""Usage: task todo [options]
 
 A convenience command for listing tasks which are incomplete.
 
-options:
+Options:
     -o <format>, --output <format>  How to display the tasks which match the
                                     query. Available formats are: json, csv,
                                     table, text. See 'task list --help' for
