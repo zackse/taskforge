@@ -11,6 +11,17 @@ from task_forge.cli.utils import inject_list
 from task_forge.lists import NotFoundError
 
 
+def top_priority(task_list):
+    """Return a priority that is 0.1 more than the current highest priority."""
+    try:
+        task = task_list.current()
+        current_priority = task.priority
+    except NotFoundError:
+        current_priority = 1.0
+
+    return current_priority + 0.1
+
+
 @inject_list
 def run(args, task_list=None):
     """Print the current task in task_list."""
@@ -20,13 +31,7 @@ def run(args, task_list=None):
         print('no task with that id exists')
         sys.exit(1)
 
-    try:
-        task = task_list.current()
-        current_priority = task.priority
-    except NotFoundError:
-        current_priority = 1.0
-
-    new_current.priority = current_priority + 0.1
+    new_current.priority = top_priority(task_list)
     try:
         task_list.update(new_current)
     except NotFoundError:
