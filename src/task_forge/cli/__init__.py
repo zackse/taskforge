@@ -7,6 +7,7 @@ Commands:
    add (new, a)        Add a new task to the list
    next (n)            Print the next or "current" task in the list
    todo                Print incomplete tasks in the list
+   edit (e)            Edit task data as a toml file
    complete (done, d)  Complete tasks in the list.
    query (q, s, list)  Search or list tasks in the list
    workon              Move a task to the top of the list
@@ -28,6 +29,7 @@ ALIASES = {
     'q': 'query',
     's': 'query',
     'list': 'query',
+    'e': 'edit',
 }
 
 
