@@ -1,12 +1,11 @@
 # pylint: disable=missing-docstring
 
-import pytest
 import unittest
-
 from tempfile import NamedTemporaryFile
 
+import pytest
+
 from task_forge.lists.sqlite import List
-from task_forge.task import Task
 
 from ..list_utils import ListTests, ListBenchmarks
 
@@ -23,6 +22,6 @@ class SQLiteListTests(unittest.TestCase, ListTests):
 @pytest.mark.benchmark(group='SQLite')
 class TestSQLiteListPerformance(ListBenchmarks):
     @pytest.fixture
-    def task_list(self, tmpdir):
+    def task_list(self, tmpdir):  # pylint: disable=arguments-differ
         tmpfile = tmpdir.join("tasks.sqlite3")
         return List(file_name=tmpfile, create_tables=True)

@@ -1,4 +1,5 @@
-"""Usage: task [--help] [--version] <command> [<args>...]
+"""
+Usage: task [--help] [--version] <command> [<args>...]
 
 A task management CLI that integrates with external services.
 

@@ -17,7 +17,8 @@ class AST:
         return self.expression == other.expression
 
     def __repr__(self):
-        """Return a string representation of this AST.
+        """
+        Return a string representation of this AST.
 
         The resulting string is parsable by a Parser.
         """
@@ -41,7 +42,8 @@ class Expression:
     ]
 
     def __init__(self, token, left=None, right=None):
-        """Build an Expression from token.
+        """
+        Build an Expression from token.
 
         If token is an operator left and right will be used to build
         an infix expression.

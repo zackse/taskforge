@@ -158,9 +158,9 @@ FROM tasks
             self.task_from_row(row) for row in self.conn.execute(self.__select)
         ]
 
-    def find_by_id(self, id):
-        """Find a task by id."""
-        cursor = self.conn.execute(self.__select + 'WHERE id = ?', (id, ))
+    def find_by_id(self, task_id):
+        """Find a task by task_id."""
+        cursor = self.conn.execute(self.__select + 'WHERE id = ?', (task_id, ))
         return self.task_from_row(cursor.fetchone())
 
     def current(self):
@@ -174,12 +174,12 @@ FROM tasks
             ).\
             fetchone())
 
-    def complete(self, id):
-        """Complete a task by id."""
+    def complete(self, task_id):
+        """Complete a task by task_id."""
         self.conn.\
             execute(
                 'UPDATE tasks SET completed_date = ? WHERE id = ?',
-                (datetime.now().timestamp(), id)
+                (datetime.now().timestamp(), task_id)
             )
         self.conn.commit()
 
@@ -213,13 +213,13 @@ WHERE id = ?
 """, update_tuple)
         self.conn.commit()
 
-    def add_note(self, id, note):
-        """Add note to a task by id."""
+    def add_note(self, task_id, note):
+        """Add note to a task by task_id."""
         self.conn.\
             execute(
                 'INSERT INTO notes (task_id, id, body, created_date) VALUES (?, ?, ?, ?)',
                 (
-                    id,
+                    task_id,
                     note.id,
                     note.body,
                     note.created_date.timestamp(),

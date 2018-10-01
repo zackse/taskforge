@@ -1,4 +1,5 @@
-"""Usage: task todo [options]
+"""
+Usage: task todo [options]
 
 A convenience command for listing tasks which are incomplete.
 

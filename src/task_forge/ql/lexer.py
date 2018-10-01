@@ -95,7 +95,8 @@ class Lexer:
         return self.data[self.read_pos]
 
     def _read(self, valid):
-        """Read characters in the lexer until valid returns False.
+        """
+        Read characters in the lexer until valid returns False.
 
         Returns the full string which matched the valid function.
         """

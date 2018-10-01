@@ -1,4 +1,5 @@
-"""Implements loading lists from entry_points
+"""
+Implements loading lists from entry_points
 
 List plugins are created as python modules using entry_points. The entry_point
 name should be a human readable name. It is used when loading a list such as
@@ -14,14 +15,15 @@ def __entry_points():
 
 
 def get_all_lists():
-    """Returns a list of Tuples of list names to class objects"""
+    """Return a list of Tuples of list names to class objects"""
     return [(mod.name, mod.load().List) for mod in __entry_points()]
 
 
 def get_list(name):
-    """Return the list implementation which corresponds to name.
+    """
+    Return the list implementation which corresponds to name.
 
-    Returns None if not found.
+    Return None if not found.
     """
     for mod in __entry_points():
         if mod.name == name:

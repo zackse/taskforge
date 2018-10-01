@@ -1,4 +1,5 @@
-"""Usage: task complete [<ID>...]
+"""
+Usage: task complete [<ID>...]
 
 Complete tasks by ID. If no IDs are provided then the current task indicated by
 'task next' is completed.
@@ -12,7 +13,8 @@ from .utils import inject_list
 
 @inject_list
 def complete_tasks(tasks, task_list=None):
-    """Complete tasks by the ids in tasks.
+    """
+    Complete tasks by the ids in tasks.
 
     If no tasks are provided then complete the current task.
     """

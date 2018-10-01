@@ -1,15 +1,11 @@
 # pylint: disable=missing-docstring
 
-import cProfile
-import os
 import unittest
 from uuid import uuid1
 
 import pytest
 
 from task_forge.lists.mongo import List
-from task_forge.ql.ast import AST, Expression
-from task_forge.ql.tokens import Token
 
 from ..list_utils import ListTests, ListBenchmarks
 

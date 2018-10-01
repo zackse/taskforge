@@ -54,38 +54,40 @@ class List(AList):
             for doc in self._collection.find(projection={"_id": False})
         ]
 
-    def find_by_id(self, id):
-        """Find a task by id."""
+    def find_by_id(self, task_id):
+        """Find a task by task_id."""
         return Task.from_dict(
             self._collection.find_one({
-                "id": id
-            }, projection={"_id": False}))
+                "id": task_id
+            },
+                                      projection={"_id": False}))
 
     def current(self):
         """Return the current task."""
-        return Task.from_dict(
-            self._collection.find_one(
-                {
-                    "completed_date": None,
-                },
-                projection={"_id": False},
-                sort=[
-                    ("priority", pymongo.DESCENDING),
-                    ("created_date", pymongo.ASCENDING),
-                ]))
+        doc = self._collection.find_one({
+            "completed_date": None,
+        },
+                                        projection={"_id": False},
+                                        sort=[
+                                            ("priority", pymongo.DESCENDING),
+                                            ("created_date",
+                                             pymongo.ASCENDING),
+                                        ])
+        return Task.from_dict(doc)
 
-    def complete(self, id):
-        """Complete a task by id."""
+    def complete(self, task_id):
+        """Complete a task by task_id."""
         self._collection.find_one_and_update({
-            "id": id
+            "id": task_id
         }, {"$set": {
             "completed_date": datetime.now()
         }})
 
     def update(self, task):
-        """Update a task in the list.
+        """
+        Update a task in the list.
 
-        The original is retrieved using the id of the given task.
+        The original is retrieved using the task_id of the given task.
         """
         doc = task.to_dict()
         doc["id"] = doc["id"]
@@ -93,10 +95,10 @@ class List(AList):
 
         self._collection.find_one_and_update({"id": task.id}, {"$set": doc})
 
-    def add_note(self, id, note):
-        """Add note to a task by id."""
+    def add_note(self, task_id, note):
+        """Add note to a task by task_id."""
         self._collection.find_one_and_update({
-            "id": id
+            "id": task_id
         }, {"$push": {
             "notes": note.to_dict()
         }})

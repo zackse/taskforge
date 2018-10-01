@@ -1,4 +1,5 @@
-"""Usage: task next [options]
+"""
+Usage: task next [options]
 
 Print the "next" or "current" task. This is calculated by the list as the
 highest priority, oldest task in the list.

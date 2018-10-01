@@ -1,4 +1,5 @@
-"""Usage: task query [options] [<query>...]
+"""
+Usage: task query [options] [<query>...]
 
 Search or list tasks in this list.
 

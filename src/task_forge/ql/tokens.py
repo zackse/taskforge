@@ -64,7 +64,8 @@ class Token:
     """A query language lexical Token."""
 
     def __init__(self, literal, token_type=None):
-        """Return a token for literal.
+        """
+        Return a token for literal.
 
         If token_type is None will be determined from literal.
         """

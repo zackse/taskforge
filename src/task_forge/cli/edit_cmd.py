@@ -1,4 +1,5 @@
-"""Usage: task edit [<ID>]
+"""
+Usage: task edit [<ID>]
 
 Edit the task indicated by ID as a toml file. If no ID given opens the current
 task.
@@ -7,12 +8,13 @@ Will use $EDITOR if set and if not will attempt to find an editor based on
 platform.
 """
 
-import toml
 import sys
 import os
 
 from tempfile import NamedTemporaryFile
 from subprocess import call
+
+import toml
 
 from task_forge.task import Task
 from task_forge.lists import NotFoundError

@@ -1,4 +1,5 @@
-"""Usage: task add [options] [<title>...]
+"""
+Usage: task add [options] [<title>...]
 
 Add or import tasks into the list.
 

@@ -1,4 +1,5 @@
 PYTHON := python3
+PIP := pip3
 
 lint:
 	$(PYTHON) -m pydocstyle src
@@ -16,9 +17,9 @@ install:
 	$(PYTHON) setup.py install
 
 install-dev:
-	pip install --editable .
-	pip install --editable ".[mongo]"
-	pip install -r requirements.dev.txt
+	$(PIP) install --editable .
+	$(PIP) install --editable ".[mongo]"
+	$(PIP) install -r requirements.dev.txt
 
 test:
 	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest -m 'not slow'

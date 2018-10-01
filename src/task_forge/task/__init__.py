@@ -7,7 +7,8 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 class Note:
-    """A note or 'comment' on a task.
+    """
+    A note or 'comment' on a task.
 
     A basic note instantiation only requires the body field. All other fields
     are optional and id should not be set unless instantiating from an existing
@@ -49,7 +50,8 @@ class Note:
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Create a note instance from a dictionary.
+        """
+        Create a note instance from a dictionary.
 
         Handles JSON-deserialized types appropriately. i.e. datetime fields will
         be properly parsed if in string form.
@@ -57,7 +59,8 @@ class Note:
         return cls(**dictionary)
 
     def to_json(self):
-        """Convert this note object into a dictionary with JSON incompatible types serialized.
+        """
+        Convert this note object into a dictionary with JSON incompatible types serialized.
 
         .. note:: For richer data types use :meth:`Note.to_dict` instead.
         """
@@ -75,7 +78,8 @@ class Note:
 
 
 class Task:  # pylint: disable=too-many-instance-attributes
-    """Represents a task in a Task List.
+    """
+    Represents a task in a Task List.
 
     This class is the basic unit in Taskforge and is central to all
     functionality.
@@ -126,7 +130,8 @@ class Task:  # pylint: disable=too-many-instance-attributes
             completed_date=None,
             body='',
     ):
-        """Create a Task with the given fields, defaulting appropriate metadata.
+        """
+        Create a Task with the given fields, defaulting appropriate metadata.
 
         All other fields are optional and id should not be set unless
         instantiating from an existing task.
@@ -172,7 +177,8 @@ class Task:  # pylint: disable=too-many-instance-attributes
 
     @classmethod
     def from_dict(cls, dictionary):
-        """Create a Task from a dictionary representation.
+        """
+        Create a Task from a dictionary representation.
 
         Handles JSON-deserialized types appropriately. i.e. datetime fields will
         be properly parsed if in string form.
@@ -187,7 +193,8 @@ class Task:  # pylint: disable=too-many-instance-attributes
         return cls(**dictionary)
 
     def to_json(self):
-        """Convert to a dictionary which has JSON incompatible types properly serialized.
+        """
+        Convert to a dictionary which has JSON incompatible types properly serialized.
 
         .. note:: For richer data types use :meth:`Task.to_dict` instead.
         """
@@ -213,7 +220,8 @@ class Task:  # pylint: disable=too-many-instance-attributes
         }
 
     def complete(self):
-        """Complete this task.
+        """
+        Complete this task.
 
         Sets self.completed_date using :meth:`datetime.datetime.now`.
         """

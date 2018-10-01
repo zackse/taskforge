@@ -41,7 +41,8 @@ class Parser:
     """Parser for the task_forge query language."""
 
     def __init__(self, query='', lexer=None):
-        """Create a lexer and parser for query.
+        """
+        Create a lexer and parser for query.
 
         If lexer is not None use that lexer instead of creating one
         for query.
