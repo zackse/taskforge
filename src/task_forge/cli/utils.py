@@ -69,7 +69,7 @@ def load_list(cfg):
         print('Invalid config: {}'.format(invalid_config))
         sys.exit(1)
     except TypeError as unknown_key:
-        print('Invalid config unkown config key: {}'.format(unknown_key))
+        print('Invalid config unknown config key: {}'.format(unknown_key))
         sys.exit(1)
 
 
