@@ -2,7 +2,7 @@
 
 Task management tool that integrates well with other services.
 
-Checkout out the [Getting Started](http://taskforge.io/getting_started.html)
+Checkout out the [Getting Started](https://github.com/chasinglogic/taskforge/blob/master/src/docs/getting_started.rst)
 guide to learn how to use Taskforge!
 
 ## Contributing
