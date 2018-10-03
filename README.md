@@ -7,6 +7,9 @@ guide to learn how to use Taskforge!
 
 ## Contributing
 
+Follow the 
+[Code of Conduct](https://github.com/chasinglogic/taskforge/blob/master/src/docs/code_of_conduct.rst)
+
 Contributions are greatly appreciated. We have a process for making a
 contribution via Github that you can read in the 
 [CONTRIBUTING.md](https://github.com/chasinglogic/taskforge/blob/master/CONTRIBUTING.md)
