@@ -37,23 +37,18 @@
 
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="k">import</span> <span class="n">datetime</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pymongo</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;you must install pymongo to use the MongoDB list&#39;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
 <span class="kn">from</span> <span class="nn">taskforge.ql.tokens</span> <span class="k">import</span> <span class="n">Type</span>
 <span class="kn">from</span> <span class="nn">taskforge.task</span> <span class="k">import</span> <span class="n">Task</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">List</span> <span class="k">as</span> <span class="n">AList</span>
+<span class="kn">import</span> <span class="nn">pymongo</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">List</span>
 
 
-<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">AList</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList">[docs]</a><span class="k">class</span> <span class="nc">MongoDBList</span><span class="p">(</span><span class="n">List</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A MongoDB backed list implementation.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-arguments</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">host</span><span class="o">=</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span>
             <span class="n">port</span><span class="o">=</span><span class="mi">27017</span><span class="p">,</span>
@@ -63,7 +58,7 @@
             <span class="n">password</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">ssl</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a List from the given configuration.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Create a MongoDBList from the given configuration.&quot;&quot;&quot;</span>
         <span class="n">conn_url</span> <span class="o">=</span> <span class="s1">&#39;mongodb://&#39;</span>
         <span class="k">if</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">:</span>
             <span class="n">conn_url</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">@&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
@@ -74,29 +69,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">[</span><span class="n">db</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">[</span><span class="n">collection</span><span class="p">]</span>
 
-<div class="viewcode-block" id="List.add"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.add"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a task to the List.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">insert_one</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="List.add_multiple"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.add_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">add_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.add_multiple"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.add_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">add_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add multiple tasks to the List.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">insert_many</span><span class="p">([</span><span class="n">task</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">])</span></div>
 
-<div class="viewcode-block" id="List.list"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.list"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a python list of the Task in this List.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="List.find_by_id"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.find_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.find_by_id"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.find_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Find a task by id.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">({</span>
                 <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span>
             <span class="p">},</span> <span class="n">projection</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;_id&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}))</span></div>
 
-<div class="viewcode-block" id="List.current"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.current"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the current task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find_one</span><span class="p">(</span>
@@ -109,7 +104,7 @@
                     <span class="p">(</span><span class="s2">&quot;created_date&quot;</span><span class="p">,</span> <span class="n">pymongo</span><span class="o">.</span><span class="n">ASCENDING</span><span class="p">),</span>
                 <span class="p">]))</span></div>
 
-<div class="viewcode-block" id="List.complete"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.complete"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Complete a task by id.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find_one_and_update</span><span class="p">({</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span>
@@ -117,7 +112,7 @@
             <span class="s2">&quot;completed_date&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
         <span class="p">}})</span></div>
 
-<div class="viewcode-block" id="List.update"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.update"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update a task in the list.</span>
 
 <span class="sd">        The original is retrieved using the id of the given task.</span>
@@ -128,7 +123,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find_one_and_update</span><span class="p">({</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;$set&quot;</span><span class="p">:</span> <span class="n">doc</span><span class="p">})</span></div>
 
-<div class="viewcode-block" id="List.add_note"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.add_note">[docs]</a>    <span class="k">def</span> <span class="nf">add_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.add_note"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.add_note">[docs]</a>    <span class="k">def</span> <span class="nf">add_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add note to a task by id.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find_one_and_update</span><span class="p">({</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="nb">id</span>
@@ -136,7 +131,7 @@
             <span class="s2">&quot;notes&quot;</span><span class="p">:</span> <span class="n">note</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
         <span class="p">}})</span></div>
 
-<div class="viewcode-block" id="List.search"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.List.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ast</span><span class="p">):</span>
+<div class="viewcode-block" id="MongoDBList.search"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.mongo.MongoDBList.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ast</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the AST and return a List of matching results.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">doc</span><span class="p">)</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
@@ -147,10 +142,10 @@
     <span class="k">def</span> <span class="nf">__eval</span><span class="p">(</span><span class="n">expression</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate expression returning dictionary for use as a MongoDB query.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_str_literal</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval_str_literal</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">MongoDBList</span><span class="o">.</span><span class="n">__eval_str_literal</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval_infix</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">MongoDBList</span><span class="o">.</span><span class="n">__eval_infix</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">{}</span>
 
@@ -183,8 +178,8 @@
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_logical_infix</span><span class="p">():</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span> <span class="p">[</span>
-                    <span class="n">List</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">left</span><span class="p">),</span>
-                    <span class="n">List</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
+                    <span class="n">MongoDBList</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">left</span><span class="p">),</span>
+                    <span class="n">MongoDBList</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">right</span><span class="p">),</span>
                 <span class="p">]</span>
             <span class="p">}</span>
 

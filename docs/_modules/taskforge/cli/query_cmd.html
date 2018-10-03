@@ -33,59 +33,14 @@
           <div class="body" role="main">
             
   <h1>Source code for taskforge.cli.query_cmd</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;usage: task query [options] [&lt;query&gt;...]</span>
-
-<span class="sd">Search or list tasks in this list.</span>
-
-<span class="sd">QUERY will be concatenated using spaces and will be interpreted using the</span>
-<span class="sd">Taskforge Query Language.</span>
-
-<span class="sd">If no query is provided all tasks will be returned.</span>
-
-<span class="sd">You can view information about the taskforge query</span>
-<span class="sd">language using &#39;task help ql&#39; or by visiting:</span>
-
-<span class="sd">http://taskforge.io/docs/query_language</span>
-
-<span class="sd">options:</span>
-<span class="sd">    -o &lt;format&gt;, --output &lt;format&gt;  How to display the tasks which match the</span>
-<span class="sd">                                    query. Available formats are: json, csv,</span>
-<span class="sd">                                    table, text which are described below.</span>
-<span class="sd">                                    [default: table]</span>
-
-<span class="sd">output formats:</span>
-
-<span class="sd">   Text output format is the same as for task next where each task will be</span>
-<span class="sd">   printed on one line with the format:</span>
-
-<span class="sd">   $TASK_ID: $TASK_TITLE</span>
-
-<span class="sd">   Table output format lists tasks in an ascii table and it looks like this:</span>
-
-<span class="sd">   | ID  | Created Date  | Completed Date  | Priority  | Title  | Context  |</span>
-<span class="sd">   | --- | ------------- | --------------- | --------- | ------ | -------- |</span>
-<span class="sd">   | $ID | $CREATED_DATE | $COMPLETED_DATE | $PRIORITY | $TITLE | $CONTEXT |</span>
-
-<span class="sd">   JSON output format will &quot;pretty print&quot; a JSON array of the tasks in the list</span>
-<span class="sd">   to stdout.  They will be properly indented 4 spaces and should be fairly</span>
-<span class="sd">   human readable.  This is useful for migrating from one list implementation</span>
-<span class="sd">   for another as you can redirect this output to a file then import it with:</span>
-<span class="sd">   &#39;task add --from-file $YOUR_JSON_FILE&#39;</span>
-
-<span class="sd">   CSV will output all task metadata in a csv format. It will write to stdout</span>
-<span class="sd">   so you can use shell redirection to put it into a csv file like so:</span>
-
-<span class="sd">   &#39;task list --output csv &gt; my_tasks.csv&#39;</span>
-
-<span class="sd">   This is useful for importing tasks into spreadsheet programs like Excel.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the query subcommand.&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">..lists</span> <span class="k">import</span> <span class="n">NotFoundError</span>
-<span class="kn">from</span> <span class="nn">..ql.parser</span> <span class="k">import</span> <span class="n">ParseError</span><span class="p">,</span> <span class="n">Parser</span>
+<span class="kn">from</span> <span class="nn">..ql</span> <span class="k">import</span> <span class="n">Parser</span>
 <span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">inject_list</span>
 
 
@@ -95,37 +50,21 @@
         <span class="s1">&#39;ID&#39;</span><span class="p">,</span> <span class="s1">&#39;Created Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Completed Date&#39;</span><span class="p">,</span> <span class="s1">&#39;Priority&#39;</span><span class="p">,</span> <span class="s1">&#39;Title&#39;</span><span class="p">,</span> <span class="s1">&#39;Context&#39;</span>
     <span class="p">]]</span>
     <span class="n">rows</span> <span class="o">+=</span> <span class="p">[[</span>
-        <span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">created_date</span><span class="p">),</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">completed_date</span><span class="p">),</span>
-        <span class="nb">str</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">priority</span><span class="p">),</span> <span class="n">task</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">context</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">created_date</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">completed_date</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span>
+        <span class="n">task</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">context</span>
     <span class="p">]</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">]</span>
 
-    <span class="c1"># Create a list of the lengths of the longest item in each column.</span>
-    <span class="c1"># Something like [10, 4, 3, 8]</span>
-    <span class="n">column_widths</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">column_widths</span><span class="p">:</span>
-            <span class="c1"># Get the initial length of our headers</span>
-            <span class="n">column_widths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span>
+    <span class="n">wcolumns</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">for</span> <span class="n">columns</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wcolumns</span><span class="p">:</span>
+            <span class="n">wcolumns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Compare the current_width with the width of the data in that</span>
-            <span class="c1"># column on this row. If the width of the data is larger use that</span>
-            <span class="c1"># instead of our current width.</span>
-            <span class="n">column_widths</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="nb">max</span><span class="p">(</span><span class="n">current_width</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">column_data</span><span class="p">))</span>
-                <span class="k">for</span> <span class="n">current_width</span><span class="p">,</span> <span class="n">column_data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_widths</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
-            <span class="p">]</span>
+            <span class="n">wcolumns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wcolumns</span><span class="p">,</span> <span class="n">columns</span><span class="p">)]</span>
 
-    <span class="c1"># Insert the &quot;separator&quot; row</span>
-    <span class="n">rows</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;-&#39;</span> <span class="o">*</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">column_widths</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
-        <span class="c1"># ljust will add a number of spaces to the right of data to make it</span>
-        <span class="c1"># match the width of that column. So if we have the string &quot;a task&quot;</span>
-        <span class="c1"># which has a length of 6 (i.e. len(&quot;a task&quot;)) and the widest data for</span>
-        <span class="c1"># that column is 10 we will end up with &quot;a task    &quot;.</span>
-        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="k">for</span> <span class="n">width</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_widths</span><span class="p">,</span> <span class="n">row</span><span class="p">)]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;| </span><span class="si">{}</span><span class="s2"> |&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cols</span><span class="p">)))</span></div>
+    <span class="c1"># print columns with the maximum width</span>
+    <span class="k">for</span> <span class="n">columns</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wcolumns</span><span class="p">,</span> <span class="n">columns</span><span class="p">)]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;| </span><span class="si">{}</span><span class="s2"> |&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">cols</span><span class="p">))))</span></div>
 
 
 <div class="viewcode-block" id="print_text"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.query_cmd.print_text">[docs]</a><span class="k">def</span> <span class="nf">print_text</span><span class="p">(</span><span class="n">tasks</span><span class="p">):</span>
@@ -173,32 +112,39 @@
     <span class="k">elif</span> <span class="n">output</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
         <span class="n">print_csv</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid output format. Defaulting to table.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">output</span><span class="p">))</span>
-        <span class="n">print_table</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a valid output format&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">))</span></div>
 
 
 <span class="nd">@inject_list</span>
-<span class="k">def</span> <span class="nf">query_tasks</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">task_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return tasks which match query or all tasks if query is blank&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
-        <span class="n">ast</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">task_list</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">task_list</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-
-
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.query_cmd.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add the query command to parser.&quot;&quot;&quot;</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;query&gt;&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;query&gt;&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+<span class="k">def</span> <span class="nf">query_task</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">task_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print the current task in task_list.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">tasks</span> <span class="o">=</span> <span class="n">query_tasks</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
-        <span class="n">print_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;--output&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">query</span><span class="p">:</span>
+            <span class="n">ast</span> <span class="o">=</span> <span class="n">Parser</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">query</span><span class="p">))</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="n">task_list</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">ast</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tasks</span> <span class="o">=</span> <span class="n">task_list</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     <span class="k">except</span> <span class="n">NotFoundError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no tasks matched query&#39;</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">ParseError</span> <span class="k">as</span> <span class="n">parse_error</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unable to parse query: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parse_error</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="n">tasks</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">print_tasks</span><span class="p">(</span><span class="n">tasks</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="query_cmd"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.query_cmd.query_cmd">[docs]</a><span class="k">def</span> <span class="nf">query_cmd</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add the query command to parser.&quot;&quot;&quot;</span>
+    <span class="n">sub_parser</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s1">&#39;query&#39;</span><span class="p">,</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;q&#39;</span><span class="p">,</span> <span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;search&#39;</span><span class="p">,</span> <span class="s1">&#39;list&#39;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Query tasks in the list.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--output&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;-o&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;table&#39;</span><span class="p">,</span>
+        <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;table&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">])</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;QUERY&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">query_task</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

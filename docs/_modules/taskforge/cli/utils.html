@@ -40,12 +40,12 @@
 
 <span class="kn">import</span> <span class="nn">toml</span>
 
-<span class="kn">from</span> <span class="nn">..lists.load</span> <span class="k">import</span> <span class="n">get_list</span>
+<span class="kn">from</span> <span class="nn">..lists.sqlite</span> <span class="k">import</span> <span class="n">SQLiteList</span>
 <span class="kn">from</span> <span class="nn">..lists</span> <span class="k">import</span> <span class="n">InvalidConfigError</span>
 
 <span class="n">CONFIG_FILES</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;taskforge.toml&#39;</span><span class="p">,</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span> <span class="s1">&#39;.taskforge.d&#39;</span><span class="p">,</span> <span class="s1">&#39;config.toml&#39;</span><span class="p">),</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;HOME&#39;</span><span class="p">),</span> <span class="s1">&#39;.taskforge.d&#39;</span><span class="p">,</span> <span class="s1">&#39;config.toml&#39;</span><span class="p">),</span>
     <span class="s1">&#39;/etc/taskforge.d/config.toml&#39;</span>
 <span class="p">]</span>
 
@@ -91,11 +91,17 @@
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
+<span class="n">LISTS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;sqlite&#39;</span><span class="p">:</span> <span class="n">SQLiteList</span><span class="p">,</span>
+    <span class="s1">&#39;file&#39;</span><span class="p">:</span> <span class="n">SQLiteList</span><span class="p">,</span>
+<span class="p">}</span>
+
+
 <div class="viewcode-block" id="load_list"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.utils.load_list">[docs]</a><span class="k">def</span> <span class="nf">load_list</span><span class="p">(</span><span class="n">cfg</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Load the correct List implementation based on the provided config.&quot;&quot;&quot;</span>
-    <span class="n">impl</span> <span class="o">=</span> <span class="n">get_list</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+    <span class="n">impl</span> <span class="o">=</span> <span class="n">LISTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
     <span class="k">if</span> <span class="n">impl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unknown list: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Unknown list: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;list&#39;</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]))</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>

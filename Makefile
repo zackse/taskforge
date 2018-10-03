@@ -41,8 +41,6 @@ BUILDDIR      = build/docs
 docs: html
 	rm -rf docs/*
 	mv build/docs/html/* docs/
-	mv docs/_static/* docs/
-	rm -rf docs/_static
 
 # Put it first so that "make" without argument is like "make help".
 help:

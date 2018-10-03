@@ -43,10 +43,10 @@
 <span class="kn">from</span> <span class="nn">taskforge.ql.tokens</span> <span class="k">import</span> <span class="n">Type</span>
 <span class="kn">from</span> <span class="nn">taskforge.task</span> <span class="k">import</span> <span class="n">Note</span><span class="p">,</span> <span class="n">Task</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">InvalidConfigError</span><span class="p">,</span> <span class="n">List</span> <span class="k">as</span> <span class="n">AList</span><span class="p">,</span> <span class="n">NotFoundError</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">InvalidConfigError</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">NotFoundError</span>
 
 
-<div class="viewcode-block" id="List"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List">[docs]</a><span class="k">class</span> <span class="nc">List</span><span class="p">(</span><span class="n">AList</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList">[docs]</a><span class="k">class</span> <span class="nc">SQLiteList</span><span class="p">(</span><span class="n">List</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A SQLite 3 backed list implementation.&quot;&quot;&quot;</span>
 
     <span class="n">__create_task_table</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
@@ -94,7 +94,7 @@
             <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="n">create_tables</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Create a List from the given configuration.</span>
+        <span class="sd">&quot;&quot;&quot;Create a SQLiteList from the given configuration.</span>
 
 <span class="sd">        Either directory or file_name should be provided. Raises</span>
 <span class="sd">        InvalidConfigError if neither are provided. If both are</span>
@@ -124,7 +124,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__create_task_table</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__create_note_table</span><span class="p">)</span>
 
-<div class="viewcode-block" id="List.note_from_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.note_from_row">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SQLiteList.note_from_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.note_from_row">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">note_from_row</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a SQL row tuple back into a Note object.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Note</span><span class="p">(</span>
@@ -132,7 +132,7 @@
             <span class="n">body</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
             <span class="n">created_date</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span></div>
 
-<div class="viewcode-block" id="List.task_to_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.task_to_row">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SQLiteList.task_to_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.task_to_row">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a task to a tuple with the correct column order.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
@@ -145,7 +145,7 @@
             <span class="n">task</span><span class="o">.</span><span class="n">completed_date</span><span class="o">.</span><span class="n">timestamp</span><span class="p">()</span> <span class="k">if</span> <span class="n">task</span><span class="o">.</span><span class="n">completed_date</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="List.task_from_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.task_from_row">[docs]</a>    <span class="k">def</span> <span class="nf">task_from_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.task_from_row"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.task_from_row">[docs]</a>    <span class="k">def</span> <span class="nf">task_from_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Convert a SQL row tuple back into a Task object.</span>
 
 <span class="sd">        Raises a NotFoundError if row is None</span>
@@ -168,37 +168,37 @@
 
     <span class="k">def</span> <span class="nf">__get_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">List</span><span class="o">.</span><span class="n">note_from_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
-                <span class="s1">&#39;SELECT id, body, created_date FROM notes WHERE task_id = ?&#39;</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="nb">id</span><span class="p">,</span> <span class="p">))</span>
+            <span class="n">SQLiteList</span><span class="o">.</span><span class="n">note_from_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="s1">&#39;SELECT id, body, created_date FROM notes WHERE task_id = ?&#39;</span><span class="p">,</span>
+                <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="p">))</span>
         <span class="p">]</span>
 
-<div class="viewcode-block" id="List.add"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.add"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add a task to the List.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span>\
-            <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__insert</span><span class="p">,</span> <span class="n">List</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
+            <span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__insert</span><span class="p">,</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="List.add_multiple"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.add_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">add_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.add_multiple"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.add_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">add_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tasks</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add multiple tasks to the List.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span>\
             <span class="n">executemany</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__insert</span><span class="p">,</span>
-                <span class="p">[</span><span class="n">List</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">])</span>
+                <span class="p">[</span><span class="n">SQLiteList</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="List.list"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.list"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a python list of the Task in this List.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">task_from_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__select</span><span class="p">)</span>
         <span class="p">]</span></div>
 
-<div class="viewcode-block" id="List.find_by_id"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.find_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.find_by_id"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.find_by_id">[docs]</a>    <span class="k">def</span> <span class="nf">find_by_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Find a task by id.&quot;&quot;&quot;</span>
         <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__select</span> <span class="o">+</span> <span class="s1">&#39;WHERE id = ?&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_from_row</span><span class="p">(</span><span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="List.current"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.current"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return the current task.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_from_row</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span>\
@@ -209,7 +209,7 @@
             <span class="p">)</span><span class="o">.</span>\
             <span class="n">fetchone</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="List.complete"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.complete"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.complete">[docs]</a>    <span class="k">def</span> <span class="nf">complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Complete a task by id.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span>\
             <span class="n">execute</span><span class="p">(</span>
@@ -218,12 +218,12 @@
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="List.update"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.update"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Update a task in the list.</span>
 
 <span class="sd">        The original is retrieved using the id of the given task.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">update_tuple</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+        <span class="n">update_tuple</span> <span class="o">=</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">task_to_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
         <span class="c1"># move id to the end</span>
         <span class="n">update_tuple</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">update_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
@@ -231,7 +231,6 @@
             <span class="n">update_tuple</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
             <span class="n">update_tuple</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
             <span class="n">update_tuple</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span>
-            <span class="n">update_tuple</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span>
             <span class="n">update_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
@@ -239,7 +238,6 @@
 <span class="sd">UPDATE tasks</span>
 <span class="sd">SET</span>
 <span class="sd">    title = ?,</span>
-<span class="sd">    body = ?,</span>
 <span class="sd">    context = ?,</span>
 <span class="sd">    priority = ?,</span>
 <span class="sd">    created_date = ?,</span>
@@ -248,7 +246,7 @@
 <span class="sd">&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">update_tuple</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="List.add_note"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.add_note">[docs]</a>    <span class="k">def</span> <span class="nf">add_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.add_note"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.add_note">[docs]</a>    <span class="k">def</span> <span class="nf">add_note</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">note</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add note to a task by id.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span>\
             <span class="n">execute</span><span class="p">(</span>
@@ -262,23 +260,22 @@
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="List.search"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.List.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ast</span><span class="p">):</span>
+<div class="viewcode-block" id="SQLiteList.search"><a class="viewcode-back" href="../../../taskforge.lists.html#taskforge.lists.sqlite.SQLiteList.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ast</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate the AST and return a List of matching results.&quot;&quot;&quot;</span>
-        <span class="n">where</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">expression</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">expression</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">task_from_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__select</span> <span class="o">+</span> <span class="s1">&#39;WHERE &#39;</span> <span class="o">+</span>
-                                          <span class="n">where</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">task_from_row</span><span class="p">(</span><span class="n">task</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__select</span> <span class="o">+</span> <span class="s1">&#39;WHERE &#39;</span> <span class="o">+</span> <span class="n">where</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
         <span class="p">]</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">__eval</span><span class="p">(</span><span class="n">expression</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate expression returning a where clause and a dictionary of values.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_str_literal</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval_str_literal</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">__eval_str_literal</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_infix</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval_infix</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">__eval_infix</span><span class="p">(</span><span class="n">expression</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="p">{})</span>
 
@@ -286,8 +283,9 @@
     <span class="k">def</span> <span class="nf">__eval_str_literal</span><span class="p">(</span><span class="n">expression</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate a string literal query.&quot;&quot;&quot;</span>
         <span class="n">ident</span> <span class="o">=</span> <span class="n">uuid1</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;(title LIKE :</span><span class="si">{ident}</span><span class="s2"> OR body LIKE :</span><span class="si">{ident}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">ident</span><span class="o">=</span><span class="n">ident</span><span class="p">),</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;(title LIKE :</span><span class="si">{ident}</span><span class="s2"> OR body LIKE :</span><span class="si">{ident}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ident</span><span class="o">=</span><span class="n">ident</span><span class="p">),</span>
+            <span class="p">{</span>
                 <span class="n">ident</span><span class="p">:</span> <span class="s1">&#39;%</span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
             <span class="p">})</span>
 
@@ -295,8 +293,8 @@
     <span class="k">def</span> <span class="nf">__eval_infix</span><span class="p">(</span><span class="n">expression</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate an infix expression.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">expression</span><span class="o">.</span><span class="n">is_logical_infix</span><span class="p">():</span>
-            <span class="n">left</span><span class="p">,</span> <span class="n">left_values</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
-            <span class="n">right</span><span class="p">,</span> <span class="n">right_values</span> <span class="o">=</span> <span class="n">List</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+            <span class="n">left</span><span class="p">,</span> <span class="n">left_values</span> <span class="o">=</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">right</span><span class="p">,</span> <span class="n">right_values</span> <span class="o">=</span> <span class="n">SQLiteList</span><span class="o">.</span><span class="n">__eval</span><span class="p">(</span><span class="n">expression</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span><span class="s1">&#39;(</span><span class="si">{}</span><span class="s1">) </span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">left</span><span class="p">,</span>
                 <span class="n">expression</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">literal</span><span class="p">,</span>

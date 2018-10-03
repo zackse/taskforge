@@ -33,64 +33,53 @@
           <div class="body" role="main">
             
   <h1>Source code for taskforge.cli.add_cmd</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;usage: task add [options] [&lt;title&gt;...]</span>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the new subcommand.&quot;&quot;&quot;</span>
 
-<span class="sd">Add or import tasks into the list.</span>
+<span class="kn">import</span> <span class="nn">json</span>
 
-<span class="sd">options:</span>
-<span class="sd">   -p &lt;priority&gt;, --priority &lt;priority&gt;  Create the task with the indicated</span>
-<span class="sd">                                         priority, this can be an integer or</span>
-<span class="sd">                                         float [default: 1.0]</span>
-<span class="sd">   -b &lt;body&gt;, --body &lt;body&gt;              The body or &quot;description&quot; of the task</span>
-<span class="sd">   -c &lt;context&gt;, --context &lt;context&gt;     The context in which to create the task</span>
-
-<span class="sd">import options:</span>
-<span class="sd">   -f &lt;file&gt;, --from-file &lt;file&gt;  Import tasks from the indicated JSON file</span>
-
-<span class="sd">If an import option is provided all other options are ignored.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">inject_list</span>
 <span class="kn">from</span> <span class="nn">..task</span> <span class="k">import</span> <span class="n">Task</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="k">import</span> <span class="n">inject_list</span>
 
 
 <span class="nd">@inject_list</span>
-<span class="k">def</span> <span class="nf">add_task</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">task_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add a task to the configured task list&quot;&quot;&quot;</span>
-    <span class="n">task_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Task</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">add_task</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">task_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Print the current task in task_list.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">from_file</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">from_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">tasks_file</span><span class="p">:</span>
+            <span class="n">task</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tasks_file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">task</span><span class="p">]</span>
+                <span class="n">task_list</span><span class="o">.</span><span class="n">add_multiple</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">task_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="n">task_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+        <span class="n">Task</span><span class="p">(</span>
+            <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">title</span><span class="p">),</span>
+            <span class="n">body</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">body</span><span class="p">,</span>
+            <span class="n">context</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">context</span><span class="p">,</span>
+            <span class="n">priority</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">priority</span><span class="p">))</span>
 
 
-<span class="nd">@inject_list</span>
-<span class="k">def</span> <span class="nf">import_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">task_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Import tasks from filename into the configured task list&quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">json</span>
-
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">tasks_file</span><span class="p">:</span>
-        <span class="n">task</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">tasks_file</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">tasks</span> <span class="o">=</span> <span class="p">[</span><span class="n">Task</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">task</span><span class="p">]</span>
-            <span class="n">task_list</span><span class="o">.</span><span class="n">add_multiple</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">task_list</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
-
-
-<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.add_cmd.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse the docopt args and call add_task.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--from-file&#39;</span><span class="p">]:</span>
-        <span class="n">import_file</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;--from-file&#39;</span><span class="p">])</span>
-        <span class="k">return</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;title&gt;&#39;</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;when not importing tasks title is required&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;title&gt;&#39;</span><span class="p">])</span>
-    <span class="n">priority</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="s1">&#39;--priority&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--priority&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mf">1.0</span>
-    <span class="n">context</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--context&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--context&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;default&#39;</span>
-    <span class="n">body</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--body&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;--body&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">add_task</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="n">body</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">priority</span><span class="o">=</span><span class="n">priority</span><span class="p">)</span></div>
+<div class="viewcode-block" id="add_cmd"><a class="viewcode-back" href="../../../taskforge.cli.html#taskforge.cli.add_cmd.add_cmd">[docs]</a><span class="k">def</span> <span class="nf">add_cmd</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add the next command to parser.&quot;&quot;&quot;</span>
+    <span class="n">sub_parser</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+        <span class="s1">&#39;add&#39;</span><span class="p">,</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;new&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Add a new task to the list&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s1">&#39;--from-file&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;-f&#39;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;A JSON file which to load tasks from, &#39;</span>
+        <span class="s1">&#39;if provided all other arguments are ignored.&#39;</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--priority&#39;</span><span class="p">,</span> <span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--context&#39;</span><span class="p">,</span> <span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--body&#39;</span><span class="p">,</span> <span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s1">&#39;TITLE&#39;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">sub_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">add_task</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

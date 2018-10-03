@@ -33,85 +33,34 @@
           <div class="body" role="main">
             
   <h1>Source code for taskforge.cli</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;usage: task [--help] [--version] &lt;command&gt; [&lt;args&gt;...]</span>
+<span></span><span class="sd">&quot;&quot;&quot;Entry point for the Taskforge CLI.&quot;&quot;&quot;</span>
 
-<span class="sd">A task management CLI that integrates with external services.</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
 
-<span class="sd">available commands:</span>
-<span class="sd">   help                Print usage information about task commands</span>
-<span class="sd">   add (new, a)        Add a new task to the list</span>
-<span class="sd">   next (n)            Print the next or &quot;current&quot; task in the list</span>
-<span class="sd">   todo                Print incomplete tasks in the list</span>
-<span class="sd">   complete (done, d)  Complete tasks in the list.</span>
-<span class="sd">   query (q, s, list)  Search or list tasks in the list</span>
-<span class="sd">   workon              Move a task to the top of the list</span>
-
-<span class="sd">See &#39;task help &lt;command&gt;&#39; for more information on a specific command.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">importlib</span> <span class="k">import</span> <span class="n">import_module</span>
-
-<span class="kn">from</span> <span class="nn">docopt</span> <span class="k">import</span> <span class="n">docopt</span>
-
-<span class="n">ALIASES</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="s1">&#39;next&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;new&#39;</span><span class="p">:</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="s1">&#39;add&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="s1">&#39;complete&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;done&#39;</span><span class="p">:</span> <span class="s1">&#39;complete&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;q&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;s&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span>
-<span class="p">}</span>
-
-
-<div class="viewcode-block" id="print_lists"><a class="viewcode-back" href="../../taskforge.cli.html#taskforge.cli.print_lists">[docs]</a><span class="k">def</span> <span class="nf">print_lists</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Print installed list implementations&quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">..lists.load</span> <span class="k">import</span> <span class="n">get_all_lists</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Available lists are:&#39;</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">lists</span> <span class="o">=</span> <span class="n">get_all_lists</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">import_err</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unable to load lists: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">import_err</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">lists</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;no lists are installed&#39;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">lists</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;  </span><span class="si">{name}</span><span class="s1">&#39;</span><span class="p">)</span></div>
+<span class="kn">from</span> <span class="nn">.add_cmd</span> <span class="k">import</span> <span class="n">add_cmd</span>
+<span class="kn">from</span> <span class="nn">.complete_cmd</span> <span class="k">import</span> <span class="n">complete_cmd</span>
+<span class="c1"># from .edit_cmd import edit_cmd</span>
+<span class="kn">from</span> <span class="nn">.next_cmd</span> <span class="k">import</span> <span class="n">next_cmd</span>
+<span class="kn">from</span> <span class="nn">.query_cmd</span> <span class="k">import</span> <span class="n">query_cmd</span>
+<span class="kn">from</span> <span class="nn">.todo_cmd</span> <span class="k">import</span> <span class="n">todo_cmd</span>
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../taskforge.cli.html#taskforge.cli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;CLI entrypoint, handles subcommand parsing&quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">docopt</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;task version 0.1.0&#39;</span><span class="p">,</span> <span class="n">options_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;command&gt;&#39;</span><span class="p">]:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;Entry point function for the Taskforge CLI.&quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="p">)</span>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">()</span>
+    <span class="n">next_cmd</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
+    <span class="n">add_cmd</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
+    <span class="n">query_cmd</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
+    <span class="n">todo_cmd</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
+    <span class="n">complete_cmd</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
+    <span class="c1"># edit_cmd(subparsers)</span>
 
-    <span class="n">command</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;command&gt;&#39;</span><span class="p">]</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s1">&#39;help&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;args&gt;&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;args&gt;&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;lists&#39;</span><span class="p">:</span>
-                <span class="n">print_lists</span><span class="p">()</span>
-            <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;args&gt;&#39;</span><span class="p">]:</span>
-                <span class="n">command_mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;taskforge.cli.</span><span class="si">{}</span><span class="s1">_cmd&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;args&gt;&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">command_mod</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="vm">__doc__</span><span class="p">)</span>
-            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="n">command</span> <span class="o">=</span> <span class="n">ALIASES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
-        <span class="n">command_mod</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;taskforge.cli.</span><span class="si">{}</span><span class="s1">_cmd&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
-        <span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">command</span><span class="p">]</span> <span class="o">+</span> <span class="n">args</span><span class="p">[</span><span class="s1">&#39;&lt;args&gt;&#39;</span><span class="p">]</span>
-        <span class="n">command_mod</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">docopt</span><span class="p">(</span><span class="n">command_mod</span><span class="o">.</span><span class="vm">__doc__</span><span class="p">,</span> <span class="n">argv</span><span class="o">=</span><span class="n">argv</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> is not a known task command.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">command</span><span class="p">))</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s1">&#39;func&#39;</span><span class="p">):</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">print_help</span><span class="p">()</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>

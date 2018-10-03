@@ -41,138 +41,37 @@
 </div>
 <div class="section" id="module-taskforge.cli.add_cmd">
 <span id="taskforge-cli-add-cmd-module"></span><h2>taskforge.cli.add_cmd module<a class="headerlink" href="#module-taskforge.cli.add_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task add [options] [&lt;title&gt;…]</p>
-<p>Add or import tasks into the list.</p>
-<dl class="docutils">
-<dt>options:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-p <var>&lt;priority&gt;</var></span>, <span class="option">--priority <var>&lt;priority&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Create the task with the indicated
-priority, this can be an integer or
-float [default: 1.0]</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-b <var>&lt;body&gt;</var></span>, <span class="option">--body <var>&lt;body&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>The body or “description” of the task</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>&lt;context&gt;</var></span>, <span class="option">--context <var>&lt;context&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>The context in which to create the task</td></tr>
-</tbody>
-</table>
-</dd>
-<dt>import options:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-f <var>&lt;file&gt;</var></span>, <span class="option">--from-file <var>&lt;file&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Import tasks from the indicated JSON file</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<p>If an import option is provided all other options are ignored.</p>
+<p>Implements the new subcommand.</p>
 <dl class="function">
-<dt id="taskforge.cli.add_cmd.run">
-<code class="descclassname">taskforge.cli.add_cmd.</code><code class="descname">run</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/add_cmd.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.add_cmd.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the docopt args and call add_task.</p>
+<dt id="taskforge.cli.add_cmd.add_cmd">
+<code class="descclassname">taskforge.cli.add_cmd.</code><code class="descname">add_cmd</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/add_cmd.html#add_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.add_cmd.add_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the next command to parser.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-taskforge.cli.complete_cmd">
 <span id="taskforge-cli-complete-cmd-module"></span><h2>taskforge.cli.complete_cmd module<a class="headerlink" href="#module-taskforge.cli.complete_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task complete [&lt;ID&gt;…]</p>
-<p>Complete tasks by ID. If no IDs are provided then the current task indicated by
-‘task next’ is completed.</p>
+<p>Implements the complete subcommand.</p>
 <dl class="function">
-<dt id="taskforge.cli.complete_cmd.run">
-<code class="descclassname">taskforge.cli.complete_cmd.</code><code class="descname">run</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/complete_cmd.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.complete_cmd.run" title="Permalink to this definition">¶</a></dt>
+<dt id="taskforge.cli.complete_cmd.complete_cmd">
+<code class="descclassname">taskforge.cli.complete_cmd.</code><code class="descname">complete_cmd</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/complete_cmd.html#complete_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.complete_cmd.complete_cmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the next command to parser.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-taskforge.cli.next_cmd">
 <span id="taskforge-cli-next-cmd-module"></span><h2>taskforge.cli.next_cmd module<a class="headerlink" href="#module-taskforge.cli.next_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task next [options]</p>
-<p>Print the “next” or “current” task. This is calculated by the list as the
-highest priority, oldest task in the list.</p>
-<p>Default output format is:</p>
-<p>$TASK_ID: $TASK_TITLE</p>
-<p>You can modify the output with the options below.</p>
-<dl class="docutils">
-<dt>options:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-i</span>, <span class="option">--id-only</span></kbd></td>
-<td>Print only the task ID</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-t</span>, <span class="option">--title-only</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Print only the task title</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
+<p>Implements the next subcommand.</p>
+<dl class="function">
+<dt id="taskforge.cli.next_cmd.next_cmd">
+<code class="descclassname">taskforge.cli.next_cmd.</code><code class="descname">next_cmd</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/next_cmd.html#next_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.next_cmd.next_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the next command to parser.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-taskforge.cli.query_cmd">
 <span id="taskforge-cli-query-cmd-module"></span><h2>taskforge.cli.query_cmd module<a class="headerlink" href="#module-taskforge.cli.query_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task query [options] [&lt;query&gt;…]</p>
-<p>Search or list tasks in this list.</p>
-<p>QUERY will be concatenated using spaces and will be interpreted using the
-Taskforge Query Language.</p>
-<p>If no query is provided all tasks will be returned.</p>
-<p>You can view information about the taskforge query
-language using ‘task help ql’ or by visiting:</p>
-<p><a class="reference external" href="http://taskforge.io/docs/query_language">http://taskforge.io/docs/query_language</a></p>
-<dl class="docutils">
-<dt>options:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-o <var>&lt;format&gt;</var></span>, <span class="option">--output <var>&lt;format&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>How to display the tasks which match the
-query. Available formats are: json, csv,
-table, text which are described below.
-[default: table]</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<p>output formats:</p>
-<blockquote>
-<div><p>Text output format is the same as for task next where each task will be
-printed on one line with the format:</p>
-<p>$TASK_ID: $TASK_TITLE</p>
-<p>Table output format lists tasks in an ascii table and it looks like this:</p>
-<div class="line-block">
-<div class="line">ID  | Created Date  | Completed Date  | Priority  | Title  | Context  |</div>
-<div class="line">— | ————- | ————— | ——— | —— | ——– |</div>
-<div class="line">$ID | $CREATED_DATE | $COMPLETED_DATE | $PRIORITY | $TITLE | $CONTEXT |</div>
-</div>
-<p>JSON output format will “pretty print” a JSON array of the tasks in the list
-to stdout.  They will be properly indented 4 spaces and should be fairly
-human readable.  This is useful for migrating from one list implementation
-for another as you can redirect this output to a file then import it with:
-‘task add –from-file $YOUR_JSON_FILE’</p>
-<p>CSV will output all task metadata in a csv format. It will write to stdout
-so you can use shell redirection to put it into a csv file like so:</p>
-<p>‘task list –output csv &gt; my_tasks.csv’</p>
-<p>This is useful for importing tasks into spreadsheet programs like Excel.</p>
-</div></blockquote>
+<p>Implements the query subcommand.</p>
 <dl class="function">
 <dt id="taskforge.cli.query_cmd.print_csv">
 <code class="descclassname">taskforge.cli.query_cmd.</code><code class="descname">print_csv</code><span class="sig-paren">(</span><em>tasks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/query_cmd.html#print_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.query_cmd.print_csv" title="Permalink to this definition">¶</a></dt>
@@ -204,34 +103,21 @@ so you can use shell redirection to put it into a csv file like so:</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="taskforge.cli.query_cmd.run">
-<code class="descclassname">taskforge.cli.query_cmd.</code><code class="descname">run</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/query_cmd.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.query_cmd.run" title="Permalink to this definition">¶</a></dt>
+<dt id="taskforge.cli.query_cmd.query_cmd">
+<code class="descclassname">taskforge.cli.query_cmd.</code><code class="descname">query_cmd</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/query_cmd.html#query_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.query_cmd.query_cmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add the query command to parser.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-taskforge.cli.todo_cmd">
 <span id="taskforge-cli-todo-cmd-module"></span><h2>taskforge.cli.todo_cmd module<a class="headerlink" href="#module-taskforge.cli.todo_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task todo [options]</p>
-<p>A convenience command for listing tasks which are incomplete.</p>
-<dl class="docutils">
-<dt>options:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-o <var>&lt;format&gt;</var></span>, <span class="option">--output <var>&lt;format&gt;</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>How to display the tasks which match the
-query. Available formats are: json, csv,
-table, text. See ‘task list –help’ for
-more information on how each format is
-displayed. [default: table]</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
+<p>Implements the todo subcommand.</p>
+<dl class="function">
+<dt id="taskforge.cli.todo_cmd.todo_cmd">
+<code class="descclassname">taskforge.cli.todo_cmd.</code><code class="descname">todo_cmd</code><span class="sig-paren">(</span><em>parser</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli/todo_cmd.html#todo_cmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.todo_cmd.todo_cmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the next command to parser.</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-taskforge.cli.utils">
 <span id="taskforge-cli-utils-module"></span><h2>taskforge.cli.utils module<a class="headerlink" href="#module-taskforge.cli.utils" title="Permalink to this headline">¶</a></h2>
@@ -267,38 +153,16 @@ displayed. [default: table]</td></tr>
 </dd></dl>
 
 </div>
-<div class="section" id="module-taskforge.cli.workon_cmd">
-<span id="taskforge-cli-workon-cmd-module"></span><h2>taskforge.cli.workon_cmd module<a class="headerlink" href="#module-taskforge.cli.workon_cmd" title="Permalink to this headline">¶</a></h2>
-<p>usage: task workon &lt;ID&gt;</p>
-<p>Find task with ID and make it so the priority of the task is 0.1 higher than
-that of the current highest priority task. Effectively making it the “current”
-task in Taskforge terms.</p>
+<div class="section" id="taskforge-cli-workon-cmd-module">
+<h2>taskforge.cli.workon_cmd module<a class="headerlink" href="#taskforge-cli-workon-cmd-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-taskforge.cli">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-taskforge.cli" title="Permalink to this headline">¶</a></h2>
-<p>usage: task [–help] [–version] &lt;command&gt; [&lt;args&gt;…]</p>
-<p>A task management CLI that integrates with external services.</p>
-<dl class="docutils">
-<dt>available commands:</dt>
-<dd>help                Print usage information about task commands
-add (new, a)        Add a new task to the list
-next (n)            Print the next or “current” task in the list
-todo                Print incomplete tasks in the list
-complete (done, d)  Complete tasks in the list.
-query (q, s, list)  Search or list tasks in the list
-workon              Move a task to the top of the list</dd>
-</dl>
-<p>See ‘task help &lt;command&gt;’ for more information on a specific command.</p>
+<p>Entry point for the Taskforge CLI.</p>
 <dl class="function">
 <dt id="taskforge.cli.main">
 <code class="descclassname">taskforge.cli.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>CLI entrypoint, handles subcommand parsing</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="taskforge.cli.print_lists">
-<code class="descclassname">taskforge.cli.</code><code class="descname">print_lists</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/taskforge/cli.html#print_lists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#taskforge.cli.print_lists" title="Permalink to this definition">¶</a></dt>
-<dd><p>Print installed list implementations</p>
+<dd><p>Entry point function for the Taskforge CLI.</p>
 </dd></dl>
 
 </div>
