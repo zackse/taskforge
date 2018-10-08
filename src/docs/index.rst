@@ -18,5 +18,7 @@ services.
    advanced_usage/index
 
    api
+   contributing/index
+   code_of_conduct
 
    designs/index

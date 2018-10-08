@@ -1,15 +1,15 @@
-taskforge package
-=================
+task_forge package
+==================
 
 Subpackages
 -----------
 
 .. toctree::
 
-    taskforge.cli
-    taskforge.lists
-    taskforge.ql
-    taskforge.task
+    task_forge.cli
+    task_forge.lists
+    task_forge.ql
+    task_forge.task
 
 Submodules
 ----------
@@ -17,7 +17,7 @@ Submodules
 Module contents
 ---------------
 
-.. automodule:: taskforge
+.. automodule:: task_forge
     :members:
     :undoc-members:
     :show-inheritance:

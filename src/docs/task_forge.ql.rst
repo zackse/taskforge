@@ -1,37 +1,37 @@
-taskforge.ql package
+task_forge.ql package
 ====================
 
 Submodules
 ----------
 
-taskforge.ql.ast module
+task_forge.ql.ast module
 -----------------------
 
-.. automodule:: taskforge.ql.ast
+.. automodule:: task_forge.ql.ast
     :members:
     :undoc-members:
     :show-inheritance:
 
-taskforge.ql.lexer module
+task_forge.ql.lexer module
 -------------------------
 
-.. automodule:: taskforge.ql.lexer
+.. automodule:: task_forge.ql.lexer
     :members:
     :undoc-members:
     :show-inheritance:
 
-taskforge.ql.parser module
+task_forge.ql.parser module
 --------------------------
 
-.. automodule:: taskforge.ql.parser
+.. automodule:: task_forge.ql.parser
     :members:
     :undoc-members:
     :show-inheritance:
 
-taskforge.ql.tokens module
+task_forge.ql.tokens module
 --------------------------
 
-.. automodule:: taskforge.ql.tokens
+.. automodule:: task_forge.ql.tokens
     :members:
     :undoc-members:
     :show-inheritance:
@@ -40,7 +40,7 @@ taskforge.ql.tokens module
 Module contents
 ---------------
 
-.. automodule:: taskforge.ql
+.. automodule:: task_forge.ql
     :members:
     :undoc-members:
     :show-inheritance:
