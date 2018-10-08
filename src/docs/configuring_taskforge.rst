@@ -14,7 +14,7 @@ terminal:
 .. code::
    
    $ mkdir ~/.taskforge.d
-   $ touch ~/.taskforeg.d/config.toml
+   $ touch ~/.taskforge.d/config.toml
 
 
 Now we simply need to 
