@@ -2,7 +2,6 @@ PYTHON := python3
 PIP := pip3
 
 lint:
-	vale --ext='.rst' --glob='*.rst' src/docs
 	$(PYTHON) -m pydocstyle src
 	$(PYTHON) -m pylint src tests
 
@@ -21,7 +20,6 @@ install-dev:
 	$(PIP) install --editable .
 	$(PIP) install --editable ".[mongo]"
 	$(PIP) install -r requirements.dev.txt
-	go get github.com/errata-ai/vale
 
 test:
 	PYTHONPATH="$$PYTHONPATH:src" $(PYTHON) -m pytest -m 'not slow'

@@ -5,6 +5,8 @@ python:
 install:
   - make install
   - make install-dev
+  - go get github.com/errata-ai/vale
 script:
+  - vale --ext='.rst' --glob='*.rst' src/docs
   - make lint
   - make test
