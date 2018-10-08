@@ -1,12 +1,12 @@
-taskforge.task package
+task_forge.task package
 ======================
 
-.. automodule:: taskforge.task
+.. automodule:: task_forge.task
 
 Module contents
 ---------------
 
-.. autoclass:: taskforge.task.Task
+.. autoclass:: task_forge.task.Task
 
    .. automethod:: complete
    .. automethod:: is_completed
@@ -21,7 +21,7 @@ Module contents
 
    .. automethod:: to_dict
 
-.. autoclass:: taskforge.task.Note
+.. autoclass:: task_forge.task.Note
 
    .. automethod:: from_dict
 

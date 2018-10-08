@@ -1,4 +1,4 @@
 task add
 ========
 
-.. automodule:: taskforge.cli.add_cmd
+.. automodule:: task_forge.cli.add_cmd

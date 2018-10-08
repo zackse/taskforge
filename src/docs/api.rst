@@ -3,4 +3,4 @@ API
 
 .. toctree::
 
-   taskforge
+   task_forge

@@ -1,29 +1,29 @@
-taskforge.lists package
+task_forge.lists package
 =======================
 
 Submodules
 ----------
 
-taskforge.lists.load module
+task_forge.lists.load module
 ---------------------------
 
-.. automodule:: taskforge.lists.load
+.. automodule:: task_forge.lists.load
     :members:
     :undoc-members:
     :show-inheritance:
 
-taskforge.lists.mongo module
+task_forge.lists.mongo module
 ----------------------------
 
-.. automodule:: taskforge.lists.mongo
+.. automodule:: task_forge.lists.mongo
     :members:
     :undoc-members:
     :show-inheritance:
 
-taskforge.lists.sqlite module
+task_forge.lists.sqlite module
 -----------------------------
 
-.. automodule:: taskforge.lists.sqlite
+.. automodule:: task_forge.lists.sqlite
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,7 +32,7 @@ taskforge.lists.sqlite module
 Module contents
 ---------------
 
-.. automodule:: taskforge.lists
+.. automodule:: task_forge.lists
     :members:
     :undoc-members:
     :show-inheritance:
