@@ -17,8 +17,9 @@ services.
    cli/index
    advanced_usage/index
 
-   api
    contributing/index
    code_of_conduct
+
+   api
 
    designs/index
