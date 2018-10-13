@@ -1,9 +1,25 @@
-# taskforge, a task management cli
+![Taskforge](https://raw.githubusercontent.com/chasinglogic/taskforge/master/src/docs/_static/logo_wide.png)
 
-Task management tool that integrates well with other services.
+Task management tool and library that integrates and aggregates other services.
 
-Checkout out the [Getting Started](https://github.com/chasinglogic/taskforge/blob/master/src/docs/getting_started.rst)
-guide to learn how to use Taskforge!
+## Why Taskforge?
+
+Taskforge has many competitors and all of them are great choices for task
+management. So why build yet another "todo app"?
+
+The answer is simple, most task management applications require that you
+duplicate data into them from other sources. Whether by work, or personal
+preference, our actual tasks are managed in different sources today. Whether
+that be JIRA, GitHub, Trello etc. the teams and people we interact with rarely
+use the same solution as we do. Furthermore, it's even less likely that you'll
+be able to use the same systems at work and on projects.
+
+The downside of all this? **These systems put the responsibility on you** to
+duplicate that information into a format that you can digest.
+
+This is the problem that Taskforge solves. It aggregates and integrates with
+existing systems and provides a unified interface for all the various tasks
+systems you're required to interact with.
 
 ## Contributing
 
