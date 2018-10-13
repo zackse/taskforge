@@ -35,7 +35,7 @@ publish: clean
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = src/docs
-BUILDDIR      = build/docs
+BUILDDIR      = docs
 
 .PHONY: docs
 docs: html
@@ -50,6 +50,13 @@ help:
 
 livehtml:
 	sphinx-autobuild --watch ./src -b html $(SPHINXOPTS) "$(SOURCEDIR)" $(BUILDDIR)/html
+
+# Build the web site container
+website: html
+	docker build --tag "chasinglogic/taskforge.io:latest" --file Dockerfile.docs .
+
+publish-website: website
+	docker push "chasinglogic/taskforge.io:latest"
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
