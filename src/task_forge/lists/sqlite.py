@@ -74,7 +74,7 @@ FROM tasks
                 'either directory or file_name must be provided')
 
         if not file_name:
-            directory = directory.replace('~', os.getenv('HOME'))
+            directory = directory.replace('~', os.getenv('HOME', os.getenv('APPDATALOCAL', '')))
             file_name = os.path.join(directory, 'tasks.sqlite3')
 
         parent = os.path.dirname(file_name)

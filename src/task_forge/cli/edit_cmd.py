@@ -10,6 +10,7 @@ platform.
 
 import sys
 import os
+import shlex
 
 from tempfile import NamedTemporaryFile
 from subprocess import call
@@ -21,11 +22,23 @@ from task_forge.lists import NotFoundError
 from task_forge.cli.utils import inject_list
 
 
+def get_editor_program():
+    """Return editor based on operating system"""
+    if sys.platform == 'win32':
+        if 'EDITOR' in os.environ:
+            return os.getenv('EDITOR')
+
+        return 'notepad.exe'
+
+    return os.getenv('EDITOR', 'vi')
+
+
 def editor(filename):
     """Open filename in $EDITOR"""
     # TODO: Improve this to handle more edge cases and be platform specific
-    program = os.getenv('EDITOR', 'vi')
-    call([program, filename],
+    program = get_editor_program()
+    args = '{} {}'.format(program, filename)
+    call(shlex.split(args),
          stdin=sys.stdin,
          stdout=sys.stdout,
          stderr=sys.stderr)
