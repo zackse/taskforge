@@ -1,0 +1,3 @@
+FROM nginx:latest
+COPY src/docs/index.html /usr/share/nginx/html/index.html
+COPY docs/html /usr/share/nginx/html/docs
