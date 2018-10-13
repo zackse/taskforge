@@ -21,6 +21,11 @@ This is the problem that Taskforge solves. It aggregates and integrates with
 existing systems and provides a unified interface for all the various tasks
 systems you're required to interact with.
 
+## Getting Started
+
+Head over to [our documentation website](http://taskforge.io/docs) for full
+documentation. For a getting started guide and more information.
+
 ## Contributing
 
 Follow the 
