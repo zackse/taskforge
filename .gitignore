@@ -2,6 +2,7 @@
 
 dist/
 build/
+docs/*
 *.egg-info/
 
 .tox/
