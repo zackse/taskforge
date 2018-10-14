@@ -2,7 +2,6 @@ yapf
 pydocstyle
 isort
 pylint
-jinja2
 pytest
 pytest-benchmark
 sphinx

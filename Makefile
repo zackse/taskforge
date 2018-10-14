@@ -1,5 +1,5 @@
 PYTHON := python3
-PIP := pip3
+PIP := $(PYTHON) -m pip
 
 lint:
 	$(PYTHON) -m pydocstyle src
