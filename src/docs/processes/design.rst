@@ -46,3 +46,5 @@ The design process is as follows:
 
 You are then free to pick up the implementation issue or leave it for someone
 else to complete.
+
+Use the :doc:`/designs/template` to get started.
