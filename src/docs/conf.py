@@ -16,6 +16,11 @@ import os
 # dirname dirname gives the src dir which has task_forge
 sys.path.insert(0, os.path.abspath('./src'))
 
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "_ext")))
+
 # -- Project information -----------------------------------------------------
 
 project = 'Taskforge'
@@ -37,6 +42,7 @@ release = '0.1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'taskforgedocs',
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
