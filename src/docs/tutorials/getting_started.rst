@@ -255,6 +255,7 @@ guide for Taskforge. From here you can start looking at using different
 :doc:`lists/index` or see the :doc:`advanced_usage/index` guide to find out how
 to integrate Taskforge with external reporting tools.
 
+- :doc:`tutorials/index`
 - :doc:`configuring_taskforge`
 - :doc:`query_language`
 - :doc:`lists/index`

@@ -18,6 +18,7 @@ on your platform.
 
 Getting the Code
 ++++++++++++++++
+
 Before you begin development on Taskforge you of course will need to download
 the repository. To do this open your shell of choice and run the following
 command:

@@ -9,17 +9,18 @@ services.
 .. toctree::
    :maxdepth: 2
 
-   getting_started
-   query_language
-   configuring_taskforge
+   tutorials/getting_started
+
+   how_tos/query_language
+   how_tos/configuring_taskforge
    lists/index
 
    cli/index
    advanced_usage/index
 
    contributing/index
-   code_of_conduct
+   contributing/code_of_conduct
 
-   api
+   api/index
 
    designs/index
