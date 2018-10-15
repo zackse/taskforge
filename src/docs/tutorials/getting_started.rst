@@ -19,7 +19,7 @@ document so we will simply link to the canonical documentation below:
   <https://pip.pypa.io/en/stable/installing/>`_
 
 Certain list implementations will require additional packages not installed in
-this guide to work. See the :doc:`lists/index` documentation for your preferred list to
+this guide to work. See the :doc:`../lists/index` documentation for your preferred list to
 know more. In this guide we will use the SQLite list because it will work on
 most platforms with no additional setup.
 
@@ -90,7 +90,7 @@ date. To demonstrate let's add a few more tasks:
    $ task add --priority 2 a high priority task
 
 This introduces a new flag ``--priority``. You can set many fields on a task via
-flags to the add command. See the :doc:`cli/task_add` documentation for more
+flags to the add command. See the :doc:`../cli/task_add` documentation for more
 information.
 
 Now our ``task list`` should look like this:
@@ -159,7 +159,7 @@ However if we run ``task list`` we will still see the completed task:
 
 
 As your task list grows finding tasks that need to be done using ``task list``
-can be overwhelming. Luckily, Taskforge has a :doc:`query_language` we can use to
+can be overwhelming. Luckily, Taskforge has a :doc:`../how_tos/query_language` we can use to
 search tasks. See the linked documentation for full instructions, for our
 purposes we simply need to run the following:
 
@@ -252,13 +252,13 @@ Further Reading
 
 You can safely run ``task done`` now since you've completed the getting started
 guide for Taskforge. From here you can start looking at using different
-:doc:`lists/index` or see the :doc:`advanced_usage/index` guide to find out how
+:doc:`../lists/index` or see the :doc:`../advanced_usage/index` guide to find out how
 to integrate Taskforge with external reporting tools.
 
-- :doc:`tutorials/index`
-- :doc:`configuring_taskforge`
-- :doc:`query_language`
-- :doc:`lists/index`
-- :doc:`advanced_usage/index`
+- :doc:`../tutorials/index`
+- :doc:`../how_tos/configuring_taskforge`
+- :doc:`../how_tos/query_language`
+- :doc:`../lists/index`
+- :doc:`../advanced_usage/index`
 
 

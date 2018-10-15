@@ -9,7 +9,7 @@ fmt:
 	$(PYTHON) -m yapf --recursive -i src tests
 
 clean:
-	rm -rf build dist
+	rm -rf build dist docs
 	rm -rf {} **/*.egg-info
 	rm -f **/*.pyc
 
@@ -53,7 +53,7 @@ livehtml:
 
 # Build the web site container
 website: clean html
-	docker build --tag "chasinglogic/taskforge.io:latest" --file Dockerfile.website .
+	docker build --no-cache --tag "chasinglogic/taskforge.io:latest" --file Dockerfile.website .
 
 publish-website: website
 	docker push "chasinglogic/taskforge.io:latest"

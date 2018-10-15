@@ -1,5 +1,5 @@
 task_forge.ql package
-====================
+=====================
 
 Submodules
 ----------
@@ -7,7 +7,7 @@ Submodules
 .. vale off
 
 task_forge.ql.ast module
------------------------
+------------------------
 
 .. automodule:: task_forge.ql.ast
     :members:
@@ -15,7 +15,7 @@ task_forge.ql.ast module
     :show-inheritance:
 
 task_forge.ql.lexer module
--------------------------
+--------------------------
 
 .. automodule:: task_forge.ql.lexer
     :members:
@@ -23,7 +23,7 @@ task_forge.ql.lexer module
     :show-inheritance:
 
 task_forge.ql.parser module
---------------------------
+---------------------------
 
 .. automodule:: task_forge.ql.parser
     :members:
@@ -31,7 +31,7 @@ task_forge.ql.parser module
     :show-inheritance:
 
 task_forge.ql.tokens module
---------------------------
+---------------------------
 
 .. automodule:: task_forge.ql.tokens
     :members:

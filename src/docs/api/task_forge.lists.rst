@@ -1,11 +1,11 @@
 task_forge.lists package
-=======================
+========================
 
 Submodules
 ----------
 
 task_forge.lists.load module
----------------------------
+----------------------------
 
 .. automodule:: task_forge.lists.load
     :members:
@@ -13,7 +13,7 @@ task_forge.lists.load module
     :show-inheritance:
 
 task_forge.lists.mongo module
-----------------------------
+-----------------------------
 
 .. automodule:: task_forge.lists.mongo
     :members:
@@ -21,7 +21,7 @@ task_forge.lists.mongo module
     :show-inheritance:
 
 task_forge.lists.sqlite module
------------------------------
+------------------------------
 
 .. automodule:: task_forge.lists.sqlite
     :members:

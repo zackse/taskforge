@@ -31,8 +31,9 @@ Now use GitHub to fork the project to create your own remote which you will work
 from. When viewing the repo above in your browser, click the fork button in the
 top right hand corner.
 
-GitHub provides `this article <https://help.github.com/articles/fork-a-repo/>`_
-which gives a good explanation of what forking means and how to work with a fork.
+GitHub provides `documentation on maintaining a fork
+<https://help.github.com/articles/fork-a-repo/>`_ which gives a good explanation
+of what forking means and how to work with a fork.
 
 Once you've created your fork copy the clone URL and run the command:
 

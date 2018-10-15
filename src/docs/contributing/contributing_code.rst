@@ -46,9 +46,10 @@ Setting Up A Development Environment
 
 .. note::
 
-   It's recommended that you set up a Python virtualenv before doing any of
-   the steps below. A great explanation of how and why to use a virtualenv can
-   be found at `https://docs.python.org/3/library/venv.html`_
+   It's recommended that you set up a Python virtualenv before doing any of the
+   steps below. A great explanation of how and why to use a virtualenv can be
+   found in `Python's venv module documentation
+   <https://docs.python.org/3/library/venv.html>`_
 
 First lets cd into the repository we created earlier if you haven't already:
 
@@ -73,12 +74,16 @@ Requirements for Submitting Code
 All code needs to meet these requirements:
 
 - If new code:
-  - Write a design document and complete the :doc:`processes/design`_ 
+
+  - Write a design document and complete the :doc:`../processes/design`
   - For each goal in the design write a test
   - Write the code to make the tests pass in CI
+
 - If fixing a bug:
+
   - Write a test which reproduces the bug
   - Write the code fixing that test, it must pass in CI
+
 - All code must pass lint using our pylintrc which is in the root of the
   repository
 

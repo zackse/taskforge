@@ -46,12 +46,12 @@ members:
 -  Attempt collaboration before conflict.
 -  Refrain from demeaning, discriminatory, or harassing behavior and
    speech.
-.. vale off
+   .. vale off
 -  Be mindful of your surroundings and of your fellow participants.
    Alert community leaders if you notice a dangerous situation, someone
    in distress, or violations of this Code of Conduct, even if they seem
    inconsequential.
-.. vale on
+   .. vale on
 -  Remember that community event venues may be shared with members of
    the public; please be respectful to all patrons of these locations.
 

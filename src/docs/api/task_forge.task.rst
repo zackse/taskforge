@@ -1,5 +1,5 @@
 task_forge.task package
-======================
+=======================
 
 .. automodule:: task_forge.task
 

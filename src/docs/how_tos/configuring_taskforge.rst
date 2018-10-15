@@ -11,15 +11,8 @@ The primary location for a Taskforge configuration file is in
 file manager, however below we will demonstrate how to do so via a Unix
 terminal:
 
-.. code::
+.. console::
    
    $ mkdir ~/.taskforge.d
    $ touch ~/.taskforge.d/config.toml
-
-
-Now we simply need to 
-
-A full guide with all available options can be found in the `Configuration`_
-documentation. However for this tutorial we only need to set up a basic
-configuration file. 
 
