@@ -156,7 +156,7 @@ class Parser:
         return expression
 
     def _concat(self, left):
-        """Concat multiple unquoted strings into one value."""
+        """Concatenate multiple unquoted strings into one value."""
         if not (left.is_literal() and isinstance(left.value, str)):
             raise ParseError(
                 'can only concat string literals got: {}'.format(left))

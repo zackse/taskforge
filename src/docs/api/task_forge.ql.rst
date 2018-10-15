@@ -4,6 +4,8 @@ task_forge.ql package
 Submodules
 ----------
 
+.. vale off
+
 task_forge.ql.ast module
 -----------------------
 

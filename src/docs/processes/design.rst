@@ -4,7 +4,7 @@ Design Document Process
 This describes the design document process for Taskforge. All new features must
 go through the design process as described here before the any code is written.
 
-Why we write design documents
+Why We Write Design Documents
 +++++++++++++++++++++++++++++
 
 When the idea for a feature is first introduced we, as human beings, can look at

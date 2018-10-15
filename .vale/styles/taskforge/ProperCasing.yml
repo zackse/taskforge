@@ -1,0 +1,12 @@
+---
+extends: substitution
+message: Use '%s' instead of '%s'
+level: error
+swap:
+  Github: GitHub
+  github: GitHub
+  '(?!($ |:: |))python': Python
+  '(?!install )taskforge': Taskforge
+  ast: AST
+  html: HTML
+  json: JSON

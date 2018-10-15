@@ -1,0 +1,10 @@
+---
+# Based on:
+# https://github.com/errata-ai/vale-boilerplate/blob/master/src/18F/Quotes.yml
+extends: existence
+message: Punctuation should be inside the quotes.
+link: https://content-guide.18f.gov/punctuation/#quotes
+level: error
+nonword: true
+tokens:
+- '"[^"]+"[.,?]'

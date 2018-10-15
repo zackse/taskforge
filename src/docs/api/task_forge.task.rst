@@ -3,7 +3,7 @@ task_forge.task package
 
 .. automodule:: task_forge.task
 
-Module contents
+Module Contents
 ---------------
 
 .. autoclass:: task_forge.task.Task

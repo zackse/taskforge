@@ -1,7 +1,7 @@
-taskforge
+Taskforge
 =========
 
-This document describes the goals of taskforge the library, and it’s
+This document describes the goals of Taskforge the library, and it’s
 design.
 
 Goals
@@ -35,7 +35,7 @@ Design
 Query Language
 ++++++++++++++
 
-The query language for tasks will accept two “modes”.
+The query language for tasks will accept two “modes.”
 
 The first mode is a simple string search. A query which takes the form:
 ``WORD^`` such as: ``milk and sugar`` is a simple string search. It will
@@ -67,20 +67,19 @@ Important notes:
 
 -  ``FIELD_NAME`` is lexed as a String Literal token. The parser will
    validate that it is a valid field name if it is part of an infix
-   expression. Else the parser will concat multiple ``FIELD_NAMES`` into
+   expression. Else the parser will concatenate multiple ``FIELD_NAMES`` into
    a single String Literal expression.
 -  All numbers are lexed as floats, however in a query string both 5 and
    5.0 are valid.
 
-There is only one “prefix operator” and is not seen by the parser or
-interpreter (so is not a true operator at all), and that is ``-``. This
-is used during unquoted string queries to indicate that a keyword should
-be interpreted literally. Take our above example of ``milk and sugar``.
-The lexer would normally interpret this as ``STRING AND STRING``. If we
-instead want this to be taken as ``STRING STRING STRING`` we must put a
-``-`` in front of and. This means the final query is
-``milk -and sugar``. The ``-`` is simply ignored by anything other than
-the lexer.
+Taskforge query language has one “prefix operator” and is not seen by the parser
+or interpreter (so is not a true operator at all), and that is ``-``. The lexer
+will use this during tokenization of unquoted strings to change what would
+normally be a keyword into a string token. Take our above example of ``milk and
+sugar``. The lexer would normally interpret this as ``STRING AND STRING``. If we
+instead want this to be taken as ``STRING STRING STRING`` we must put a ``-`` in
+front of and. This means the final query is ``milk -and sugar``. The ``-`` is
+simply ignored by anything other than the lexer.
 
 Valid infix operators are:
 
@@ -138,6 +137,8 @@ AST
 
 The AST for the query language returned by the parser is a class which
 has a single member variable ``expression``.
+
+.. vale off
 
 .. code:: python
 
@@ -257,10 +258,14 @@ follows:
            return (self.is_literal() and
                    self.token.token_type == Type.BOOLEAN)
 
+.. vale on
+
 Task Data
 +++++++++
 
 The pseudo-code representation of a task is:
+
+.. vale off
 
 .. code:: json
 
@@ -284,6 +289,8 @@ A Note will be represented as:
        created_date: Date,
        body: String,
    }
+
+.. vale on
 
 All ID’s will be hex strings of python std library uuids regardless of
 list storage. This is a nice, 0 dependency, and easy to use UUID that

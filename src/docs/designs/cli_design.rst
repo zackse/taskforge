@@ -1,4 +1,4 @@
-task (CLI client)
+task (CLI Client)
 =================
 
 Goals
@@ -26,7 +26,21 @@ Configuration File
 
 The task CLI will be configured with TOML.
 
-TODO: Write this section
+An example config file will look like:
+
+.. code::
+
+   [list]
+   name = "sqlite"
+
+   [list.config]
+   file = "~/.taskforge.d/tasks.sqlite3"
+
+To start there will be two sections, ``[list]`` which has a single key
+name. This name corresponds to the list implementation the user wants to load.
+``[list.confg]`` is a section filled with arbitrary key value pairs that are
+passed to the constructor of the list implementation as kwargs deconstructed
+using the ``**`` operator.
 
 New Subcommand
 --------------
@@ -39,13 +53,13 @@ The new subcommand will accept the following flags:
 -  ``--from-file PATH_TO_FILE`` loads a task/s from a yaml file or csv
    file
 
-It takes VarArgs and concats them into the title of a new task. So that:
+It takes VarArgs and concatenates them into the title of a new task. So that:
 
 .. code:: bash
 
    task new write a design doc
 
-Will create a task with the title “write a design doc”. Flags as
+Will create a task with the title “write a design doc." Flags as
 described above can be passed to populate other fields of the Task.
 Otherwise the flag fields will get the defaults described below:
 

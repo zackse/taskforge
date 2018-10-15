@@ -9,7 +9,7 @@ of contributors, with the most varied and diverse backgrounds possible. As such,
 we are committed to providing a friendly, safe and welcoming environment for
 all, regardless of gender, sexual orientation, ability, ethnicity, socioeconomic
 status, political belief, religion (or lack thereof), and any other
-characteristic one could conceive to divide people.
+characteristic one would use to try to divide people.
 
 This code of conduct outlines our expectations for all those who
 participate in our community, as well as the consequences for
@@ -46,10 +46,12 @@ members:
 -  Attempt collaboration before conflict.
 -  Refrain from demeaning, discriminatory, or harassing behavior and
    speech.
+.. vale off
 -  Be mindful of your surroundings and of your fellow participants.
    Alert community leaders if you notice a dangerous situation, someone
    in distress, or violations of this Code of Conduct, even if they seem
    inconsequential.
+.. vale on
 -  Remember that community event venues may be shared with members of
    the public; please be respectful to all patrons of these locations.
 
@@ -130,13 +132,13 @@ safety and well-being of community members. Such as when displaying association
 with the project on the forum where the communication occurs i.e., a tweet and
 your Twitter bio.
 
-10. Contact info
+10. Contact Info
 ----------------
 
 Send all questions or concerns to: `The Project Maintainers
 <mailto://chasinglogic@gmail.com>`_
 
-11. License and attribution
+11. License and Attribution
 ---------------------------
 
 This Code of Conduct is derived from the Citizen Code of Conduct.

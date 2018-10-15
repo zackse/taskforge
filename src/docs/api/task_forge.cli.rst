@@ -4,6 +4,8 @@ task_forge.cli package
 Submodules
 ----------
 
+.. vale off
+
 task_forge.cli.add\_cmd module
 -----------------------------
 
