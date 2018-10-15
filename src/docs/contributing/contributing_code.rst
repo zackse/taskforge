@@ -5,9 +5,9 @@ Contributing code to Taskforge, like all contributions, is highly appreciated.
 This document will help you set up your development environment and follow our
 coding best practices.
 
-This document assumes that you have already installed python version 3.4 or
-greater. If not you can `head to python.org <https://python.org>`_ to install it
-on your platform.
+This document assumes that you have already installed Python version 3.4 or
+greater. If not you can `go to Python's website <https://python.org>`_ to
+install it on your platform.
 
 .. contents::
 
@@ -19,9 +19,8 @@ on your platform.
 Getting the Code
 ++++++++++++++++
 
-Before you begin development on Taskforge you of course will need to download
-the repository. To do this open your shell of choice and run the following
-command:
+Before you begin development on Taskforge you will need to download the
+repository. To do this open your shell of choice and run the following command:
 
 .. console::
 

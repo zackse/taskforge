@@ -1,0 +1,22 @@
+---
+extends: capitalization
+message: "'%s' should be in title case"
+level: warning
+scope: heading
+match: $title
+style: Chicago
+exceptions:
+  - task_forge.ql
+  - task_forge.task
+  - task_forge.query
+  - task_forge.cli
+  - task_forge
+  - task_forge.lists
+  - task_forge.lists.sqlite
+  - task_forge.lists.mongo
+  - task_forge.lists.load
+  - package
+  - module
+  - task
+  - query
+  - add

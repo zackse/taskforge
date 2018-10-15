@@ -29,7 +29,7 @@ task_forge.lists.sqlite module
     :show-inheritance:
 
 
-Module contents
+Module Contents
 ---------------
 
 .. automodule:: task_forge.lists

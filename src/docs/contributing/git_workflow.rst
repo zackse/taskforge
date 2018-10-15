@@ -55,7 +55,7 @@ All commit messages should ideally follow this format:
     - Fix typo in docstring
     - Corrected bad link in README
 
-Note that with the following format, it's acceptable to throw smaller changes into one
+With the following format, it's acceptable to throw smaller changes into one
 commit with a bigger change. The most important thing is that I should be able
 to tell what the commit changed by reading your message and not the diff.
 
@@ -79,10 +79,10 @@ Commit Limits
 
 
 While for some features it's understandable that you will have a lot of commits,
-generally speaking, a good Pull Request should not generally contain any more than
-5 commits. Again this is not a hard and fast rule, but if you find yourself with
-5+ commits perhaps rethink how you've written your commits and consider
-squashing some of them.
+generally speaking, a good Pull Request should not generally contain any more
+than 5 commits. Again this is not a hard and fast rule, but if you find yourself
+with 5+ commits rethink how you've written your commits and consider squashing
+some of them.
 
 Topic Branches
 ++++++++++++++

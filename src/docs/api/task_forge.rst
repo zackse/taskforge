@@ -14,7 +14,7 @@ Subpackages
 Submodules
 ----------
 
-Module contents
+Module Contents
 ---------------
 
 .. automodule:: task_forge

@@ -1,20 +1,20 @@
-"""
-Sphinx plugins for Taskforge documentation.
-"""
+"""Sphinx plugins for Taskforge documentation."""
+
 import re
 import logging
 
 from docutils import nodes
 from docutils.statemachine import ViewList
-from sphinx.directives import CodeBlock
+from sphinx.directives import CodeBlock  # pylint: disable=import-error
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 # RE for option descriptions without a '--' prefix
-simple_option_desc_re = re.compile(
+simple_option_desc_re = re.compile(  # pylint: disable=invalid-name
     r'([-_a-zA-Z0-9]+)(\s*.*?)(?=,\s+(?:/|-|--)|$)')
 
 
 def setup(app):
+    """Add our custom code to sphinx."""
     app.add_node(
         ConsoleNode,
         html=(visit_console_html, None),
@@ -28,19 +28,21 @@ def setup(app):
     return {'parallel_read_safe': True}
 
 
-class ConsoleNode(nodes.literal_block):
+class ConsoleNode(nodes.literal_block):  # pylint: disable=too-many-ancestors
     """
     Custom node to override the visit/depart event handlers at registration
     time. Wrap a literal_block object and defer to it.
     """
+
     tagname = 'ConsoleNode'
 
     def __init__(self, litblk_obj):
         self.wrapped = litblk_obj
 
     def __getattr__(self, attr):
+        """If wrapped, return the wrapped attribute."""
         if attr == 'wrapped':
-            return self.__dict__.wrapped
+            return self.__dict__['wrapped']
         return getattr(self.wrapped, attr)
 
 
@@ -56,10 +58,11 @@ def depart_console_dummy(self, node):
 
 def visit_console_html(self, node):
     """Generate HTML for the console directive."""
-    if self.builder.name in ('taskforgehtml', 'json') and node['win_console_text']:
+    if self.builder.name in ('taskforgehtml',
+                             'json') and node['win_console_text']:
         # Put a mark on the document object signaling the fact the directive
         # has been used on it.
-        self.document._console_directive_used_flag = True
+        self.document._console_directive_used_flag = True  # pylint: disable=protected-access
         uid = node['uid']
         self.body.append('''\
 <div class="console-block" id="console-block-%(id)s">
@@ -74,7 +77,9 @@ def visit_console_html(self, node):
             pass
         self.body.append('</section>\n')
 
-        self.body.append('<section class="c-content-win" id="c-content-%(id)s-win">\n' % {'id': uid})
+        self.body.append(
+            '<section class="c-content-win" id="c-content-%(id)s-win">\n' %
+            {'id': uid})
         win_text = node['win_console_text']
         highlight_args = {'force': True}
         if 'linenos' in node:
@@ -86,8 +91,7 @@ def visit_console_html(self, node):
             self.builder.warn(msg, (self.builder.current_docname, node.line))
 
         highlighted = self.highlighter.highlight_block(
-            win_text, 'doscon', warn=warner, linenos=linenos, **highlight_args
-        )
+            win_text, 'doscon', warn=warner, linenos=linenos, **highlight_args)
         self.body.append(highlighted)
         self.body.append('</section>\n')
         self.body.append('</div>\n')
@@ -96,12 +100,13 @@ def visit_console_html(self, node):
         self.visit_literal_block(node)
 
 
-class ConsoleDirective(CodeBlock):
+class ConsoleDirective(CodeBlock):  # pylint: disable=too-few-public-methods
     """
     A reStructuredText directive which renders a two-tab code block in which
     the second tab shows a Windows command line equivalent of the usual
     Unix-oriented examples.
     """
+
     required_arguments = 0
     # The 'doscon' Pygments formatter needs a prompt like this. '>' alone
     # won't do it because then it simply paints the whole command line as a
@@ -109,6 +114,7 @@ class ConsoleDirective(CodeBlock):
     WIN_PROMPT = r'...\> '
 
     def run(self):
+        """Convert a Unix shell command to a Windows Powershell command."""
 
         def args_to_win(cmdline):
             changed = False
@@ -132,7 +138,7 @@ class ConsoleDirective(CodeBlock):
                 return ' '.join(out)
             return cmdline
 
-        def cmdline_to_win(line):
+        def cmdline_to_win(line):  # pylint: disable=too-many-return-statements
             if line.startswith('# '):
                 return 'REM ' + args_to_win(line[2:])
             if line.startswith('$ # '):
@@ -168,7 +174,7 @@ class ConsoleDirective(CodeBlock):
             return None
 
         env = self.state.document.settings.env
-        self.arguments = ['console']
+        self.arguments = ['console']  # pylint: disable=attribute-defined-outside-init
         lit_blk_obj = super().run()[0]
 
         # Only do work when the taskforgehtml HTML Sphinx builder is being used,
@@ -179,11 +185,11 @@ class ConsoleDirective(CodeBlock):
         lit_blk_obj['uid'] = '%s' % env.new_serialno('console')
         # Only add the tabbed UI if there is actually a Windows-specific
         # version of the CLI example.
-        win_content = code_block_to_win(self.content)
+        win_content = code_block_to_win(self.content)  # pylint: disable=access-member-before-definition
         if win_content is None:
             lit_blk_obj['win_console_text'] = None
         else:
-            self.content = win_content
+            self.content = win_content  # pylint: disable=attribute-defined-outside-init
             lit_blk_obj['win_console_text'] = super().run()[0].rawsource
 
         # Replace the literal_node object returned by Sphinx's CodeBlock with
@@ -191,9 +197,13 @@ class ConsoleDirective(CodeBlock):
         return [ConsoleNode(lit_blk_obj)]
 
 
-def html_page_context_hook(app, pagename, templatename, context, doctree):
-    # Put a bool on the context used to render the template. It's used to
-    # control inclusion of console-tabs.css and activation of the JavaScript.
-    # This way it's include only from HTML files rendered from reST files where
-    # the ConsoleDirective is used.
-    context['include_console_assets'] = getattr(doctree, '_console_directive_used_flag', False)
+def html_page_context_hook(_app, _pagename, _templatename, context, doctree):
+    """
+    Put a bool on the context used to render the template.
+
+    It's used to control inclusion of console-tabs.css and activation of the
+    JavaScript. This way it's include only from HTML files rendered from reST
+    files where the ConsoleDirective is used.
+    """
+    context['include_console_assets'] = getattr(
+        doctree, '_console_directive_used_flag', False)

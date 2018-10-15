@@ -35,7 +35,6 @@ def get_editor_program():
 
 def editor(filename):
     """Open filename in $EDITOR"""
-    # TODO: Improve this to handle more edge cases and be platform specific
     program = get_editor_program()
     args = '{} {}'.format(program, filename)
     call(shlex.split(args),
