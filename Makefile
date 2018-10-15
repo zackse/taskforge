@@ -53,7 +53,7 @@ livehtml:
 
 # Build the web site container
 website: html
-	docker build --tag "chasinglogic/taskforge.io:latest" --file Dockerfile.docs .
+	docker build --tag "chasinglogic/taskforge.io:latest" --file Dockerfile.website .
 
 publish-website: website
 	docker push "chasinglogic/taskforge.io:latest"

@@ -9,7 +9,7 @@ services.
 .. toctree::
    :maxdepth: 2
 
-   tutorials/getting_started
+   tutorials/index
 
    how_tos/query_language
    how_tos/configuring_taskforge

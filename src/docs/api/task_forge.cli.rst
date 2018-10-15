@@ -1,12 +1,12 @@
 task_forge.cli package
-=====================
+======================
 
 Submodules
 ----------
 
 .. vale off
 
-task_forge.cli.add\_cmd module
+task_forge.cli.add_cmd module
 -----------------------------
 
 .. automodule:: task_forge.cli.add_cmd
@@ -14,7 +14,7 @@ task_forge.cli.add\_cmd module
     :undoc-members:
     :show-inheritance:
 
-task_forge.cli.complete\_cmd module
+task_forge.cli.complete_cmd module
 ----------------------------------
 
 .. automodule:: task_forge.cli.complete_cmd
@@ -22,7 +22,7 @@ task_forge.cli.complete\_cmd module
     :undoc-members:
     :show-inheritance:
 
-task_forge.cli.next\_cmd module
+task_forge.cli.next_cmd module
 ------------------------------
 
 .. automodule:: task_forge.cli.next_cmd
@@ -30,7 +30,7 @@ task_forge.cli.next\_cmd module
     :undoc-members:
     :show-inheritance:
 
-task_forge.cli.query\_cmd module
+task_forge.cli.query_cmd module
 -------------------------------
 
 .. automodule:: task_forge.cli.query_cmd
@@ -38,7 +38,7 @@ task_forge.cli.query\_cmd module
     :undoc-members:
     :show-inheritance:
 
-task_forge.cli.todo\_cmd module
+task_forge.cli.todo_cmd module
 ------------------------------
 
 .. automodule:: task_forge.cli.todo_cmd
@@ -47,14 +47,14 @@ task_forge.cli.todo\_cmd module
     :show-inheritance:
 
 task_forge.cli.utils module
---------------------------
+---------------------------
 
 .. automodule:: task_forge.cli.utils
     :members:
     :undoc-members:
     :show-inheritance:
 
-task_forge.cli.workon\_cmd module
+task_forge.cli.workon_cmd module
 --------------------------------
 
 .. automodule:: task_forge.cli.workon_cmd

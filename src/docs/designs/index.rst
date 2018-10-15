@@ -11,5 +11,7 @@ discussion to occur before a feature is built.
 
 .. toctree::
 
+   template
+
    initial_design
    cli_design
