@@ -23,7 +23,7 @@ systems you're required to interact with.
 
 ## Getting Started
 
-Head over to [our documentation website](http://taskforge.io/docs) for full
+Head over to [our documentation website](http://taskforge.io/docs/) for full
 documentation. For a getting started guide and more information.
 
 ## Contributing
