@@ -3,6 +3,7 @@ python:
   - "3.6"
   - "3.7"
 install:
+  - pip install -r requirements.dev.txt
   - make install
   - make install-dev
   - go get github.com/errata-ai/vale
@@ -10,3 +11,6 @@ script:
   - vale --ext='.rst' --glob='*.rst' src/docs
   - make lint
   - make test
+  - make website
+  - docker run -p 8080:80 -d chasinglogic/taskforge.io:latest
+  - pylinkvalidate.py -P http://localhost:8080
